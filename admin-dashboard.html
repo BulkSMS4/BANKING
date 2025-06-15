@@ -1,67 +1,82 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - UBA</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    header { background: #002868; color: white; padding: 1rem; text-align: center; }
     .sidebar {
+      width: 250px;
+      background: #d40000;
+      height: 100vh;
       position: fixed;
       top: 0;
       left: 0;
-      width: 250px;
-      height: 100%;
-      background: #002244;
+      padding-top: 60px;
       color: white;
-      padding: 20px;
     }
-    .sidebar h2 { margin-top: 0; }
     .sidebar a {
       display: block;
       color: white;
+      padding: 15px;
       text-decoration: none;
-      padding: 10px 0;
     }
-    .main {
-      margin-left: 270px;
-      padding: 20px;
-    }
-    .user-box {
-      background: white;
+    .sidebar a:hover { background: #990000; }
+    .main { margin-left: 260px; padding: 20px; }
+    .section { display: none; }
+    .active { display: block; }
+    .user-card, .transfer-card {
+      background: #f5f5f5;
       padding: 15px;
       margin-bottom: 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 5px;
     }
-    .user-box button {
-      margin-right: 10px;
+    button {
+      margin-top: 5px;
+      padding: 5px 10px;
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Admin Dashboard</h1>
+  </header>
   <div class="sidebar">
-    <h2>UBA Admin</h2>
-    <a href="#" onclick="loadUsers()">User Accounts</a>
-    <a href="#">Add Money</a>
-    <a href="#">Transfers</a>
-    <a href="#">Logout</a>
-  </div>  <div class="main">
-    <h1>Registered User Accounts</h1>
-    <div id="user-list"></div>
+    <a href="#" onclick="showSection('accounts')">User Accounts</a>
+    <a href="#" onclick="showSection('transfers')">Transfers</a>
+    <a href="index.html">Logout</a>
+  </div>
+  <div class="main">
+    <div id="accounts" class="section active">
+      <h2>Registered Users</h2>
+      <div id="user-list"></div>
+    </div><div id="transfers" class="section">
+  <h2>Transfer Requests</h2>
+  <div id="transfer-list"></div>
+</div>
+
   </div>  <script>
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+    }
+
     function loadUsers() {
       const users = JSON.parse(localStorage.getItem("users")) || [];
       const list = document.getElementById("user-list");
       list.innerHTML = "";
       users.forEach((user, index) => {
         list.innerHTML += `
-          <div class="user-box">
+          <div class="user-card">
             <strong>${user.fullName}</strong><br>
-            Username: ${user.username}<br>
             Email: ${user.email}<br>
-            Phone: ${user.phone || 'N/A'}<br>
+            Phone: ${user.phone}<br>
+            Username: ${user.username}<br>
             Account #: ${user.accountNumber}<br>
-            Balance: $${user.balance}<br>
+            Balance: $${user.balance.toFixed(2)}<br>
             <button onclick="addMoney(${index})">Add Money</button>
             <button onclick="suspendUser(${index})">Suspend</button>
           </div>
@@ -69,8 +84,29 @@
       });
     }
 
+    function loadTransfers() {
+      const transfers = JSON.parse(localStorage.getItem("transfers")) || [];
+      const list = document.getElementById("transfer-list");
+      list.innerHTML = "";
+      transfers.forEach((t, i) => {
+        list.innerHTML += `
+          <div class="transfer-card">
+            From: ${t.from}<br>
+            To: ${t.to}<br>
+            Amount: $${t.amount}<br>
+            Status: ${t.status}<br>
+            <button onclick="updateTransfer(${i}, 'approved')">Approve</button>
+            <button onclick="updateTransfer(${i}, 'processing')">Processing</button>
+            <button onclick="updateTransfer(${i}, 'cancelled')">Cancel</button>
+            <button onclick="updateTransfer(${i}, 'suspended')">Suspend</button>
+          </div>
+        `;
+      });
+    }
+
     function addMoney(index) {
       let amount = prompt("Enter amount to credit:");
+      if (!amount || isNaN(amount)) return alert("Invalid amount");
       let users = JSON.parse(localStorage.getItem("users")) || [];
       users[index].balance = parseFloat(users[index].balance) + parseFloat(amount);
       localStorage.setItem("users", JSON.stringify(users));
@@ -79,9 +115,20 @@
     }
 
     function suspendUser(index) {
-      alert("User has been suspended (demo only).");
+      alert("User suspended (prank-only feature)");
     }
 
-    window.onload = loadUsers;
+    function updateTransfer(index, status) {
+      let transfers = JSON.parse(localStorage.getItem("transfers")) || [];
+      transfers[index].status = status;
+      localStorage.setItem("transfers", JSON.stringify(transfers));
+      alert("Transfer updated to: " + status);
+      loadTransfers();
+    }
+
+    window.onload = () => {
+      loadUsers();
+      loadTransfers();
+    };
   </script></body>
 </html>

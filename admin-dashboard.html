@@ -1,111 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Dashboard - UBA</title>
+  <meta charset="UTF-8" />
+  <title>UBA Admin Dashboard</title>
   <style>
     body {
-      font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
     }
-    .header {
-      background: #d40000; color: white; padding: 15px;
-      text-align: center; font-size: 20px;
+
+    header {
+      background-color: #d40000;
+      color: white;
+      padding: 20px;
+      text-align: center;
     }
+
     .container {
-      max-width: 800px; margin: 30px auto; background: white;
-      padding: 25px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h2 { color: #d40000; text-align: center; }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
     table {
-      width: 100%; border-collapse: collapse; margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 40px;
     }
+
     th, td {
-      border: 1px solid #ddd; padding: 10px; text-align: center;
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
     }
-    th { background-color: #f2f2f2; }
-    button {
-      padding: 5px 10px; margin: 2px; border: none; border-radius: 5px;
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .actions button {
+      padding: 6px 12px;
+      margin-right: 5px;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
     }
-    .approve { background-color: green; color: white; }
-    .suspend { background-color: orange; color: white; }
-    .cancel { background-color: red; color: white; }
 
-    .add-balance {
-      margin-top: 30px;
-      padding: 15px;
-      border-top: 1px solid #ccc;
+    .approve { background: green; color: white; }
+    .suspend { background: orange; color: white; }
+    .cancel  { background: red; color: white; }
+
+    .balance-update {
+      margin-top: 40px;
     }
-    input {
-      padding: 10px; width: 100%; margin-top: 10px; margin-bottom: 10px;
-      border-radius: 5px; border: 1px solid #ccc;
+
+    .balance-update input {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
-    .submit-balance {
+
+    .balance-update button {
       background-color: #d40000;
-      color: white; width: 100%; font-size: 16px;
+      color: white;
+      padding: 12px;
+      border: none;
+      font-size: 16px;
+      width: 100%;
+      border-radius: 5px;
     }
   </style>
 </head>
 <body>
 
-<div class="header">UBA ADMIN PANEL</div>
+<header>
+  <h1>UBA Admin Dashboard</h1>
+</header>
 
 <div class="container">
-  <h2>Pending Transfers</h2>
+  <h2>Transfer Requests</h2>
   <table>
-    <tr>
-      <th>Sender</th>
-      <th>Receiver</th>
-      <th>Amount</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
-    <tr>
-      <td>Mr. Rogers</td>
-      <td>Jane Smith</td>
-      <td>$5,000.00</td>
-      <td><span id="status1">Pending</span></td>
-      <td>
-        <button class="approve" onclick="setStatus('status1', 'Approved')">Approve</button>
-        <button class="suspend" onclick="setStatus('status1', 'Suspended')">Suspend</button>
-        <button class="cancel" onclick="setStatus('status1', 'Cancelled')">Cancel</button>
-      </td>
-    </tr>
-    <tr>
-      <td>Mr. Rogers</td>
-      <td>ABC Corp</td>
-      <td>$50,000.00</td>
-      <td><span id="status2">Pending</span></td>
-      <td>
-        <button class="approve" onclick="setStatus('status2', 'Approved')">Approve</button>
-        <button class="suspend" onclick="setStatus('status2', 'Suspended')">Suspend</button>
-        <button class="cancel" onclick="setStatus('status2', 'Cancelled')">Cancel</button>
-      </td>
-    </tr>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Amount</th>
+        <th>Account</th>
+        <th>Bank</th>
+        <th>SWIFT</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="transferList">
+      <tr>
+        <td>Mr. Rogers</td>
+        <td>$500,000.00</td>
+        <td>0987623412</td>
+        <td>GTBank</td>
+        <td>GTB12345</td>
+        <td class="actions">
+          <button class="approve" onclick="handleAction(this, 'Approved')">Approve</button>
+          <button class="suspend" onclick="handleAction(this, 'Suspended')">Suspend</button>
+          <button class="cancel" onclick="handleAction(this, 'Cancelled')">Cancel</button>
+        </td>
+      </tr>
+    </tbody>
   </table>
 
-  <div class="add-balance">
+  <div class="balance-update">
     <h2>Add Fake Balance</h2>
-    <input type="text" id="user" placeholder="Enter Username (e.g. mrrogers)" required />
-    <input type="number" id="amount" placeholder="Enter Amount (e.g. 100000000)" required />
-    <button class="submit-balance" onclick="addFakeBalance()">Add Balance</button>
+    <form onsubmit="event.preventDefault(); alert('Fake balance added successfully!');">
+      <input type="text" required placeholder="Username (e.g. mrrogers)" />
+      <input type="number" required placeholder="Amount to Add (e.g. 1000000)" />
+      <button type="submit">Add Balance</button>
+    </form>
   </div>
 </div>
 
 <script>
-  function setStatus(id, newStatus) {
-    document.getElementById(id).textContent = newStatus;
-    alert("Transfer has been " + newStatus.toLowerCase() + ".");
-  }
-
-  function addFakeBalance() {
-    const user = document.getElementById('user').value;
-    const amount = document.getElementById('amount').value;
-    if (user && amount) {
-      alert("Fake balance of $" + amount + " added to user: " + user);
-    } else {
-      alert("Please fill in all fields");
-    }
+  function handleAction(button, status) {
+    const row = button.closest("tr");
+    row.style.backgroundColor = status === 'Approved' ? '#d4f8d4' :
+                                status === 'Suspended' ? '#fff3cd' :
+                                '#f8d7da';
+    row.cells[5].innerText = status;
   }
 </script>
 

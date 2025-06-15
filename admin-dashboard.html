@@ -3,83 +3,86 @@
 <head>
   <meta charset="UTF-8" />
   <title>UBA Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
+    :root {
+      --primary: #002244;
+      --accent: #cc0000;
+      --light: #f1f1f1;
+      --white: #ffffff;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
       margin: 0;
-      padding: 0;
+      font-family: Arial, sans-serif;
+      background: var(--light);
     }
 
     header {
-      background-color: #d40000;
+      background: var(--primary);
       color: white;
       padding: 20px;
       text-align: center;
     }
 
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    h2 {
+      margin-top: 20px;
+      color: var(--primary);
     }
 
-    h2 {
-      text-align: center;
+    .content {
+      padding: 20px;
+    }
+
+    .form-box {
+      background: var(--white);
+      padding: 20px;
+      border-radius: 8px;
       margin-bottom: 30px;
+      box-shadow: 0 0 5px #ccc;
+    }
+
+    input, select, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #001a33;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 40px;
+      background: white;
+      margin-top: 20px;
+      box-shadow: 0 0 5px #ccc;
     }
 
     th, td {
-      padding: 12px;
       border: 1px solid #ddd;
-      text-align: left;
+      padding: 12px;
+      text-align: center;
     }
 
     th {
-      background-color: #f2f2f2;
+      background: var(--light);
     }
 
-    .actions button {
-      padding: 6px 12px;
-      margin-right: 5px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .approve { background: green; color: white; }
-    .suspend { background: orange; color: white; }
-    .cancel  { background: red; color: white; }
-
-    .balance-update {
-      margin-top: 40px;
-    }
-
-    .balance-update input {
-      padding: 10px;
-      margin: 10px 0;
-      width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    .balance-update button {
-      background-color: #d40000;
-      color: white;
-      padding: 12px;
-      border: none;
-      font-size: 16px;
-      width: 100%;
-      border-radius: 5px;
+    .action-buttons button {
+      margin: 2px;
+      padding: 8px 12px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -89,52 +92,75 @@
   <h1>UBA Admin Dashboard</h1>
 </header>
 
-<div class="container">
-  <h2>Transfer Requests</h2>
+<div class="content">
+  <div class="form-box">
+    <h2>Add Money to User</h2>
+    <form id="addMoneyForm">
+      <input type="text" id="username" placeholder="Username (e.g. rogers98)" required />
+      <input type="number" id="amount" placeholder="Amount to Add (e.g. 10000)" required />
+      <button type="submit">Add Money</button>
+    </form>
+  </div>
+
+  <h2>Pending Wire Transfers</h2>
   <table>
     <thead>
       <tr>
+        <th>SN</th>
         <th>User</th>
         <th>Amount</th>
-        <th>Account</th>
-        <th>Bank</th>
-        <th>SWIFT</th>
-        <th>Action</th>
+        <th>Status</th>
+        <th>Actions</th>
       </tr>
     </thead>
-    <tbody id="transferList">
+    <tbody id="transfersTable">
+      <!-- Example static row -->
       <tr>
-        <td>Mr. Rogers</td>
-        <td>$500,000.00</td>
-        <td>0987623412</td>
-        <td>GTBank</td>
-        <td>GTB12345</td>
-        <td class="actions">
-          <button class="approve" onclick="handleAction(this, 'Approved')">Approve</button>
-          <button class="suspend" onclick="handleAction(this, 'Suspended')">Suspend</button>
-          <button class="cancel" onclick="handleAction(this, 'Cancelled')">Cancel</button>
+        <td>1</td>
+        <td>rogers98</td>
+        <td>$50,000</td>
+        <td id="status-1">Pending</td>
+        <td class="action-buttons">
+          <button onclick="updateStatus(1, 'Approved')">Approve</button>
+          <button onclick="updateStatus(1, 'Processing')">Processing</button>
+          <button onclick="updateStatus(1, 'Suspended')">Suspend</button>
+          <button onclick="updateStatus(1, 'Cancelled')">Cancel</button>
         </td>
       </tr>
     </tbody>
   </table>
-
-  <div class="balance-update">
-    <h2>Add Fake Balance</h2>
-    <form onsubmit="event.preventDefault(); alert('Fake balance added successfully!');">
-      <input type="text" required placeholder="Username (e.g. mrrogers)" />
-      <input type="number" required placeholder="Amount to Add (e.g. 1000000)" />
-      <button type="submit">Add Balance</button>
-    </form>
-  </div>
 </div>
 
 <script>
-  function handleAction(button, status) {
-    const row = button.closest("tr");
-    row.style.backgroundColor = status === 'Approved' ? '#d4f8d4' :
-                                status === 'Suspended' ? '#fff3cd' :
-                                '#f8d7da';
-    row.cells[5].innerText = status;
+  const form = document.getElementById("addMoneyForm");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const user = document.getElementById("username").value.trim();
+    const amount = parseFloat(document.getElementById("amount").value);
+
+    if (!user || isNaN(amount)) {
+      alert("Enter valid username and amount.");
+      return;
+    }
+
+    // Fetch existing data or create it
+    let userData = JSON.parse(localStorage.getItem("userData")) || {};
+    userData.balance = (parseFloat(userData.balance) || 0) + amount;
+
+    localStorage.setItem("userData", JSON.stringify(userData));
+    alert(`$${amount} added successfully to ${user}'s account.`);
+    form.reset();
+  });
+
+  function updateStatus(id, newStatus) {
+    document.getElementById(`status-${id}`).innerText = newStatus;
+
+    if (newStatus === "Approved") {
+      setTimeout(() => {
+        alert("✅ Transfer Approved Successfully");
+      }, 300);
+    }
   }
 </script>
 

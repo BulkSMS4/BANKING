@@ -1,56 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Create UBA Account</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    input, select { width: 100%; margin: 10px 0; padding: 10px; }
-    button { padding: 10px; background: #d40000; color: white; border: none; width: 100%; }
-  </style>
-</head>
-<body>
-  <h2>CREATE YOUR BANK ACCOUNT</h2>
-  <p>Fill all the form field to go next step.</p>
-  <form id="signupForm">
-    <input type="text" id="first" placeholder="First Name" required />
-    <input type="text" id="last" placeholder="Last Name" required />
-    <select id="currency" required>
-      <option value="">Select Currency</option>
-      <option>USD</option>
-      <option>GHS</option>
-    </select>
-    <select id="account" required>
-      <option value="">Select Account Type</option>
-      <option>Savings</option>
-      <option>Current</option>
-    </select>
-    <input type="text" id="occupation" placeholder="Occupation" required />
-    <input type="text" id="country" placeholder="Country" required />
-    <input type="text" id="address" placeholder="Street Address" required />
-    <input type="text" id="city" placeholder="City" required />
-    <input type="text" id="state" placeholder="State" required />
-    <input type="text" id="zip" placeholder="Zip Code" required />
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="tel" id="phone" placeholder="Phone" required />
-    <input type="text" id="username" placeholder="Username" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <input type="password" id="confirm" placeholder="Confirm Password" required />
-    <button type="submit">Submit</button>
-  </form>
-
-  <script>
-    document.getElementById("signupForm").onsubmit = function(e) {
-      e.preventDefault();
-      const user = {
-        first: document.getElementById("first").value,
-        username: document.getElementById("username").value,
-        password: document.getElementById("password").value
-      };
-      localStorage.setItem("userData", JSON.stringify(user));
-      alert("Account created! Now log in.");
-      window.location.href = "login.html";
+<script>
+  function saveUserInfo() {
+    const user = {
+      fullName: document.getElementById("first-name").value + " " + document.getElementById("last-name").value,
+      email: document.getElementById("email").value,
+      username: document.getElementById("username").value,
+      accountNumber: "UBA" + Math.floor(100000000 + Math.random() * 900000000),
+      balance: 0
     };
-  </script>
-</body>
-</html>
+
+    // Store to localStorage
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    users.push(user);
+    localStorage.setItem("users", JSON.stringify(users));
+
+    // Redirect to user dashboard or PIN
+    window.location.href = "pin.html";
+  }
+</script>
+
+<!-- Final submit button -->
+<button onclick="saveUserInfo()">Submit</button>

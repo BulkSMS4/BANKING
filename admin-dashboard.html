@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <style>
+    body { font-family: sans-serif; background: #eee; }
+    .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; margin-top: 40px; box-shadow: 0 0 10px #ccc; }
+    h2 { text-align: center; }
+    input, select { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+    button { padding: 10px 20px; background: red; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px; }
+    .btn-group { text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Admin Dashboard</h2>
+
+    <label>Set Fake User Balance</label>
+    <input type="text" placeholder="Enter amount, e.g. 1000000000">
+    <button onclick="alert('Balance Updated')">Update Balance</button>
+
+    <hr>
+
+    <h3>Pending Transfers</h3>
+    <p>Transfer #11234 from Mr Rogers to Mark Jordan — $500,000</p>
+    <div class="btn-group">
+      <button onclick="alert('Transfer Approved')">Approve</button>
+      <button onclick="alert('Transfer Suspended')">Suspend</button>
+      <button onclick="alert('Transfer Canceled')">Cancel</button>
+    </div>
+  </div>
+</body>
+</html>

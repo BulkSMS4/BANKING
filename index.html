@@ -1,113 +1,204 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Welcome to UBA Online Banking</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Welcome to Capital One Bank</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
-    :root {
-      --primary: #002244;
-      --accent: #cc0000;
-      --light: #f9f9f9;
-      --text: #333;
-    }body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: var(--light);
-  color: var(--text);
-}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #222;
+    }
 
-header {
-  background: var(--primary);
-  color: white;
-  padding: 30px 20px;
-  text-align: center;
-}
+    .header {
+      background: #003366;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
 
-header img {
-  width: 100px;
-  margin-bottom: 10px;
-}
+    .intro {
+      padding: 20px;
+      text-align: center;
+    }
 
-h1 {
-  font-size: 2em;
-}
+    .intro img {
+      width: 80%;
+      max-width: 400px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
 
-.container {
-  padding: 20px;
-}
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+    }
 
-.description {
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 0 10px #ccc;
-  margin-bottom: 30px;
-}
+    .feature {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 300px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
 
-.description h2 {
-  color: var(--primary);
-}
+    .feature img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
 
-.description p {
-  line-height: 1.6;
-}
+    .section {
+      background: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
 
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 40px;
-}
+    .section h2 {
+      margin-bottom: 15px;
+      color: #003366;
+    }
 
-.actions a {
-  padding: 15px 25px;
-  text-decoration: none;
-  background: var(--primary);
-  color: white;
-  border-radius: 5px;
-  font-weight: bold;
-}
+    .section p {
+      max-width: 800px;
+      margin: auto;
+      line-height: 1.6;
+    }
 
-.gallery {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-}
+    .testimonials {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 30px;
+    }
 
-.gallery img {
-  width: 100%;
-  max-width: 300px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
+    .testimonial {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 300px;
+      font-style: italic;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
 
+    .testimonial strong {
+      display: block;
+      margin-top: 10px;
+      font-style: normal;
+      color: #003366;
+    }
+
+    .login-btn {
+      display: inline-block;
+      margin-top: 20px;
+      background: #cc0000;
+      color: white;
+      padding: 12px 25px;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+
+    .footer {
+      background: #003366;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .footer p {
+      margin: 5px 0;
+    }
+
+    .footer a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .features, .testimonials {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .intro img {
+        width: 100%;
+      }
+    }
   </style>
 </head>
-<body><header>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/UBA_Logo.png" alt="UBA Logo">
-  <h1>Welcome to UBA Prank Online Banking</h1>
-</header><div class="container">
-  <div class="description">
-    <h2>About This Website</h2>
-    <p>
-      This is a fully designed prank online banking experience that looks and feels like a real banking portal.
-      You can create a fake UBA bank account, log in, and see a realistic-looking dashboard with fake balances,
-      wire transfer options, and credit card info. This platform is built strictly for entertainment purposes only.
-    </p>
-    <p>
-      Users can register with their personal details, create custom usernames, and see updates as if they’re using
-      a real financial platform. It’s perfect for pranking your friends or demonstrating how an online banking UI works.
-    </p>
-  </div>  <div class="actions">
-    <a href="create-account.html">Create New Account</a>
-    <a href="login.html">Login to Dashboard</a>
-  </div>  <div class="gallery">
-    <img src="https://cdn.pixabay.com/photo/2017/08/10/03/47/online-banking-2618400_960_720.jpg" alt="banking 1">
-    <img src="https://cdn.pixabay.com/photo/2017/03/14/10/59/mobile-banking-2148092_960_720.jpg" alt="banking 2">
-    <img src="https://cdn.pixabay.com/photo/2016/04/13/07/18/bank-1323386_960_720.jpg" alt="banking 3">
+<body>
+
+  <div class="header">
+    <h1>Capital One Online Banking</h1>
+    <p>Secure. Smart. Simple.</p>
   </div>
-</div></body>
+
+  <div class="intro">
+    <h2>Welcome to Your Financial Future</h2>
+    <p>With Capital One, you can manage your money, transfer funds, pay bills, and track your financial goals — all in one place.</p>
+    <img src="https://www.capitalone.com/assets/brand/logo-capital-one.svg" alt="Capital One" />
+    <br />
+    <a href="login.html" class="login-btn">Log In to Your Account</a>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <img src="https://images.unsplash.com/photo-1588776814546-d930b77f6acb" alt="Card Management">
+      <h3>Card Management</h3>
+      <p>Activate your card, lock/unlock, and check transactions in real-time.</p>
+    </div>
+    <div class="feature">
+      <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" alt="Secure Banking">
+      <h3>Secure Banking</h3>
+      <p>Top-notch security and 24/7 fraud monitoring to keep your money safe.</p>
+    </div>
+    <div class="feature">
+      <img src="https://images.unsplash.com/photo-1519337265831-281ec6cc8514" alt="Easy Transfers">
+      <h3>Easy Transfers</h3>
+      <p>Send money across the globe with just a few clicks — instantly.</p>
+    </div>
+  </div>
+
+  <div class="section" id="about">
+    <h2>About Us</h2>
+    <p>Capital One is committed to helping customers succeed financially. From personalized financial tools to secure online banking, we bring convenience and trust together. Whether you're managing savings, investing, or everyday banking — Capital One is your reliable partner in finance.</p>
+  </div>
+
+  <div class="section" id="testimonials">
+    <h2>What Our Customers Say</h2>
+    <div class="testimonials">
+      <div class="testimonial">
+        "Capital One made it so easy to transfer money to my family abroad. The process is smooth and fast!"
+        <strong>- Jessica M.</strong>
+      </div>
+      <div class="testimonial">
+        "Their mobile banking app is top-notch. I can monitor every transaction and feel totally in control."
+        <strong>- David O.</strong>
+      </div>
+      <div class="testimonial">
+        "Best customer service I’ve ever experienced. Friendly, fast, and professional. 5 stars!"
+        <strong>- Grace T.</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2025 Capital One Bank. All rights reserved.</p>
+    <p>
+      <a href="#">Privacy Policy</a> |
+      <a href="#">Terms of Use</a> |
+      <a href="#">Support</a>
+    </p>
+    <p>Contact us: support@capitalonebank.com</p>
+  </div>
+
+</body>
 </html>

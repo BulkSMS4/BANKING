@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -9,181 +8,168 @@
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f4f4f4;
-    }
+    }.topbar {
+  background: #002868;
+  color: white;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-    .topbar {
-      background: #002868;
-      color: white;
-      padding: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+.topbar h1 {
+  font-size: 18px;
+  margin: 0;
+}
 
-    .topbar h1 {
-      font-size: 18px;
-      margin: 0;
-    }
+.sidebar {
+  position: fixed;
+  left: -230px;
+  top: 0;
+  height: 100%;
+  width: 220px;
+  background: white;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  padding-top: 60px;
+  transition: left 0.3s ease;
+  z-index: 1000;
+}
 
-    .sidebar {
-      position: fixed;
-      left: -230px;
-      top: 0;
-      height: 100%;
-      width: 220px;
-      background: white;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-      padding-top: 60px;
-      transition: left 0.3s ease;
-      z-index: 1000;
-    }
+.sidebar.show {
+  left: 0;
+}
 
-    .sidebar.show {
-      left: 0;
-    }
+.sidebar a {
+  display: block;
+  padding: 15px;
+  color: #333;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+}
 
-    .sidebar a {
-      display: block;
-      padding: 15px;
-      color: #333;
-      text-decoration: none;
-      border-bottom: 1px solid #eee;
-    }
+.sidebar a:hover,
+.sidebar a.active {
+  background: #e6e6e6;
+  font-weight: bold;
+}
 
-    .sidebar a:hover,
-    .sidebar a.active {
-      background: #e6e6e6;
-      font-weight: bold;
-    }
+.main {
+  padding: 20px;
+  transition: margin-left 0.3s;
+}
 
-    .main {
-      padding: 20px;
-      transition: margin-left 0.3s;
-    }
+.section {
+  display: none;
+}
 
-    .section {
-      display: none;
-    }
+.section.active {
+  display: block;
+}
 
-    .section.active {
-      display: block;
-    }
+#menu-toggle {
+  font-size: 24px;
+  cursor: pointer;
+}
 
-    #menu-toggle {
-      font-size: 24px;
-      cursor: pointer;
-    }
+.user-card {
+  background: white;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+}
 
-    .user-card {
-      background: white;
-      padding: 15px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-    }
+.transfer-card {
+  background: white;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+}
 
-    button {
-      padding: 8px 12px;
-      background: #002868;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
+button {
+  padding: 8px 12px;
+  background: #002868;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
 
-    button:hover {
-      background: #0044aa;
-    }
+button:hover {
+  background: #0044aa;
+}
 
-    @media (min-width: 769px) {
-      .sidebar {
-        left: 0;
-      }
+@media (min-width: 769px) {
+  .sidebar {
+    left: 0;
+  }
 
-      .main {
-        margin-left: 220px;
-      }
+  .main {
+    margin-left: 220px;
+  }
 
-      #menu-toggle {
-        display: none;
-      }
-    }
+  #menu-toggle {
+    display: none;
+  }
+}
+
   </style>
 </head>
 <body>
-
-  <div class="topbar">
+  <script>
+    if (sessionStorage.getItem("adminLoggedIn") !== "true") {
+      window.location.href = "admin-login.html";
+    }
+  </script>  <div class="topbar">
     <span id="menu-toggle">&#9776;</span>
     <h1>Admin Dashboard</h1>
-  </div>
-
-  <div id="sidebar" class="sidebar">
+  </div>  <div id="sidebar" class="sidebar">
     <a href="#" class="active" data-section="accounts">User Accounts</a>
     <a href="#" data-section="add-money">Add Money</a>
     <a href="#" data-section="transfers">Transfers</a>
-    <a href="index.html">Logout</a>
-  </div>
-
-  <div id="mainContent" class="main">
+    <a href="admin-login.html" onclick="sessionStorage.clear()">Logout</a>
+  </div>  <div id="mainContent" class="main">
     <div id="accounts" class="section active">
       <h2>User Accounts</h2>
       <div id="user-list"></div>
-    </div>
+    </div><div id="add-money" class="section">
+  <h2>Add Money</h2>
+  <p>Select a user from “User Accounts” to add money.</p>
+</div>
 
-    <div id="add-money" class="section">
-      <h2>Add Money</h2>
-      <p>Select a user from “User Accounts” to add money.</p>
-    </div>
+<div id="transfers" class="section">
+  <h2>Transfers</h2>
+  <div id="transfer-list"></div>
+</div>
 
-    <div id="transfers" class="section">
-      <h2>Transfers</h2>
-      <p>Transfer logs will appear here soon.</p>
-    </div>
-  </div>
-
-  <script>
+  </div>  <script>
     const menuToggle = document.getElementById("menu-toggle");
     const sidebar = document.getElementById("sidebar");
     const links = sidebar.querySelectorAll("a[data-section]");
     const sections = document.querySelectorAll(".section");
 
-    // Toggle sidebar for mobile
     menuToggle.addEventListener("click", () => {
       sidebar.classList.toggle("show");
     });
 
-    // Handle sidebar clicks
     links.forEach(link => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
-
-        // Remove active from all links
         links.forEach(l => l.classList.remove("active"));
         link.classList.add("active");
-
-        // Hide all sections
         sections.forEach(section => section.classList.remove("active"));
-
-        // Show the selected section
         const target = document.getElementById(link.dataset.section);
         if (target) target.classList.add("active");
-
-        // Hide sidebar after click (for mobile)
-        if (window.innerWidth <= 768) {
-          sidebar.classList.remove("show");
-        }
+        if (window.innerWidth <= 768) sidebar.classList.remove("show");
       });
     });
 
-    // Load users
     function loadUsers() {
       const users = JSON.parse(localStorage.getItem("users")) || [];
       const list = document.getElementById("user-list");
       list.innerHTML = "";
-
       if (users.length === 0) {
         list.innerHTML = "<p>No users found.</p>";
         return;
       }
-
       users.forEach((user, index) => {
         list.innerHTML += `
           <div class="user-card">
@@ -211,7 +197,40 @@
       }
     }
 
-    window.onload = loadUsers;
-  </script>
-</body>
+    function loadTransfers() {
+      const transfers = JSON.parse(localStorage.getItem("transfers")) || [];
+      const list = document.getElementById("transfer-list");
+      list.innerHTML = "";
+      if (transfers.length === 0) {
+        list.innerHTML = "<p>No transfers yet.</p>";
+        return;
+      }
+      transfers.forEach((t, index) => {
+        list.innerHTML += `
+          <div class="transfer-card">
+            <strong>${t.fullName}</strong><br>
+            Amount: $${t.amount}<br>
+            Status: ${t.status}<br>
+            <button onclick="updateTransfer(${index}, 'approved')">Approve</button>
+            <button onclick="updateTransfer(${index}, 'suspended')">Suspend</button>
+            <button onclick="updateTransfer(${index}, 'canceled')">Cancel</button>
+            <button onclick="updateTransfer(${index}, 'processing')">Process</button>
+          </div>
+        `;
+      });
+    }
+
+    function updateTransfer(index, status) {
+      let transfers = JSON.parse(localStorage.getItem("transfers")) || [];
+      transfers[index].status = status;
+      localStorage.setItem("transfers", JSON.stringify(transfers));
+      alert(`Transfer ${status}`);
+      loadTransfers();
+    }
+
+    window.onload = () => {
+      loadUsers();
+      loadTransfers();
+    }
+  </script></body>
 </html>

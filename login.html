@@ -1,31 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>UBA Login</title>
+  <meta charset="UTF-8" />
+  <title>Login - UBA Bank</title>
   <style>
-    body { font-family: sans-serif; background: #f4f4f4; }
-    .login-box { max-width: 400px; margin: 100px auto; padding: 20px; background: white; border-radius: 10px; text-align: center; box-shadow: 0 0 10px #ccc; }
-    input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-    button { padding: 10px 20px; background: red; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    body { font-family: Arial, sans-serif; background-color: #f2f2f2; margin: 0; padding: 0; }
+    .login-container {
+      max-width: 400px;
+      margin: 100px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    img {
+      display: block;
+      margin: auto;
+      width: 120px;
+      margin-bottom: 20px;
+    }
+    h2 { text-align: center; color: #d40000; }
+    label { display: block; margin-top: 15px; }
+    input {
+      width: 100%; padding: 10px; margin-top: 5px;
+      border: 1px solid #ccc; border-radius: 5px;
+    }
+    button {
+      width: 100%; margin-top: 20px;
+      background-color: red; color: white;
+      padding: 10px; border: none;
+      border-radius: 5px; font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <div class="login-box">
-    <h2>Login to UBA</h2>
-    <input type="text" id="accountId" placeholder="Account ID" />
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="login()">Login</button>
+  <div class="login-container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/United_Bank_for_Africa_logo.svg/2560px-United_Bank_for_Africa_logo.svg.png" alt="UBA Logo">
+    <h2>UBA Bank Login</h2>
+    <form onsubmit="handleLogin(event)">
+      <label>Account ID</label>
+      <input type="text" placeholder="e.g. UBA123456" required>
+
+      <label>Password</label>
+      <input type="password" placeholder="Enter your password" required>
+
+      <button type="submit">Login</button>
+    </form>
   </div>
 
   <script>
-    function login() {
-      const id = document.getElementById('accountId').value;
-      const pass = document.getElementById('password').value;
-      if (id && pass) {
-        window.location.href = 'pin.html';
-      } else {
-        alert('Please enter ID and Password');
-      }
+    function handleLogin(e) {
+      e.preventDefault();
+      window.location.href = "user-dashboard.html";
     }
   </script>
 </body>

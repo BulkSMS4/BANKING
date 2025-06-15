@@ -2,21 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Welcome to UBA Bank</title>
+  <title>Login - UBA</title>
   <style>
-    body { font-family: sans-serif; text-align: center; background: #f5f5f5; }
-    .container { margin-top: 100px; }
-    a { background: red; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px; }
+    body {
+      background-color: #f4f4f4;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 400px;
+      margin: 100px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #d40000;
+    }
+    label {
+      margin-top: 10px;
+      display: block;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #d40000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/United_Bank_for_Africa_logo.svg/2560px-United_Bank_for_Africa_logo.svg.png" alt="UBA Logo" width="200">
-    <h1>Welcome to UBA Online Banking</h1>
-    <p>Experience the new way to bank.</p>
-    <a href="create-account.html">Create Account</a><br><br>
-    <a href="login.html">Login</a>
-  </div>
+
+<div class="container">
+  <h2>UBA LOGIN</h2>
+  <form id="loginForm">
+    <label>Account ID</label>
+    <input type="text" id="accountId" placeholder="e.g. mrrogers" required />
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="e.g. ********" required />
+
+    <button type="submit">Login</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById("loginForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    // Normally you'd check credentials here
+    const id = document.getElementById("accountId").value;
+    const pass = document.getElementById("password").value;
+
+    if (id && pass) {
+      // Save user name to session so we can show it in the dashboard
+      sessionStorage.setItem("userName", id);
+      window.location.href = "user-dashboard.html";
+    } else {
+      alert("Invalid login. Try again.");
+    }
+  });
+</script>
+
 </body>
 </html>

@@ -1,43 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>User Dashboard</title>
+  <meta charset="UTF-8">
+  <title>User Dashboard - UBA</title>
   <style>
-    body { font-family: sans-serif; background: #f2f2f2; margin: 0; }
-    header { background: red; padding: 10px; color: white; text-align: center; }
-    .container { max-width: 700px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
-    h2 { text-align: center; }
-    .balance { font-size: 24px; text-align: center; margin: 20px 0; color: green; }
-    table { width: 100%; margin-top: 20px; border-collapse: collapse; }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-    .form-area { margin-top: 30px; }
-    label { display: block; margin-top: 10px; }
-    input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; }
-    button { background: red; color: white; border: none; padding: 10px; margin-top: 15px; border-radius: 5px; cursor: pointer; }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Welcome Mr Rogers</h1>
-  </header>
-  <div class="container">
-    <div class="balance">Account Balance: $800,000,000</div>
-
-    <h2>Recent Transactions</h2>
-    <table>
-      <tr><th>Date</th><th>Description</th><th>Amount</th></tr>
-      <tr><td>2025-06-01</td><td>Incoming Wire</td><td>$300,000</td></tr>
-      <tr><td>2025-05-30</td><td>ATM Withdrawal</td><td>-$1,200</td></tr>
-      <tr><td>2025-05-28</td><td>Mobile Deposit</td><td>$2,000</td></tr>
-    </table>
-
-    <div class="form-area">
-      <h2>Wire Transfer</h2>
-      <label>Recipient Name</label><input type="text">
-      <label>Recipient Account Number</label><input type="text">
-      <label>Amount</label><input type="number">
-      <button onclick="alert('Transfer Pending Approval')">Send Transfer</button>
-    </div>
-  </div>
-</body>
-</html>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; }
+    .header {
+      background: #d40000; color: white; padding: 15px;
+      text-align: center; font-size: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    h2, h3 { text-align: center; }
+    input[type="password"] {
+      width: 100%; padding: 10px; margin-top: 10px;
+      border-radius: 5px; border: 1px solid #ccc;
+    }
+    button {
+      width: 100%; padding: 10px; background: red; color: white;
+      border: none; border-radius: 5px; font-size: 16px; margin-top: 15px;
+      cursor: pointer;
+    }
+    #dashboard { display: none; }
+    .transaction {
+      border-bottom: 1px solid #eee;

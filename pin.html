@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Enter PIN</title>
+  <style>
+    body { font-family: sans-serif; background: #f4f4f4; }
+    .box { max-width: 400px; margin: 100px auto; padding: 20px; background: white; text-align: center; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+    input { width: 80%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 10px 20px; background: red; color: white; border: none; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Welcome, Mr Rogers</h2>
+    <p>Enter your 4-digit PIN</p>
+    <input type="password" maxlength="4" placeholder="****" id="pin" />
+    <button onclick="goDashboard()">Submit</button>
+  </div>
+
+  <script>
+    function goDashboard() {
+      const pin = document.getElementById('pin').value;
+      if (pin.length === 4) {
+        window.location.href = 'user-dashboard.html';
+      } else {
+        alert('Enter a valid 4-digit PIN');
+      }
+    }
+  </script>
+</body>
+</html>

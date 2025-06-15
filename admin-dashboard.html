@@ -1,163 +1,87 @@
 <!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>UBA Admin Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - UBA</title>
   <style>
-    :root {
-      --primary: #002244;
-      --accent: #cc0000;
-      --light: #f1f1f1;
-      --white: #ffffff;
-    }body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: var(--light);
-}
-
-header {
-  background: var(--primary);
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
-
-h2 {
-  margin-top: 20px;
-  color: var(--primary);
-}
-
-.content {
-  padding: 20px;
-}
-
-.form-box {
-  background: var(--white);
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 30px;
-  box-shadow: 0 0 5px #ccc;
-}
-
-input, select, button {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-  font-size: 16px;
-}
-
-button {
-  background: var(--primary);
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #001a33;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  margin-top: 20px;
-  box-shadow: 0 0 5px #ccc;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: center;
-}
-
-th {
-  background: var(--light);
-}
-
-.action-buttons button {
-  margin: 2px;
-  padding: 8px 12px;
-  font-size: 14px;
-}
-
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100%;
+      background: #002244;
+      color: white;
+      padding: 20px;
+    }
+    .sidebar h2 { margin-top: 0; }
+    .sidebar a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 10px 0;
+    }
+    .main {
+      margin-left: 270px;
+      padding: 20px;
+    }
+    .user-box {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .user-box button {
+      margin-right: 10px;
+    }
   </style>
 </head>
-<body><header>
-  <h1>UBA Admin Dashboard</h1>
-</header><div class="content">
-  <div class="form-box">
-    <h2>Add Money to User</h2>
-    <form id="addMoneyForm">
-      <input type="text" id="username" placeholder="Username (e.g. rogers98)" required />
-      <input type="number" id="amount" placeholder="Amount to Add (e.g. 10000)" required />
-      <button type="submit">Add Money</button>
-    </form>
-    <p id="successMsg" style="color:green;"></p>
-  </div>  <h2>Pending Wire Transfers</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>SN</th>
-        <th>User</th>
-        <th>Amount</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="transfersTable">
-      <tr>
-        <td>1</td>
-        <td>rogers98</td>
-        <td>$50,000</td>
-        <td id="status-1">Pending</td>
-        <td class="action-buttons">
-          <button onclick="updateStatus(1, 'Approved')">Approve</button>
-          <button onclick="updateStatus(1, 'Processing')">Processing</button>
-          <button onclick="updateStatus(1, 'Suspended')">Suspend</button>
-          <button onclick="updateStatus(1, 'Cancelled')">Cancel</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div><script>
-  if (sessionStorage.getItem("isAdmin") !== "true") {
-    window.location.href = "admin-login.html";
-  }
-
-  const form = document.getElementById("addMoneyForm");
-  const successMsg = document.getElementById("successMsg");
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const user = document.getElementById("username").value.trim();
-    const amount = parseFloat(document.getElementById("amount").value);
-
-    if (!user || isNaN(amount)) {
-      alert("Enter valid username and amount.");
-      return;
+<body>
+  <div class="sidebar">
+    <h2>UBA Admin</h2>
+    <a href="#" onclick="loadUsers()">User Accounts</a>
+    <a href="#">Add Money</a>
+    <a href="#">Transfers</a>
+    <a href="#">Logout</a>
+  </div>  <div class="main">
+    <h1>Registered User Accounts</h1>
+    <div id="user-list"></div>
+  </div>  <script>
+    function loadUsers() {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const list = document.getElementById("user-list");
+      list.innerHTML = "";
+      users.forEach((user, index) => {
+        list.innerHTML += `
+          <div class="user-box">
+            <strong>${user.fullName}</strong><br>
+            Username: ${user.username}<br>
+            Email: ${user.email}<br>
+            Phone: ${user.phone || 'N/A'}<br>
+            Account #: ${user.accountNumber}<br>
+            Balance: $${user.balance}<br>
+            <button onclick="addMoney(${index})">Add Money</button>
+            <button onclick="suspendUser(${index})">Suspend</button>
+          </div>
+        `;
+      });
     }
 
-    let users = JSON.parse(localStorage.getItem("users")) || {};
-    if (!users[user]) {
-      users[user] = { balance: 0 };
+    function addMoney(index) {
+      let amount = prompt("Enter amount to credit:");
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+      users[index].balance = parseFloat(users[index].balance) + parseFloat(amount);
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Money added successfully!");
+      loadUsers();
     }
 
-    users[user].balance += amount;
-
-    localStorage.setItem("users", JSON.stringify(users));
-    successMsg.textContent = `$${amount.toLocaleString()} successfully added to ${user}'s account.`;
-    form.reset();
-  });
-
-  function updateStatus(id, newStatus) {
-    document.getElementById(`status-${id}`).innerText = newStatus;
-    if (newStatus === "Approved") {
-      setTimeout(() => {
-        alert("✅ Transfer Approved Successfully");
-      }, 300);
+    function suspendUser(index) {
+      alert("User has been suspended (demo only).");
     }
-  }
-</script></body>
+
+    window.onload = loadUsers;
+  </script></body>
 </html>

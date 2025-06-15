@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>UBA Admin Dashboard</title>
@@ -10,89 +9,84 @@
       --accent: #cc0000;
       --light: #f1f1f1;
       --white: #ffffff;
-    }
+    }body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--light);
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: var(--light);
-    }
+header {
+  background: var(--primary);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
 
-    header {
-      background: var(--primary);
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
+h2 {
+  margin-top: 20px;
+  color: var(--primary);
+}
 
-    h2 {
-      margin-top: 20px;
-      color: var(--primary);
-    }
+.content {
+  padding: 20px;
+}
 
-    .content {
-      padding: 20px;
-    }
+.form-box {
+  background: var(--white);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 0 5px #ccc;
+}
 
-    .form-box {
-      background: var(--white);
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 5px #ccc;
-    }
+input, select, button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 16px;
+}
 
-    input, select, button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      font-size: 16px;
-    }
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
 
-    button {
-      background: var(--primary);
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
+button:hover {
+  background: #001a33;
+}
 
-    button:hover {
-      background: #001a33;
-    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  margin-top: 20px;
+  box-shadow: 0 0 5px #ccc;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      margin-top: 20px;
-      box-shadow: 0 0 5px #ccc;
-    }
+th, td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
 
-    th, td {
-      border: 1px solid #ddd;
-      padding: 12px;
-      text-align: center;
-    }
+th {
+  background: var(--light);
+}
 
-    th {
-      background: var(--light);
-    }
+.action-buttons button {
+  margin: 2px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
 
-    .action-buttons button {
-      margin: 2px;
-      padding: 8px 12px;
-      font-size: 14px;
-    }
   </style>
 </head>
-<body>
-
-<header>
+<body><header>
   <h1>UBA Admin Dashboard</h1>
-</header>
-
-<div class="content">
+</header><div class="content">
   <div class="form-box">
     <h2>Add Money to User</h2>
     <form id="addMoneyForm">
@@ -100,9 +94,8 @@
       <input type="number" id="amount" placeholder="Amount to Add (e.g. 10000)" required />
       <button type="submit">Add Money</button>
     </form>
-  </div>
-
-  <h2>Pending Wire Transfers</h2>
+    <p id="successMsg" style="color:green;"></p>
+  </div>  <h2>Pending Wire Transfers</h2>
   <table>
     <thead>
       <tr>
@@ -114,7 +107,6 @@
       </tr>
     </thead>
     <tbody id="transfersTable">
-      <!-- Example static row -->
       <tr>
         <td>1</td>
         <td>rogers98</td>
@@ -129,10 +121,13 @@
       </tr>
     </tbody>
   </table>
-</div>
+</div><script>
+  if (sessionStorage.getItem("isAdmin") !== "true") {
+    window.location.href = "admin-login.html";
+  }
 
-<script>
   const form = document.getElementById("addMoneyForm");
+  const successMsg = document.getElementById("successMsg");
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -144,25 +139,25 @@
       return;
     }
 
-    // Fetch existing data or create it
-    let userData = JSON.parse(localStorage.getItem("userData")) || {};
-    userData.balance = (parseFloat(userData.balance) || 0) + amount;
+    let users = JSON.parse(localStorage.getItem("users")) || {};
+    if (!users[user]) {
+      users[user] = { balance: 0 };
+    }
 
-    localStorage.setItem("userData", JSON.stringify(userData));
-    alert(`$${amount} added successfully to ${user}'s account.`);
+    users[user].balance += amount;
+
+    localStorage.setItem("users", JSON.stringify(users));
+    successMsg.textContent = `$${amount.toLocaleString()} successfully added to ${user}'s account.`;
     form.reset();
   });
 
   function updateStatus(id, newStatus) {
     document.getElementById(`status-${id}`).innerText = newStatus;
-
     if (newStatus === "Approved") {
       setTimeout(() => {
         alert("✅ Transfer Approved Successfully");
       }, 300);
     }
   }
-</script>
-
-</body>
+</script></body>
 </html>

@@ -1,73 +1,91 @@
-<!-- admin-login.html --><!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #003366;
-      color: white;
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
+
     .login-box {
       background: white;
-      color: #003366;
       padding: 30px;
-      border-radius: 12px;
-      width: 90%;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
       max-width: 400px;
-      box-shadow: 0 0 15px #00000030;
     }
-    input {
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
-      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
+
     button {
       width: 100%;
       padding: 12px;
-      background: #cc0000;
-      border: none;
+      background: #002868;
       color: white;
-      font-size: 16px;
-      cursor: pointer;
+      border: none;
       border-radius: 6px;
+      cursor: pointer;
     }
+
     button:hover {
-      background: #aa0000;
+      background: #0040b3;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+
   <div class="login-box">
     <h2>Admin Login</h2>
-    <input type="text" id="admin-username" placeholder="Username" required />
-    <input type="password" id="admin-password" placeholder="Password" required />
-    <button onclick="adminLogin()">Login</button>
-  </div>  <script>
-    function adminLogin() {
-      const username = document.getElementById("admin-username").value;
-      const password = document.getElementById("admin-password").value;
+    <input type="text" id="username" placeholder="Admin Username" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="login()">Login</button>
+    <div id="error" class="error"></div>
+  </div>
 
-      // Default credentials
-      const validUsername = "admin";
-      const validPassword = "12345";
+  <script>
+    function login() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const errorDiv = document.getElementById("error");
 
-      if (username === validUsername && password === validPassword) {
+      // You can change the admin credentials below
+      const adminUsername = "admin";
+      const adminPassword = "admin123";
+
+      if (username === adminUsername && password === adminPassword) {
         sessionStorage.setItem("adminLoggedIn", "true");
         window.location.href = "admin-dashboard.html";
       } else {
-        alert("Invalid credentials. Try again.");
+        errorDiv.textContent = "Invalid username or password.";
       }
     }
-  </script></body>
-</html><!-- At the top of admin-dashboard.html --><script>
-  if (sessionStorage.getItem("adminLoggedIn") !== "true") {
-    window.location.href = "admin-login.html";
-  }
-</script>
+  </script>
+
+</body>
+</html>

@@ -27,18 +27,19 @@
 
     .sidebar {
       position: fixed;
-      left: 0;
+      left: -230px;
       top: 0;
       height: 100%;
       width: 220px;
       background: white;
       box-shadow: 2px 0 5px rgba(0,0,0,0.1);
       padding-top: 60px;
-      transition: left 0.3s;
+      transition: left 0.3s ease;
+      z-index: 1000;
     }
 
-    .sidebar.hidden {
-      left: -230px;
+    .sidebar.show {
+      left: 0;
     }
 
     .sidebar a {
@@ -56,30 +57,8 @@
     }
 
     .main {
-      margin-left: 220px;
       padding: 20px;
       transition: margin-left 0.3s;
-    }
-
-    .main.collapsed {
-      margin-left: 0;
-    }
-
-    #menu-toggle {
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    @media(max-width: 768px) {
-      .sidebar {
-        left: -230px;
-      }
-      .sidebar.show {
-        left: 0;
-      }
-      .main {
-        margin-left: 0;
-      }
     }
 
     .section {
@@ -88,6 +67,11 @@
 
     .section.active {
       display: block;
+    }
+
+    #menu-toggle {
+      font-size: 24px;
+      cursor: pointer;
     }
 
     .user-card {
@@ -108,6 +92,20 @@
     button:hover {
       background: #0044aa;
     }
+
+    @media (min-width: 769px) {
+      .sidebar {
+        left: 0;
+      }
+
+      .main {
+        margin-left: 220px;
+      }
+
+      #menu-toggle {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -117,7 +115,7 @@
     <h1>Admin Dashboard</h1>
   </div>
 
-  <div id="sidebar" class="sidebar hidden">
+  <div id="sidebar" class="sidebar">
     <a href="#" class="active" data-section="accounts">User Accounts</a>
     <a href="#" data-section="add-money">Add Money</a>
     <a href="#" data-section="transfers">Transfers</a>
@@ -149,10 +147,10 @@
 
     // Toggle sidebar for mobile
     menuToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("hidden");
+      sidebar.classList.toggle("show");
     });
 
-    // Handle sidebar navigation
+    // Handle sidebar clicks
     links.forEach(link => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
@@ -164,23 +162,25 @@
         // Hide all sections
         sections.forEach(section => section.classList.remove("active"));
 
-        // Show selected section
+        // Show the selected section
         const target = document.getElementById(link.dataset.section);
         if (target) target.classList.add("active");
 
-        // Hide sidebar (for mobile)
-        sidebar.classList.add("hidden");
+        // Hide sidebar after click (for mobile)
+        if (window.innerWidth <= 768) {
+          sidebar.classList.remove("show");
+        }
       });
     });
 
-    // Load users from localStorage
+    // Load users
     function loadUsers() {
       const users = JSON.parse(localStorage.getItem("users")) || [];
       const list = document.getElementById("user-list");
       list.innerHTML = "";
 
       if (users.length === 0) {
-        list.innerHTML = "<p>No users registered yet.</p>";
+        list.innerHTML = "<p>No users found.</p>";
         return;
       }
 
@@ -213,6 +213,5 @@
 
     window.onload = loadUsers;
   </script>
-
 </body>
 </html>

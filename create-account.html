@@ -4,194 +4,53 @@
   <meta charset="UTF-8" />
   <title>Create UBA Account</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 600px;
-      margin: 40px auto;
-      background: white;
-      padding: 25px;
-      border-radius: 8px;
-    }
-    h2 {
-      text-align: center;
-      color: #d40000;
-    }
-    label {
-      margin-top: 10px;
-      display: block;
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    .buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-    .buttons button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .next-btn {
-      background: #d40000;
-    }
-    .prev-btn {
-      background: gray;
-    }
+    body { font-family: sans-serif; padding: 20px; }
+    input, select { width: 100%; margin: 10px 0; padding: 10px; }
+    button { padding: 10px; background: #d40000; color: white; border: none; width: 100%; }
   </style>
 </head>
 <body>
-
-<div class="container">
   <h2>CREATE YOUR BANK ACCOUNT</h2>
-  <p style="text-align:center;">Fill all the form fields to go to the next step.</p>
-
-  <form id="accountForm">
-    <!-- Step 1 -->
-    <div class="step" id="step1">
-      <label>First Name</label>
-      <input type="text" required placeholder="e.g. John" />
-
-      <label>Last Name</label>
-      <input type="text" required placeholder="e.g. Doe" />
-
-      <label>Select Currency Type</label>
-      <select required>
-        <option value="">--Select Currency--</option>
-        <option>USD</option>
-        <option>EUR</option>
-        <option>GHS</option>
-        <option>NGN</option>
-      </select>
-
-      <label>Select Account Type</label>
-      <select required>
-        <option value="">--Select Type--</option>
-        <option>Checking</option>
-        <option>Savings</option>
-      </select>
-
-      <label>Occupation</label>
-      <input type="text" required placeholder="e.g. Engineer" />
-
-      <label>Country</label>
-      <input type="text" required placeholder="e.g. Ghana" />
-
-      <label>Street Address</label>
-      <input type="text" required placeholder="e.g. 123 Main St" />
-
-      <label>Apt/Suite/Unit</label>
-      <input type="text" placeholder="e.g. Apt 5B" />
-
-      <label>City</label>
-      <input type="text" required placeholder="e.g. Accra" />
-
-      <label>State</label>
-      <input type="text" required placeholder="e.g. Greater Accra" />
-
-      <label>Zip Code</label>
-      <input type="text" required placeholder="e.g. 00233" />
-
-      <div class="buttons">
-        <div></div>
-        <button type="button" class="next-btn" onclick="nextStep()">Next</button>
-      </div>
-    </div>
-
-    <!-- Step 2 -->
-    <div class="step" id="step2" style="display:none;">
-      <label>Email Address</label>
-      <input type="email" required placeholder="e.g. example@gmail.com" />
-
-      <label>Phone Number</label>
-      <input type="tel" required placeholder="e.g. +233501234567" />
-
-      <label>Username</label>
-      <input type="text" required placeholder="e.g. mrrogers" />
-
-      <label>Password</label>
-      <input type="password" required placeholder="********" />
-
-      <label>Confirm Password</label>
-      <input type="password" required placeholder="********" />
-
-      <div class="buttons">
-        <button type="button" class="prev-btn" onclick="prevStep()">Preview</button>
-        <button type="button" class="next-btn" onclick="nextStep()">Next</button>
-      </div>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="step" id="step3" style="display:none;">
-      <p><strong>Verify Your Identity</strong></p>
-      <p>We’re required by law to collect your Social Security Number / TIN.</p>
-
-      <label>SSN / TIN</label>
-      <input type="text" required placeholder="e.g. 123-45-6789" />
-
-      <label>Confirm SSN / TIN</label>
-      <input type="text" required placeholder="Re-type the number" />
-
-      <label>Date of Birth</label>
-      <input type="date" required />
-
-      <div class="buttons">
-        <button type="button" class="prev-btn" onclick="prevStep()">Preview</button>
-        <button type="submit" class="next-btn">Submit</button>
-      </div>
-    </div>
+  <p>Fill all the form field to go next step.</p>
+  <form id="signupForm">
+    <input type="text" id="first" placeholder="First Name" required />
+    <input type="text" id="last" placeholder="Last Name" required />
+    <select id="currency" required>
+      <option value="">Select Currency</option>
+      <option>USD</option>
+      <option>GHS</option>
+    </select>
+    <select id="account" required>
+      <option value="">Select Account Type</option>
+      <option>Savings</option>
+      <option>Current</option>
+    </select>
+    <input type="text" id="occupation" placeholder="Occupation" required />
+    <input type="text" id="country" placeholder="Country" required />
+    <input type="text" id="address" placeholder="Street Address" required />
+    <input type="text" id="city" placeholder="City" required />
+    <input type="text" id="state" placeholder="State" required />
+    <input type="text" id="zip" placeholder="Zip Code" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="tel" id="phone" placeholder="Phone" required />
+    <input type="text" id="username" placeholder="Username" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <input type="password" id="confirm" placeholder="Confirm Password" required />
+    <button type="submit">Submit</button>
   </form>
-</div>
 
-<script>
-  let currentStep = 1;
-
-  function showStep(step) {
-    document.querySelectorAll('.step').forEach((s, i) => {
-      s.style.display = i === step - 1 ? 'block' : 'none';
-    });
-  }
-
-  function nextStep() {
-    const inputs = document.querySelector(`#step${currentStep}`).querySelectorAll('input, select');
-    for (let input of inputs) {
-      if (!input.checkValidity()) {
-        input.reportValidity();
-        return;
-      }
-    }
-    if (currentStep < 3) {
-      currentStep++;
-      showStep(currentStep);
-    }
-  }
-
-  function prevStep() {
-    if (currentStep > 1) {
-      currentStep--;
-      showStep(currentStep);
-    }
-  }
-
-  document.getElementById('accountForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    alert('Account created successfully!');
-    window.location.href = 'user-dashboard.html'; // or redirect to login.html
-  });
-</script>
-
+  <script>
+    document.getElementById("signupForm").onsubmit = function(e) {
+      e.preventDefault();
+      const user = {
+        first: document.getElementById("first").value,
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+      };
+      localStorage.setItem("userData", JSON.stringify(user));
+      alert("Account created! Now log in.");
+      window.location.href = "login.html";
+    };
+  </script>
 </body>
 </html>

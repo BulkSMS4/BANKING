@@ -2,48 +2,115 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>UBA User Dashboard</title>
+  <title>UBA - User Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
+    :root {
+      --primary: #003366;
+      --accent: #cc0000;
+      --light: #f5f5f5;
+      --white: #ffffff;
+    }
+
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
 
-    header {
-      background: #d40000;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .dashboard {
-      max-width: 900px;
-      margin: 30px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-
-    h2 {
-      margin-top: 0;
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--light);
       color: #333;
     }
 
-    .balance {
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--primary);
+      color: white;
+      padding: 15px;
+    }
+
+    .menu-toggle {
       font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 20px;
+      cursor: pointer;
     }
 
-    .transactions {
-      margin-bottom: 30px;
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .transactions h3 {
-      margin-bottom: 10px;
+    .user-info img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ccc;
+    }
+
+    .card-box {
+      background: #1b1b1b;
+      color: white;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      font-family: monospace;
+    }
+
+    .balance-box {
+      margin: 20px;
+      padding: 20px;
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 0 5px #ccc;
+    }
+
+    .balance-box h1 {
+      font-size: 30px;
+      color: var(--primary);
+    }
+
+    .balance-details {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .tag {
+      background: var(--light);
+      padding: 5px 10px;
+      border-radius: 8px;
+    }
+
+    .actions {
+      margin: 20px;
+    }
+
+    .actions button {
+      padding: 12px 20px;
+      margin-right: 10px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .actions button:hover {
+      background: #002244;
+    }
+
+    .table-box {
+      margin: 20px;
+      background: var(--white);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px #ccc;
     }
 
     table {
@@ -52,136 +119,153 @@
     }
 
     th, td {
+      padding: 10px;
       border: 1px solid #ddd;
-      padding: 12px;
-      text-align: left;
+      text-align: center;
     }
 
     th {
-      background-color: #f2f2f2;
+      background: var(--light);
     }
 
-    form input, form select {
-      padding: 10px;
-      margin: 10px 0;
-      width: 100%;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    form button {
-      background: #d40000;
+    /* Sidebar */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: var(--primary);
       color: white;
-      padding: 12px;
-      border: none;
-      width: 100%;
+      padding: 20px;
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+
+    #sidebar h3 {
+      margin-bottom: 20px;
+    }
+
+    #sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    #sidebar ul li {
+      margin: 15px 0;
+    }
+
+    #sidebar ul li a {
+      color: white;
+      text-decoration: none;
       font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
     }
 
-    .welcome {
-      font-size: 20px;
-      margin-bottom: 15px;
-    }
+    @media (max-width: 600px) {
+      .balance-details {
+        flex-direction: column;
+      }
 
-    .pin-section {
-      margin: 20px 0;
-    }
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-    .pin-section input {
-      width: 100px;
-      text-align: center;
-      letter-spacing: 5px;
+      .card-box, .balance-box, .table-box, .actions {
+        margin: 10px;
+      }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>UBA Online Banking</h1>
-</header>
-
-<div class="dashboard">
-  <div class="welcome">
-    Hello <strong id="username">Mr. Rogers</strong><br>
-    <span>Welcome</span>
-  </div>
-
-  <div class="pin-section">
-    <label>Enter PIN</label><br>
-    <input type="password" placeholder="****" maxlength="4" required />
-    <button onclick="showDashboard()">Submit</button>
-  </div>
-
-  <div id="mainContent" style="display:none;">
-    <div class="balance">Account Balance: <span style="color:green">$800,000,000.00</span></div>
-
-    <div class="transactions">
-      <h3>Recent Transactions</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Type</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2025-06-10</td>
-            <td>Incoming Wire from Wells Fargo</td>
-            <td>Credit</td>
-            <td>$25,000,000.00</td>
-          </tr>
-          <tr>
-            <td>2025-06-09</td>
-            <td>ATM Withdrawal</td>
-            <td>Debit</td>
-            <td>$2,000.00</td>
-          </tr>
-          <tr>
-            <td>2025-06-07</td>
-            <td>Purchase: Apple Store</td>
-            <td>Debit</td>
-            <td>$3,500.00</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="transfer">
-      <h3>Wire Transfer</h3>
-      <form onsubmit="event.preventDefault(); alert('Transfer submitted and pending approval.');">
-        <input type="text" required placeholder="Recipient Full Name" />
-        <input type="text" required placeholder="Bank Name" />
-        <input type="text" required placeholder="Account Number" />
-        <select required>
-          <option value="">-- Select Currency --</option>
-          <option>USD</option>
-          <option>EUR</option>
-          <option>GBP</option>
-          <option>GHS</option>
-        </select>
-        <input type="number" required placeholder="Amount" />
-        <input type="text" required placeholder="Routing Number / SWIFT Code" />
-        <button type="submit">Send Wire Transfer</button>
-      </form>
+  <!-- Navbar -->
+  <div class="navbar">
+    <span class="menu-toggle">☰</span>
+    <div class="user-info">
+      <img src="https://via.placeholder.com/40" />
+      <span id="userName">William Jackson</span>
     </div>
   </div>
-</div>
 
-<script>
-  // Replace with real session value later
-  const user = sessionStorage.getItem("userName") || "Mr. Rogers";
-  document.getElementById("username").innerText = user;
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <h3>Menu</h3>
+    <ul>
+      <li><a href="#">🏠 Dashboard</a></li>
+      <li><a href="wire-transfer.html">💸 Wire Transfer</a></li>
+      <li><a href="#">📄 Transactions</a></li>
+      <li><a href="login.html">🚪 Logout</a></li>
+    </ul>
+  </div>
 
-  function showDashboard() {
-    document.querySelector(".pin-section").style.display = "none";
-    document.getElementById("mainContent").style.display = "block";
-  }
-</script>
+  <!-- Credit Card Info -->
+  <div class="card-box">
+    <h3>Credit Card</h3>
+    <p>Card Number: **** **** **** 4482</p>
+    <p>Card Holder: William Jackson</p>
+    <p>Expiry: 12/29 &nbsp; CVV: 123</p>
+  </div>
+
+  <!-- Balance -->
+  <div class="balance-box">
+    <h1>Balance: <span id="balance">$100,000,000.00</span></h1>
+    <div class="balance-details">
+      <div class="tag">Pending: $0.00</div>
+      <div class="tag">My Loan: $0.00</div>
+      <div class="tag" style="color: var(--accent);">Account Limit: -$4,200,000</div>
+      <div class="tag">Login IP: 197.210.71.76</div>
+      <div class="tag">Login Date: 2024-12-20 04:53:36</div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button onclick="alert('Transaction history coming soon')">Transaction</button>
+    <button onclick="window.location.href='wire-transfer.html'">Wire Transfer</button>
+  </div>
+
+  <!-- Transactions Table -->
+  <div class="table-box">
+    <h3>Recent Credit/Debit Transactions</h3>
+    <table>
+      <tr>
+        <th>S/N</th>
+        <th>Amount</th>
+        <th>Reference ID</th>
+        <th>Bank</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>$50,000</td>
+        <td>6764d3ed7e1d</td>
+        <td>UBA</td>
+      </tr>
+    </table>
+  </div>
+
+  <script>
+    const toggleBtn = document.querySelector('.menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.style.left = sidebar.style.left === '0px' ? '-250px' : '0px';
+    });
+
+    window.addEventListener('click', function (e) {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.style.left = '-250px';
+      }
+    });
+
+    // Set user name and balance from session/localStorage
+    const userName = sessionStorage.getItem("userName") || "William Jackson";
+    document.getElementById("userName").innerText = userName;
+
+    const storedData = JSON.parse(localStorage.getItem("userData")) || {};
+    const balance = storedData.balance || 100000000;
+    document.getElementById("balance").innerText = "$" + Number(balance).toLocaleString();
+  </script>
 
 </body>
 </html>

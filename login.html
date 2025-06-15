@@ -2,58 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Login - UBA Bank</title>
+  <title>Login UBA</title>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #f2f2f2; margin: 0; padding: 0; }
-    .login-container {
-      max-width: 400px;
-      margin: 100px auto;
-      background-color: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    img {
-      display: block;
-      margin: auto;
-      width: 120px;
-      margin-bottom: 20px;
-    }
-    h2 { text-align: center; color: #d40000; }
-    label { display: block; margin-top: 15px; }
-    input {
-      width: 100%; padding: 10px; margin-top: 5px;
-      border: 1px solid #ccc; border-radius: 5px;
-    }
-    button {
-      width: 100%; margin-top: 20px;
-      background-color: red; color: white;
-      padding: 10px; border: none;
-      border-radius: 5px; font-size: 16px;
-      cursor: pointer;
-    }
+    body { font-family: sans-serif; padding: 20px; }
+    input { width: 100%; margin: 10px 0; padding: 10px; }
+    button { padding: 10px; background: #d40000; color: white; border: none; width: 100%; }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/United_Bank_for_Africa_logo.svg/2560px-United_Bank_for_Africa_logo.svg.png" alt="UBA Logo">
-    <h2>UBA Bank Login</h2>
-    <form onsubmit="handleLogin(event)">
-      <label>Account ID</label>
-      <input type="text" placeholder="e.g. UBA123456" required>
-
-      <label>Password</label>
-      <input type="password" placeholder="Enter your password" required>
-
-      <button type="submit">Login</button>
-    </form>
-  </div>
+  <h2>UBA Login</h2>
+  <form id="loginForm">
+    <input type="text" id="username" placeholder="Account ID / Username" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button type="submit">Login</button>
+  </form>
 
   <script>
-    function handleLogin(e) {
+    document.getElementById("loginForm").onsubmit = function(e) {
       e.preventDefault();
-      window.location.href = "user-dashboard.html";
-    }
+      const user = JSON.parse(localStorage.getItem("userData"));
+      const enteredUser = document.getElementById("username").value;
+      const enteredPass = document.getElementById("password").value;
+
+      if (user && user.username === enteredUser && user.password === enteredPass) {
+        sessionStorage.setItem("userName", user.first);
+        window.location.href = "user-dashboard.html";
+      } else {
+        alert("Invalid credentials");
+      }
+    };
   </script>
 </body>
 </html>

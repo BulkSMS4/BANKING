@@ -1,31 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Enter PIN</title>
+  <meta charset="UTF-8" />
+  <title>Enter PIN - UBA</title>
   <style>
-    body { font-family: sans-serif; background: #f4f4f4; }
-    .box { max-width: 400px; margin: 100px auto; padding: 20px; background: white; text-align: center; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
-    input { width: 80%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; }
-    button { padding: 10px 20px; background: red; color: white; border: none; border-radius: 5px; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      text-align: center;
+      padding: 50px;
+    }
+
+    .container {
+      background-color: white;
+      max-width: 400px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #d40000;
+    }
+
+    p {
+      margin: 10px 0;
+      color: #444;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      text-align: center;
+      margin-top: 15px;
+      margin-bottom: 25px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #d40000;
+      color: white;
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #a80000;
+    }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h2>Welcome, Mr Rogers</h2>
+
+  <div class="container">
+    <h2 id="username">Welcome</h2>
     <p>Enter your 4-digit PIN</p>
-    <input type="password" maxlength="4" placeholder="****" id="pin" />
-    <button onclick="goDashboard()">Submit</button>
+
+    <form id="pinForm">
+      <input type="password" id="pin" maxlength="4" placeholder="••••" required />
+      <button type="submit">Submit</button>
+    </form>
   </div>
 
   <script>
-    function goDashboard() {
-      const pin = document.getElementById('pin').value;
-      if (pin.length === 4) {
-        window.location.href = 'user-dashboard.html';
+    // Show the user's name
+    const name = sessionStorage.getItem("userName") || "User";
+    document.getElementById("username").innerText = `Hello ${name}`;
+
+    // Fake PIN validation
+    document.getElementById("pinForm").onsubmit = function(e) {
+      e.preventDefault();
+      const pin = document.getElementById("pin").value;
+      if (pin === "1234") {
+        // You can change the PIN to any value you want
+        alert("PIN verified!");
+        window.location.href = "user-dashboard.html";
       } else {
-        alert('Enter a valid 4-digit PIN');
+        alert("Incorrect PIN. Try again.");
       }
-    }
+    };
   </script>
+
 </body>
 </html>

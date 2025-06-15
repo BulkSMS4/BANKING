@@ -1,22 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create UBA Account</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    input, select, button { width: 100%; padding: 10px; margin: 10px 0; }
+    button { background: #d40000; color: white; border: none; cursor: pointer; }
+    .form-step { display: none; }
+    .form-step.active { display: block; }
+    .step-buttons { display: flex; justify-content: space-between; }
+  </style>
+</head>
+<body>
+
+<h2>CREATE YOUR BANK ACCOUNT</h2>
+<p>Fill all the form fields to proceed.</p>
+
+<form id="multiStepForm">
+  <!-- Step 1: Personal Info -->
+  <div class="form-step active">
+    <h3>Personal Info</h3>
+    <input type="text" id="first" placeholder="First Name (e.g. John)" required />
+    <input type="text" id="last" placeholder="Last Name (e.g. Doe)" required />
+    <select id="currency" required>
+      <option value="">Select Currency</option>
+      <option>USD</option>
+      <option>GHS</option>
+      <option>EUR</option>
+      <option>GBP</option>
+      <option>CAD</option>
+      <option>AUD</option>
+      <option>NGN</option>
+      <option>INR</option>
+    </select>
+    <select id="account" required>
+      <option value="">Select Account Type</option>
+      <option>Savings</option>
+      <option>Current</option>
+    </select>
+    <input type="text" id="occupation" placeholder="Occupation (e.g. Engineer)" required />
+    <input type="text" id="country" placeholder="Country (e.g. USA)" required />
+    <input type="text" id="address" placeholder="Street Address" required />
+    <input type="text" id="city" placeholder="City" required />
+    <input type="text" id="state" placeholder="State" required />
+    <input type="text" id="zip" placeholder="Zip Code" required />
+    <div class="step-buttons">
+      <span></span>
+      <button type="button" onclick="nextStep()">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Create Login -->
+  <div class="form-step">
+    <h3>Create Login</h3>
+    <input type="email" id="email" placeholder="Email (e.g. john@example.com)" required />
+    <input type="tel" id="phone" placeholder="Phone Number (e.g. +1234567890)" required />
+    <input type="text" id="username" placeholder="Username (e.g. johnDoe99)" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <input type="password" id="confirm" placeholder="Confirm Password" required />
+    <div class="step-buttons">
+      <button type="button" onclick="prevStep()">Preview</button>
+      <button type="button" onclick="nextStep()">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Identity Verification -->
+  <div class="form-step">
+    <h3>Verify Your Identity</h3>
+    <input type="text" id="ssn" placeholder="SSN / TIN (e.g. 123-45-6789)" required />
+    <input type="text" id="confirm-ssn" placeholder="Confirm SSN / TIN" required />
+    <label for="dob">Date of Birth <small>(e.g. 06/15/1990)</small></label>
+    <input type="date" id="dob" required />
+    <div class="step-buttons">
+      <button type="button" onclick="prevStep()">Preview</button>
+      <button type="submit">Submit</button>
+    </div>
+  </div>
+</form>
+
 <script>
-  function saveUserInfo() {
+  let currentStep = 0;
+  const steps = document.querySelectorAll(".form-step");
+
+  function showStep(index) {
+    steps.forEach((step, i) => {
+      step.classList.toggle("active", i === index);
+    });
+  }
+
+  function nextStep() {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      showStep(currentStep);
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 0) {
+      currentStep--;
+      showStep(currentStep);
+    }
+  }
+
+  document.getElementById("multiStepForm").onsubmit = function (e) {
+    e.preventDefault();
     const user = {
-      fullName: document.getElementById("first-name").value + " " + document.getElementById("last-name").value,
+      fullName: document.getElementById("first").value + " " + document.getElementById("last").value,
       email: document.getElementById("email").value,
+      phone: document.getElementById("phone").value,
       username: document.getElementById("username").value,
       accountNumber: "UBA" + Math.floor(100000000 + Math.random() * 900000000),
       balance: 0
     };
-
-    // Store to localStorage
     let users = JSON.parse(localStorage.getItem("users")) || [];
     users.push(user);
     localStorage.setItem("users", JSON.stringify(users));
-
-    // Redirect to user dashboard or PIN
+    alert("Account created successfully!");
     window.location.href = "pin.html";
-  }
+  };
+
+  // Initially show step 0
+  showStep(currentStep);
 </script>
 
-<!-- Final submit button -->
-<button onclick="saveUserInfo()">Submit</button>
+</body>
+</html>

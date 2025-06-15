@@ -2,61 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - UBA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f4f4f4;
     }
+
     .topbar {
       background: #002868;
       color: white;
       padding: 15px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
+
     .topbar h1 {
       font-size: 18px;
       margin: 0;
     }
+
     .sidebar {
-      width: 220px;
-      background: #fff;
       position: fixed;
-      top: 0;
       left: 0;
+      top: 0;
       height: 100%;
+      width: 220px;
+      background: white;
       box-shadow: 2px 0 5px rgba(0,0,0,0.1);
       padding-top: 60px;
-      transition: left 0.3s ease;
+      transition: left 0.3s;
     }
+
     .sidebar.hidden {
       left: -230px;
     }
+
     .sidebar a {
       display: block;
       padding: 15px;
-      text-decoration: none;
       color: #333;
+      text-decoration: none;
       border-bottom: 1px solid #eee;
     }
-    .sidebar a:hover {
-      background: #f0f0f0;
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #e6e6e6;
+      font-weight: bold;
     }
-    #menu-toggle {
-      font-size: 24px;
-      cursor: pointer;
-    }
+
     .main {
       margin-left: 220px;
       padding: 20px;
-      transition: margin-left 0.3s ease;
+      transition: margin-left 0.3s;
     }
+
     .main.collapsed {
       margin-left: 0;
+    }
+
+    #menu-toggle {
+      font-size: 24px;
+      cursor: pointer;
     }
 
     @media(max-width: 768px) {
@@ -74,6 +85,7 @@
     .section {
       display: none;
     }
+
     .section.active {
       display: block;
     }
@@ -82,7 +94,19 @@
       background: white;
       padding: 15px;
       margin-bottom: 10px;
-      border: 1px solid #ddd;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 8px 12px;
+      background: #002868;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0044aa;
     }
   </style>
 </head>
@@ -90,17 +114,17 @@
 
   <div class="topbar">
     <span id="menu-toggle">&#9776;</span>
-    <h1>Admin Dashboard - UBA</h1>
+    <h1>Admin Dashboard</h1>
   </div>
 
-  <div class="sidebar hidden" id="sidebar">
-    <a href="#" data-section="accounts">User Accounts</a>
+  <div id="sidebar" class="sidebar hidden">
+    <a href="#" class="active" data-section="accounts">User Accounts</a>
     <a href="#" data-section="add-money">Add Money</a>
     <a href="#" data-section="transfers">Transfers</a>
     <a href="index.html">Logout</a>
   </div>
 
-  <div class="main" id="mainContent">
+  <div id="mainContent" class="main">
     <div id="accounts" class="section active">
       <h2>User Accounts</h2>
       <div id="user-list"></div>
@@ -108,54 +132,58 @@
 
     <div id="add-money" class="section">
       <h2>Add Money</h2>
-      <p>Select a user in "User Accounts" to add money.</p>
+      <p>Select a user from “User Accounts” to add money.</p>
     </div>
 
     <div id="transfers" class="section">
       <h2>Transfers</h2>
-      <div id="transfer-list">
-        <p>No transfers yet.</p>
-      </div>
+      <p>Transfer logs will appear here soon.</p>
     </div>
   </div>
 
   <script>
     const menuToggle = document.getElementById("menu-toggle");
     const sidebar = document.getElementById("sidebar");
-    const links = sidebar.querySelectorAll("a");
+    const links = sidebar.querySelectorAll("a[data-section]");
     const sections = document.querySelectorAll(".section");
-    const mainContent = document.getElementById("mainContent");
 
-    // Toggle sidebar
+    // Toggle sidebar for mobile
     menuToggle.addEventListener("click", () => {
       sidebar.classList.toggle("hidden");
     });
 
-    // Handle sidebar menu clicks
+    // Handle sidebar navigation
     links.forEach(link => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
 
+        // Remove active from all links
+        links.forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+
         // Hide all sections
         sections.forEach(section => section.classList.remove("active"));
 
-        // Activate target section
-        const target = link.getAttribute("data-section");
-        if (target) {
-          document.getElementById(target).classList.add("active");
-        }
+        // Show selected section
+        const target = document.getElementById(link.dataset.section);
+        if (target) target.classList.add("active");
 
-        // Hide sidebar after click
+        // Hide sidebar (for mobile)
         sidebar.classList.add("hidden");
       });
     });
 
-    // Display users
+    // Load users from localStorage
     function loadUsers() {
       const users = JSON.parse(localStorage.getItem("users")) || [];
       const list = document.getElementById("user-list");
-
       list.innerHTML = "";
+
+      if (users.length === 0) {
+        list.innerHTML = "<p>No users registered yet.</p>";
+        return;
+      }
+
       users.forEach((user, index) => {
         list.innerHTML += `
           <div class="user-card">

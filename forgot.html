@@ -2,135 +2,89 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Forgot Password - Capital One</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Capital One - Forgot Password</title>
   <style>
-    :root {
-      --primary: #003366;
-      --accent: #cc0000;
-      --light: #f5f5f5;
-      --white: #ffffff;
-    }
-
     body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--light);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      padding: 50px;
+      text-align: center;
     }
-
-    .forgot-container {
-      background: var(--white);
+    .box {
+      background: white;
+      max-width: 400px;
+      margin: auto;
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input {
       width: 90%;
-      max-width: 400px;
-    }
-
-    .logo {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .logo img {
-      width: 180px;
-    }
-
-    h2 {
-      text-align: center;
-      color: var(--primary);
-      margin-bottom: 10px;
-    }
-
-    p {
-      text-align: center;
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 20px;
-    }
-
-    .input-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    input[type="email"] {
-      width: 100%;
       padding: 12px;
+      margin: 10px 0;
       border: 1px solid #ccc;
       border-radius: 6px;
-      font-size: 16px;
     }
-
-    .reset-btn {
-      width: 100%;
-      padding: 12px;
-      background-color: var(--primary);
-      color: var(--white);
+    button {
+      background: #002878;
+      color: white;
       border: none;
+      padding: 12px 20px;
       border-radius: 6px;
-      font-size: 16px;
       cursor: pointer;
     }
-
-    .reset-btn:hover {
-      background-color: #002244;
+    button:hover {
+      background: #001e5c;
     }
-
-    .back-link {
-      text-align: center;
-      margin-top: 15px;
+    #message {
+      margin-top: 10px;
       font-size: 14px;
-    }
-
-    a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-
-  <div class="forgot-container">
-    <div class="logo">
-      <img src="https://www.capitalone.com/assets/brand/logo-capital-one.svg" alt="Capital One Logo">
-    </div>
-    <h2>Reset Your Password</h2>
-    <p>Enter your email address below and we'll send you a reset link.</p>
-
+  <div class="box">
+    <h2>Forgot Your Password?</h2>
+    <p>Enter your email to receive a reset link</p>
     <form onsubmit="handleReset(event)">
-      <div class="input-group">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" required placeholder="e.g. name@example.com" />
-      </div>
-      <button type="submit" class="reset-btn">Send Reset Link</button>
+      <input type="email" id="email" placeholder="Enter your email" required />
+      <button type="submit">Send Reset Link</button>
     </form>
-
-    <div class="back-link">
-      <a href="login.html">← Back to Login</a>
-    </div>
+    <div id="message"></div>
   </div>
 
-  <script>
-    function handleReset(event) {
-      event.preventDefault();
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
+      authDomain: "capital-one-16a95.firebaseapp.com",
+      projectId: "capital-one-16a95",
+      storageBucket: "capital-one-16a95.appspot.com",
+      messagingSenderId: "1061937867911",
+      appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.handleReset = async function (e) {
+      e.preventDefault();
       const email = document.getElementById("email").value;
-      alert("A password reset link has been sent to " + email);
+      const msg = document.getElementById("message");
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        msg.style.color = "green";
+        msg.innerText = `✔ A reset link has been sent to ${email}`;
+      } catch (err) {
+        msg.style.color = "red";
+        msg.innerText = err.message;
+      }
     }
   </script>
-
 </body>
 </html>

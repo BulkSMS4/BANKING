@@ -2,33 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Capital One Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Capital One | Sign In</title>
   <style>
-    :root {
-      --primary: #003366;
-      --accent: #cc0000;
-      --light: #f5f5f5;
-      --white: #ffffff;
-    }
-
     body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--light);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      padding: 0;
     }
 
     .login-container {
-      background: var(--white);
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      width: 90%;
       max-width: 400px;
+      margin: 80px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     .logo {
@@ -37,109 +27,127 @@
     }
 
     .logo img {
-      width: 180px;
+      width: 150px;
     }
 
     h2 {
       text-align: center;
-      color: var(--primary);
-      margin-bottom: 10px;
-    }
-
-    .input-group {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-
-    .options {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 14px;
+      color: #003366;
       margin-bottom: 20px;
     }
 
-    .login-btn {
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
       padding: 12px;
-      background-color: var(--primary);
-      color: var(--white);
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    label {
+      font-size: 14px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #003366;
+      color: white;
       border: none;
-      border-radius: 6px;
-      font-size: 16px;
+      border-radius: 4px;
+      font-weight: bold;
       cursor: pointer;
-    }
-
-    .login-btn:hover {
-      background-color: #002244;
-    }
-
-    .footer-text {
-      text-align: center;
       margin-top: 15px;
-      font-size: 13px;
-      color: #777;
     }
 
-    a {
-      color: var(--accent);
+    button:hover {
+      background: #002244;
+    }
+
+    .links {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .links a {
+      color: #003366;
       text-decoration: none;
+      font-size: 14px;
+      display: block;
+      margin-top: 5px;
     }
 
-    a:hover {
-      text-decoration: underline;
+    .error {
+      color: red;
+      text-align: center;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-
   <div class="login-container">
     <div class="logo">
-      <img src="https://www.capitalone.com/assets/brand/logo-capital-one.svg" alt="Capital One Logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Capital_One_logo.svg" alt="Capital One" />
     </div>
     <h2>Sign In</h2>
-    <form action="user-dashboard.html" method="POST" onsubmit="handleLogin(event)">
-      <div class="input-group">
-        <label for="email">Username or Email</label>
-        <input type="text" id="email" required placeholder="e.g. william@example.com">
-      </div>
-      <div class="input-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" required placeholder="••••••••">
-      </div>
-      <div class="options">
-        <label><input type="checkbox" /> Remember me</label>
-        <a href="#">Forgot password?</a>
-      </div>
-      <button type="submit" class="login-btn">Login</button>
-    </form>
-    <div class="footer-text">
-      <p>Don't have an account? <a href="create-account.html">Create one</a></p>
+    <div class="error" id="errorMsg"></div>
+    <input type="email" id="email" placeholder="Email address" required />
+    <input type="password" id="password" placeholder="Password" required />
+    
+    <div class="checkbox-row">
+      <input type="checkbox" id="rememberMe" />
+      <label for="rememberMe">Remember me</label>
+    </div>
+
+    <button onclick="login()">Login</button>
+
+    <div class="links">
+      <a href="forgot.html">Forgot Password?</a>
+      <a href="create-account.html">Create Account</a>
     </div>
   </div>
 
-  <script>
-    function handleLogin(event) {
-      event.preventDefault();
-      const userName = document.getElementById("email").value;
-      sessionStorage.setItem("userName", userName.split("@")[0]);
-      window.location.href = "user-dashboard.html";
-    }
-  </script>
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
+    const firebaseConfig = {
+      apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
+      authDomain: "capital-one-16a95.firebaseapp.com",
+      projectId: "capital-one-16a95",
+      storageBucket: "capital-one-16a95.appspot.com",
+      messagingSenderId: "1061937867911",
+      appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = async function () {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+      const errorMsg = document.getElementById('errorMsg');
+
+      const persistenceType = rememberMe ? browserLocalPersistence : browserSessionPersistence;
+
+      try {
+        await setPersistence(auth, persistenceType);
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "user-dashboard.html";
+      } catch (error) {
+        errorMsg.textContent = "Invalid email or password.";
+      }
+    };
+  </script>
 </body>
 </html>

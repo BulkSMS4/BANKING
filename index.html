@@ -2,203 +2,239 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Welcome to Capital One Bank</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Capital Trust Bank</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      color: #222;
+    :root {
+      --primary: #002868;
+      --accent: #d71a28;
+      --light: #f5f5f5;
+      --white: #ffffff;
     }
 
-    .header {
-      background: #003366;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--light);
+      color: #333;
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .menu-toggle {
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -270px;
+      width: 250px;
+      height: 100%;
+      background: var(--primary);
       color: white;
       padding: 20px;
-      text-align: center;
+      transition: left 0.3s ease;
+      z-index: 2000;
     }
 
-    .intro {
-      padding: 20px;
-      text-align: center;
+    #sidebar ul {
+      list-style: none;
+      padding: 0;
     }
 
-    .intro img {
-      width: 80%;
-      max-width: 400px;
-      border-radius: 10px;
-      margin-top: 15px;
+    #sidebar ul li {
+      margin: 20px 0;
     }
 
-    .features {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
-      padding: 20px;
+    #sidebar ul li a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
     }
 
-    .feature {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 300px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .feature img {
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
       width: 100%;
-      height: 150px;
-      object-fit: cover;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      z-index: 1500;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .close-btn {
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    section {
+      padding: 40px 20px;
+    }
+
+    .hero {
+      background: url('https://www.capitalone.com/media/homepage/homepage-hero.jpg') no-repeat center center/cover;
+      height: 300px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .hero h2 {
+      font-size: 36px;
+      background: rgba(0,0,0,0.5);
+      padding: 10px 20px;
       border-radius: 8px;
     }
 
-    .section {
+    .about, .testimonials, .gallery, .video-section {
       background: white;
-      padding: 40px 20px;
-      text-align: center;
-    }
-
-    .section h2 {
-      margin-bottom: 15px;
-      color: #003366;
-    }
-
-    .section p {
-      max-width: 800px;
-      margin: auto;
-      line-height: 1.6;
-    }
-
-    .testimonials {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
-      margin-top: 30px;
-    }
-
-    .testimonial {
-      background: #f9f9f9;
-      padding: 20px;
       border-radius: 10px;
-      max-width: 300px;
+      margin: 20px auto;
+      max-width: 960px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .testimonials blockquote {
+      margin: 15px 0;
+      padding-left: 20px;
+      border-left: 4px solid var(--accent);
       font-style: italic;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
     }
 
-    .testimonial strong {
-      display: block;
-      margin-top: 10px;
-      font-style: normal;
-      color: #003366;
-    }
-
-    .login-btn {
-      display: inline-block;
+    .gallery-images {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
       margin-top: 20px;
-      background: #cc0000;
-      color: white;
-      padding: 12px 25px;
-      text-decoration: none;
-      border-radius: 6px;
     }
 
-    .footer {
-      background: #003366;
+    .gallery-images img {
+      width: 100%;
+      border-radius: 10px;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .video-section iframe {
+      width: 100%;
+      height: 315px;
+      border: none;
+      border-radius: 10px;
+    }
+
+    footer {
+      background: var(--primary);
       color: white;
-      padding: 30px 20px;
       text-align: center;
-    }
-
-    .footer p {
-      margin: 5px 0;
-    }
-
-    .footer a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: underline;
+      padding: 20px;
     }
 
     @media (max-width: 600px) {
-      .features, .testimonials {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .intro img {
-        width: 100%;
+      .hero h2 {
+        font-size: 24px;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>Capital One Online Banking</h1>
-    <p>Secure. Smart. Simple.</p>
-  </div>
+  <header>
+    <span class="menu-toggle" onclick="toggleMenu()">☰</span>
+    <h1>Capital Trust Bank</h1>
+  </header>
 
-  <div class="intro">
-    <h2>Welcome to Your Financial Future</h2>
-    <p>With Capital One, you can manage your money, transfer funds, pay bills, and track your financial goals — all in one place.</p>
-    <img src="https://www.capitalone.com/assets/brand/logo-capital-one.svg" alt="Capital One" />
-    <br />
-    <a href="login.html" class="login-btn">Log In to Your Account</a>
-  </div>
+  <div id="overlay" onclick="closeMenu()"></div>
 
-  <div class="features">
-    <div class="feature">
-      <img src="https://images.unsplash.com/photo-1588776814546-d930b77f6acb" alt="Card Management">
-      <h3>Card Management</h3>
-      <p>Activate your card, lock/unlock, and check transactions in real-time.</p>
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <h2>Menu</h2>
+      <span onclick="closeMenu()" class="close-btn">&times;</span>
     </div>
-    <div class="feature">
-      <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" alt="Secure Banking">
-      <h3>Secure Banking</h3>
-      <p>Top-notch security and 24/7 fraud monitoring to keep your money safe.</p>
-    </div>
-    <div class="feature">
-      <img src="https://images.unsplash.com/photo-1519337265831-281ec6cc8514" alt="Easy Transfers">
-      <h3>Easy Transfers</h3>
-      <p>Send money across the globe with just a few clicks — instantly.</p>
-    </div>
+    <ul>
+      <li><a href="#about" onclick="closeMenu()">📖 About Us</a></li>
+      <li><a href="#testimonials" onclick="closeMenu()">💬 Testimonials</a></li>
+      <li><a href="login.html" onclick="closeMenu()">🔐 Login</a></li>
+      <li><a href="create-account.html" onclick="closeMenu()">📝 Open Account</a></li>
+    </ul>
   </div>
 
-  <div class="section" id="about">
-    <h2>About Us</h2>
-    <p>Capital One is committed to helping customers succeed financially. From personalized financial tools to secure online banking, we bring convenience and trust together. Whether you're managing savings, investing, or everyday banking — Capital One is your reliable partner in finance.</p>
-  </div>
+  <section class="hero">
+    <h2>Banking That Works for You</h2>
+  </section>
 
-  <div class="section" id="testimonials">
-    <h2>What Our Customers Say</h2>
-    <div class="testimonials">
-      <div class="testimonial">
-        "Capital One made it so easy to transfer money to my family abroad. The process is smooth and fast!"
-        <strong>- Jessica M.</strong>
-      </div>
-      <div class="testimonial">
-        "Their mobile banking app is top-notch. I can monitor every transaction and feel totally in control."
-        <strong>- David O.</strong>
-      </div>
-      <div class="testimonial">
-        "Best customer service I’ve ever experienced. Friendly, fast, and professional. 5 stars!"
-        <strong>- Grace T.</strong>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">
-    <p>&copy; 2025 Capital One Bank. All rights reserved.</p>
+  <section class="about" id="about">
+    <h2>About Capital Trust Bank</h2>
     <p>
-      <a href="#">Privacy Policy</a> |
-      <a href="#">Terms of Use</a> |
-      <a href="#">Support</a>
+      We are a full-service digital and physical bank committed to helping customers achieve financial freedom. With personalized services, secured platforms, and expert advisors, Capital Trust Bank is your trusted partner in every step of your financial journey.
     </p>
-    <p>Contact us: support@capitalonebank.com</p>
-  </div>
+  </section>
+
+  <section class="gallery">
+    <h2>Our Bank In Action</h2>
+    <div class="gallery-images">
+      <img src="https://www.capitalone.com/media/auto-loans/dealer-loans.jpg" alt="Loan Services">
+      <img src="https://www.capitalone.com/media/mobile-banking/banking-on-the-go.jpg" alt="Mobile Banking">
+      <img src="https://www.capitalone.com/media/home-loans/home-loans.jpg" alt="Home Loans">
+    </div>
+  </section>
+
+  <section class="video-section">
+    <h2>Inside Capital Trust Bank</h2>
+    <iframe src="https://www.youtube.com/embed/vlDzYIIOYmM" title="Capital Trust Bank Tour" allowfullscreen></iframe>
+  </section>
+
+  <section class="testimonials" id="testimonials">
+    <h2>What Our Clients Say</h2>
+    <blockquote>"I’ve never experienced such quick and secure online banking. Capital Trust is top-tier!" – Sarah L.</blockquote>
+    <blockquote>"Excellent customer support and seamless mobile app experience!" – Michael B.</blockquote>
+  </section>
+
+  <footer>
+    &copy; 2025 Capital Trust Bank. All rights reserved.
+  </footer>
+
+  <script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    function toggleMenu() {
+      sidebar.style.left = "0px";
+      overlay.style.display = "block";
+    }
+
+    function closeMenu() {
+      sidebar.style.left = "-270px";
+      overlay.style.display = "none";
+    }
+  </script>
 
 </body>
 </html>

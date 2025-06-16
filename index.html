@@ -2,239 +2,126 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Capital Trust Bank</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Capital One Trust Bank</title>
   <style>
-    :root {
-      --primary: #002868;
-      --accent: #d71a28;
-      --light: #f5f5f5;
-      --white: #ffffff;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #333; }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background: var(--light);
-      color: #333;
-    }
-
-    header {
-      background: var(--primary);
+    .navbar {
+      background: #002868;
       color: white;
-      padding: 15px 20px;
+      padding: 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .menu-toggle {
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    h1 {
-      font-size: 24px;
-    }
+    .navbar h1 { font-size: 22px; }
+    .menu-toggle { font-size: 24px; cursor: pointer; }
 
     #sidebar {
       position: fixed;
+      left: -260px;
       top: 0;
-      left: -270px;
       width: 250px;
       height: 100%;
-      background: var(--primary);
+      background: #002868;
       color: white;
       padding: 20px;
-      transition: left 0.3s ease;
-      z-index: 2000;
+      transition: left 0.3s;
+      z-index: 1000;
     }
 
-    #sidebar ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    #sidebar ul li {
-      margin: 20px 0;
-    }
-
+    #sidebar.show { left: 0; }
+    #sidebar ul { list-style: none; margin-top: 20px; }
+    #sidebar ul li { margin: 15px 0; }
     #sidebar ul li a {
       color: white;
       text-decoration: none;
-      font-size: 18px;
+      font-size: 16px;
     }
 
-    #overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      background: rgba(0,0,0,0.4);
-      display: none;
-      z-index: 1500;
-    }
+    .section { padding: 30px 20px; }
+    .hero img { width: 100%; max-height: 400px; object-fit: cover; }
 
-    .sidebar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .close-btn {
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    section {
-      padding: 40px 20px;
-    }
-
-    .hero {
-      background: url('https://www.capitalone.com/media/homepage/homepage-hero.jpg') no-repeat center center/cover;
-      height: 300px;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .hero h2 {
-      font-size: 36px;
-      background: rgba(0,0,0,0.5);
-      padding: 10px 20px;
-      border-radius: 8px;
-    }
-
-    .about, .testimonials, .gallery, .video-section {
-      background: white;
-      border-radius: 10px;
-      margin: 20px auto;
-      max-width: 960px;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    .testimonials blockquote {
-      margin: 15px 0;
-      padding-left: 20px;
-      border-left: 4px solid var(--accent);
-      font-style: italic;
-    }
-
-    .gallery-images {
+    .gallery, .videos {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 15px;
-      margin-top: 20px;
+      padding-top: 20px;
     }
 
-    .gallery-images img {
+    .gallery img, .videos iframe {
       width: 100%;
-      border-radius: 10px;
-      height: 180px;
-      object-fit: cover;
-    }
-
-    .video-section iframe {
-      width: 100%;
-      height: 315px;
-      border: none;
       border-radius: 10px;
     }
 
     footer {
-      background: var(--primary);
+      background: #002868;
       color: white;
       text-align: center;
       padding: 20px;
-    }
-
-    @media (max-width: 600px) {
-      .hero h2 {
-        font-size: 24px;
-      }
+      margin-top: 30px;
     }
   </style>
 </head>
 <body>
-
-  <header>
-    <span class="menu-toggle" onclick="toggleMenu()">☰</span>
-    <h1>Capital Trust Bank</h1>
-  </header>
-
-  <div id="overlay" onclick="closeMenu()"></div>
+  <div class="navbar">
+    <span class="menu-toggle">☰</span>
+    <h1>Capital One Trust</h1>
+  </div>
 
   <div id="sidebar">
-    <div class="sidebar-header">
-      <h2>Menu</h2>
-      <span onclick="closeMenu()" class="close-btn">&times;</span>
-    </div>
     <ul>
-      <li><a href="#about" onclick="closeMenu()">📖 About Us</a></li>
-      <li><a href="#testimonials" onclick="closeMenu()">💬 Testimonials</a></li>
-      <li><a href="login.html" onclick="closeMenu()">🔐 Login</a></li>
-      <li><a href="create-account.html" onclick="closeMenu()">📝 Open Account</a></li>
+      <li><a href="#home">🏠 Home</a></li>
+      <li><a href="login.html">🔐 Login</a></li>
+      <li><a href="create-account.html">📋 Open Account</a></li>
+      <li><a href="#about">ℹ️ About</a></li>
     </ul>
   </div>
 
-  <section class="hero">
-    <h2>Banking That Works for You</h2>
+  <section class="section hero" id="home">
+    <img src="https://images.unsplash.com/photo-1573164574396-9d062ef9f1d8?fit=crop&w=1200&q=80" alt="Capital One Trust" />
+    <h2>Welcome to Capital One Trust</h2>
+    <p>Your reliable and secure digital banking partner. We prioritize your financial security and personal service excellence.</p>
   </section>
 
-  <section class="about" id="about">
-    <h2>About Capital Trust Bank</h2>
-    <p>
-      We are a full-service digital and physical bank committed to helping customers achieve financial freedom. With personalized services, secured platforms, and expert advisors, Capital Trust Bank is your trusted partner in every step of your financial journey.
-    </p>
+  <section class="section gallery">
+    <h3>Inside Our Bank</h3>
+    <img src="https://images.unsplash.com/photo-1556742044-3c52d6e88c62?fit=crop&w=800&q=80" alt="Bank Office" />
+    <img src="https://images.unsplash.com/photo-1605902711622-cfb43c44367d?fit=crop&w=800&q=80" alt="Customer Service" />
+    <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?fit=crop&w=800&q=80" alt="Finance Experts" />
   </section>
 
-  <section class="gallery">
-    <h2>Our Bank In Action</h2>
-    <div class="gallery-images">
-      <img src="https://www.capitalone.com/media/auto-loans/dealer-loans.jpg" alt="Loan Services">
-      <img src="https://www.capitalone.com/media/mobile-banking/banking-on-the-go.jpg" alt="Mobile Banking">
-      <img src="https://www.capitalone.com/media/home-loans/home-loans.jpg" alt="Home Loans">
-    </div>
+  <section class="section videos">
+    <h3>See Us In Action</h3>
+    <iframe src="https://www.youtube.com/embed/x7H6sF2nK4I" frameborder="0" allowfullscreen></iframe>
+    <iframe src="https://www.youtube.com/embed/DcJFdCmN98s" frameborder="0" allowfullscreen></iframe>
   </section>
 
-  <section class="video-section">
-    <h2>Inside Capital Trust Bank</h2>
-    <iframe src="https://www.youtube.com/embed/vlDzYIIOYmM" title="Capital Trust Bank Tour" allowfullscreen></iframe>
-  </section>
-
-  <section class="testimonials" id="testimonials">
-    <h2>What Our Clients Say</h2>
-    <blockquote>"I’ve never experienced such quick and secure online banking. Capital Trust is top-tier!" – Sarah L.</blockquote>
-    <blockquote>"Excellent customer support and seamless mobile app experience!" – Michael B.</blockquote>
+  <section class="section" id="about">
+    <h3>About Us</h3>
+    <p>Capital One Trust is dedicated to bringing premium banking services to individuals and businesses across the globe. We combine innovative technology with traditional values to deliver banking experiences tailored just for you.</p>
   </section>
 
   <footer>
-    &copy; 2025 Capital Trust Bank. All rights reserved.
+    <p>&copy; 2025 Capital One Trust Bank. All rights reserved.</p>
   </footer>
 
   <script>
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("overlay");
+    const toggleBtn = document.querySelector('.menu-toggle');
+    const sidebar = document.getElementById('sidebar');
 
-    function toggleMenu() {
-      sidebar.style.left = "0px";
-      overlay.style.display = "block";
-    }
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('show');
+    });
 
-    function closeMenu() {
-      sidebar.style.left = "-270px";
-      overlay.style.display = "none";
-    }
+    window.addEventListener('click', (e) => {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove('show');
+      }
+    });
   </script>
-
 </body>
-</html>
+  </html>

@@ -105,19 +105,43 @@
 
   document.getElementById("multiStepForm").onsubmit = function (e) {
     e.preventDefault();
+
+    // password check
+    if (document.getElementById("password").value !== document.getElementById("confirm").value) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    // SSN check
+    if (document.getElementById("ssn").value !== document.getElementById("confirm-ssn").value) {
+      alert("SSN/TIN does not match!");
+      return;
+    }
+
     const user = {
       fullName: document.getElementById("first").value + " " + document.getElementById("last").value,
       email: document.getElementById("email").value,
       phone: document.getElementById("phone").value,
       username: document.getElementById("username").value,
+      password: document.getElementById("password").value,
       accountNumber: "UBA" + Math.floor(100000000 + Math.random() * 900000000),
-      balance: 0
+      balance: 0,
+      history: [],
+      locked: false
     };
+
+    // Save user
     let users = JSON.parse(localStorage.getItem("users")) || [];
     users.push(user);
     localStorage.setItem("users", JSON.stringify(users));
+
+    // Auto-login new user
+    localStorage.setItem("loggedInUser", JSON.stringify(user));
+
     alert("Account created successfully!");
-    window.location.href = "pin.html";
+
+    // Redirect to dashboard
+    window.location.href = "user-dashboard.html";
   };
 
   // Initially show step 0

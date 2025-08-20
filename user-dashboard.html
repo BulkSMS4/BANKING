@@ -2,256 +2,147 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>UBA - User Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Dashboard</title>
   <style>
-    :root {
-      --primary: #003366;
-      --accent: #cc0000;
-      --light: #f5f5f5;
-      --white: #ffffff;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      background: var(--light);
-      color: #333;
+      background: #f4f4f4;
     }
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--primary);
+    .topbar {
+      background: #002868;
       color: white;
       padding: 15px;
-    }
-    .menu-toggle {
-      font-size: 24px;
-      cursor: pointer;
-    }
-    .user-info {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
     }
-    .user-info img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #ccc;
+    .topbar h1 { font-size: 18px; margin: 0; }
+    .main { padding: 20px; }
+    .card {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
     }
-    .card-box {
-      background: #1b1b1b;
-      color: white;
-      margin: 20px;
-      padding: 20px;
-      border-radius: 15px;
-      font-family: monospace;
-    }
-    .balance-box {
-      margin: 20px;
-      padding: 20px;
-      background: var(--white);
-      border-radius: 10px;
-      box-shadow: 0 0 5px #ccc;
-    }
-    .balance-box h1 {
-      font-size: 30px;
-      color: var(--primary);
-    }
-    .balance-details {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-    .tag {
-      background: var(--light);
-      padding: 5px 10px;
-      border-radius: 8px;
-    }
-    .actions {
-      margin: 20px;
-    }
-    .actions button {
-      padding: 12px 20px;
-      margin-right: 10px;
-      background: var(--primary);
+    button {
+      padding: 8px 12px;
+      background: #002868;
       color: white;
       border: none;
-      border-radius: 6px;
       cursor: pointer;
     }
-    .actions button:hover {
-      background: #002244;
-    }
-    .table-box {
-      margin: 20px;
-      background: var(--white);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 5px #ccc;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
+    button:hover { background: #0044aa; }
+    .history-card {
+      background: white;
       padding: 10px;
+      margin-bottom: 10px;
       border: 1px solid #ddd;
-      text-align: center;
-    }
-    th {
-      background: var(--light);
-    }
-    #sidebar {
-      position: fixed;
-      top: 0;
-      left: -250px;
-      width: 250px;
-      height: 100%;
-      background: var(--primary);
-      color: white;
-      padding: 20px;
-      transition: left 0.3s ease;
-      z-index: 1000;
-    }
-    #sidebar h3 {
-      margin-bottom: 20px;
-    }
-    #sidebar ul {
-      list-style: none;
-      padding: 0;
-    }
-    #sidebar ul li {
-      margin: 15px 0;
-    }
-    #sidebar ul li a {
-      color: white;
-      text-decoration: none;
-      font-size: 16px;
-    }
-    @media (max-width: 600px) {
-      .balance-details { flex-direction: column; }
-      .navbar { flex-direction: column; align-items: flex-start; }
-      .card-box, .balance-box, .table-box, .actions { margin: 10px; }
     }
   </style>
 </head>
 <body>
-  <div class="navbar">
-    <span class="menu-toggle">☰</span>
-    <div class="user-info">
-      <img src="https://via.placeholder.com/40" />
-      <span id="userName">William Jackson</span>
-    </div>
+<script>
+  // Check if user logged in
+  const currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
+  if (!currentUser) {
+    window.location.href = "login.html";
+  }
+</script>
+
+<div class="topbar">
+  <h1>User Dashboard</h1>
+  <a href="login.html" onclick="sessionStorage.clear()" style="color:white;">Logout</a>
+</div>
+
+<div class="main">
+  <!-- Profile -->
+  <div class="card">
+    <h2>Welcome, <span id="userName"></span></h2>
+    <p><strong>Account #:</strong> <span id="accountNumber"></span></p>
+    <p><strong>Balance:</strong> $<span id="balance"></span></p>
+    <p><strong>Status:</strong> <span id="status"></span></p>
+    <button id="spendBtn" onclick="spendMoney()">Spend / Withdraw</button>
   </div>
 
-  <div id="sidebar">
-    <h3>Menu</h3>
-    <ul>
-      <li><a href="#">🏠 Dashboard</a></li>
-      <li><a href="wire-transfer.html">💸 Wire Transfer</a></li>
-      <li><a href="#">📄 Transactions</a></li>
-      <li><a href="login.html">🚪 Logout</a></li>
-    </ul>
+  <!-- History -->
+  <div class="card">
+    <h2>Transaction History</h2>
+    <div id="history"></div>
   </div>
+</div>
 
-  <div class="card-box">
-    <h3>Credit Card</h3>
-    <p>Card Number: **** **** **** 4482</p>
-    <p>Card Holder: William Jackson</p>
-    <p>Expiry: 12/29 &nbsp; CVV: 123</p>
-  </div>
-
-  <div class="balance-box">
-    <h1>Balance: <span id="balance">$0.00</span></h1>
-    <div class="balance-details">
-      <div class="tag" id="pendingTag" style="display:none">Pending: $0.00</div>
-      <div class="tag">My Loan: $0.00</div>
-      <div class="tag" style="color: var(--accent);">Account Limit: -$4,200,000</div>
-      <div class="tag">Login IP: 197.210.71.76</div>
-      <div class="tag">Login Date: 2024-12-20 04:53:36</div>
-    </div>
-  </div>
-
-  <div class="actions">
-    <button onclick="alert('Transaction history coming soon')">Transaction</button>
-    <button onclick="window.location.href='wire-transfer.html'">Wire Transfer</button>
-    <button onclick="withdrawMoney()">Withdraw</button>
-  </div>
-
-  <div class="table-box">
-    <h3>Recent Credit/Debit Transactions</h3>
-    <table id="transactions">
-      <tr>
-        <th>S/N</th>
-        <th>Amount</th>
-        <th>Reference ID</th>
-        <th>Bank</th>
-      </tr>
-      <tr>
-        <td>1</td>
-        <td>$50,000</td>
-        <td>6764d3ed7e1d</td>
-        <td>UBA</td>
-      </tr>
-    </table>
-  </div>
-
-  <script>
-    const toggleBtn = document.querySelector('.menu-toggle');
-    const sidebar = document.getElementById('sidebar');
-
-    toggleBtn.addEventListener('click', () => {
-      sidebar.style.left = sidebar.style.left === '0px' ? '-250px' : '0px';
-    });
-
-    window.addEventListener('click', function (e) {
-      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-        sidebar.style.left = '-250px';
-      }
-    });
-
-    const userName = sessionStorage.getItem("userName") || "William Jackson";
-    document.getElementById("userName").innerText = userName;
-
-    let storedData = JSON.parse(localStorage.getItem("userData")) || {};
-    if (!storedData.balance) storedData.balance = 100000000;
-
-    function updateBalance() {
-      document.getElementById("balance").innerText = "$" + Number(storedData.balance).toLocaleString();
+<script>
+  function loadUser() {
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let user = users.find(u => u.username === currentUser.username);
+    if (!user) {
+      alert("User not found. Please login again.");
+      sessionStorage.clear();
+      window.location.href = "login.html";
+      return;
     }
 
-    updateBalance();
+    // Display user info
+    document.getElementById("userName").innerText = user.fullName;
+    document.getElementById("accountNumber").innerText = user.accountNumber;
+    document.getElementById("balance").innerText = user.balance || 0;
+    document.getElementById("status").innerText = user.locked ? "🔒 Locked" : "Active";
 
-    const pendingTag = document.getElementById("pendingTag");
-    if (storedData.pendingAmount && storedData.status && storedData.status !== "none") {
-      pendingTag.innerText = `${storedData.status}: $${storedData.pendingAmount}`;
-      pendingTag.style.display = 'block';
+    // Disable spending if locked
+    document.getElementById("spendBtn").disabled = user.locked;
+
+    // Show history
+    let historyDiv = document.getElementById("history");
+    historyDiv.innerHTML = "";
+    if (user.transactions && user.transactions.length > 0) {
+      user.transactions.slice().reverse().forEach(tx => {
+        historyDiv.innerHTML += `
+          <div class="history-card">
+            <strong>${tx.type}</strong><br>
+            ${tx.amount ? "Amount: $" + tx.amount + "<br>" : ""}
+            Date: ${tx.date}<br>
+            By: ${tx.by}
+          </div>
+        `;
+      });
+    } else {
+      historyDiv.innerHTML = "<p>No transactions yet.</p>";
+    }
+  }
+
+  function spendMoney() {
+    let amount = prompt("Enter amount to spend/withdraw:");
+    if (isNaN(amount) || amount <= 0) return alert("Invalid amount.");
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let userIndex = users.findIndex(u => u.username === currentUser.username);
+    if (userIndex === -1) return;
+
+    if (users[userIndex].locked) {
+      alert("Your account is locked. You cannot withdraw.");
+      return;
     }
 
-    function withdrawMoney() {
-      let input = prompt("Enter amount to withdraw:");
-      if (!input) return;
-
-      let amount = parseFloat(input.replace(/[^0-9.]/g, ''));
-      if (isNaN(amount) || amount <= 0) {
-        alert("Please enter a valid number.");
-        return;
-      }
-
-      if (amount > storedData.balance) {
-        alert("Insufficient balance.");
-        return;
-      }
-
-      storedData.balance -= amount;
-      localStorage.setItem("userData", JSON.stringify(storedData));
-      updateBalance();
-      alert(`Withdrawal of $${amount.toLocaleString()} successful.`);
+    if (users[userIndex].balance >= amount) {
+      users[userIndex].balance -= parseFloat(amount);
+      if (!users[userIndex].transactions) users[userIndex].transactions = [];
+      users[userIndex].transactions.push({
+        type: "User Spending",
+        amount: amount,
+        date: new Date().toLocaleString(),
+        by: users[userIndex].fullName
+      });
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Transaction successful!");
+      loadUser();
+    } else {
+      alert("Insufficient funds.");
     }
-  </script>
+  }
+
+  window.onload = loadUser;
+</script>
 </body>
 </html>

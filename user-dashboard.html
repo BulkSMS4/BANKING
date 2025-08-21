@@ -41,25 +41,23 @@ input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px so
 <body>
 
 <script>
-  // ---------- Load user ----------
-  let user = JSON.parse(localStorage.getItem("loggedInUser"));
-  if (!user) {
-    alert("No user logged in. Redirecting to login.");
-    window.location.href = "login.html";
-  } else {
-    // Ask for PIN
-    let attempts = 0;
-    while (attempts < 3) {
-      const enteredPin = prompt("Enter your 4-digit PIN to access dashboard:");
-      if (enteredPin === user.pin) break;
-      attempts++;
-      alert("Incorrect PIN. Attempts left: " + (3 - attempts));
-      if (attempts >= 3) {
-        alert("Too many failed attempts. Redirecting to login.");
-        window.location.href = "login.html";
-      }
+let user = JSON.parse(localStorage.getItem("loggedInUser"));
+if (!user) {
+  alert("No user logged in. Redirecting to login.");
+  window.location.href = "login.html";
+} else {
+  let attempts = 0;
+  while (attempts < 3) {
+    const enteredPin = prompt("Enter your 4-digit PIN to access dashboard:");
+    if (enteredPin === user.pin) break;
+    attempts++;
+    alert("Incorrect PIN. Attempts left: " + (3 - attempts));
+    if (attempts >= 3) {
+      alert("Too many failed attempts. Redirecting to login.");
+      window.location.href = "login.html";
     }
   }
+}
 </script>
 
 <div class="header">
@@ -82,22 +80,22 @@ input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px so
       <div class="cc-header">
         <img src="https://1000logos.net/wp-content/uploads/2017/06/Bank-of-America-Logo-2001.png" class="boa-logo" alt="Bank of America Logo">
       </div>
-      <div class="cc-number" id="ccNumber">**** **** **** 1234</div>
+      <div class="cc-number" id="ccNumber"></div>
       <div class="cc-info">
         <div>
           <span>EXP</span>
-          <div id="ccExpiry">12/28</div>
+          <div id="ccExpiry"></div>
         </div>
         <div>
           <span>CVV</span>
-          <div id="ccCVV">***</div>
+          <div id="ccCVV"></div>
         </div>
       </div>
       <div class="cc-footer">
-        <div class="card-holder" id="ccName">John Doe</div>
-        <img id="ccPic" class="cc-pic" src="https://via.placeholder.com/50">
+        <div class="card-holder" id="ccName"></div>
+        <img id="ccPic" class="cc-pic" src="">
       </div>
-      <img id="networkLogo" class="network-logo" src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg">
+      <img id="networkLogo" class="network-logo" src="">
     </div>
   </div>
 
@@ -162,15 +160,14 @@ input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px so
 <script>
 const fmt = n => "$" + Number(n).toFixed(2);
 
-// Initialize credit card if not present
+// Generate credit card if missing
 if(!user.creditCard){
-  let type = Math.random()<0.5?'visa':'mastercard';
   user.creditCard = {
     number: '**** **** **** ' + String(Math.floor(1000 + Math.random()*9000)),
     expiry: '12/28',
     cvv: '***',
     name: user.fullName,
-    type
+    type: Math.random()<0.5?'visa':'mastercard'
   };
   updateUser(user);
 }
@@ -256,8 +253,7 @@ function logout(){
 
 function openModal(id){ document.getElementById(id).style.display="flex"; }
 function closeModal(id){ document.getElementById(id).style.display="none"; }
-
 </script>
 
 </body>
-      </html>
+</html>

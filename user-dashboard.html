@@ -18,19 +18,12 @@
       margin-top: 10px;
     }
     .credit-card .number { font-size: 1.3em; letter-spacing: 3px; margin: 15px 0; }
-    .actions button {
-      padding: 10px 15px;
-      margin: 5px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #d40000;
-      color: white;
-    }
-    .actions button:hover { background: #a00000; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border-bottom: 1px solid #ddd; padding: 10px; text-align: left; }
     th { background: #f4f4f4; }
+    .profile { text-align: center; margin-bottom: 20px; }
+    .profile img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+    .profile h2 { margin: 10px 0 0 0; }
   </style>
 </head>
 <body>
@@ -39,9 +32,14 @@
 
 <div class="container">
 
-  <!-- Welcome -->
+  <!-- Profile section -->
+  <div class="profile">
+    <img id="profilePic" src="https://via.placeholder.com/100" alt="Profile Picture">
+    <h2 id="userName"></h2>
+  </div>
+
+  <!-- Account -->
   <div class="card">
-    <h2>Welcome, <span id="userName"></span></h2>
     <p>Account Number: <b><span id="accountNumber"></span></b></p>
     <p class="balance">Balance: $<span id="balance"></span></p>
   </div>
@@ -51,17 +49,6 @@
     <div class="number" id="cardNumber"></div>
     <p>Expiry: <span id="expiry"></span> &nbsp;&nbsp; CVV: <span id="cvv"></span></p>
     <p>Card Holder: <span id="cardHolder"></span></p>
-  </div>
-
-  <!-- Actions -->
-  <div class="card">
-    <h2>Quick Actions</h2>
-    <div class="actions">
-      <button onclick="sendMoney()">Send Money</button>
-      <button onclick="spend()">Spend</button>
-      <button onclick="cancel()">Cancel Transaction</button>
-      <button onclick="lockAccount()">Lock Account</button>
-    </div>
   </div>
 
   <!-- Transaction History -->
@@ -78,7 +65,7 @@
 </div>
 
 <script>
-  // Load logged-in user and refresh from global users
+  // Load logged-in user
   let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
   let users = JSON.parse(localStorage.getItem("users")) || [];
   let user = users.find(u => u.email === loggedIn?.email);
@@ -87,7 +74,7 @@
     alert("No user logged in. Redirecting to login.");
     window.location.href = "login.html";
   } else {
-    // Generate card if missing
+    // Ensure user has a card
     if (!user.card) {
       user.card = {
         number: "4" + Math.floor(100000000000000 + Math.random() * 900000000000000),
@@ -98,13 +85,13 @@
     }
     if (!user.history) user.history = [];
 
-    // Save updated user back
+    // Save updated
     let idx = users.findIndex(u => u.email === user.email);
     users[idx] = user;
     localStorage.setItem("users", JSON.stringify(users));
     localStorage.setItem("loggedInUser", JSON.stringify(user));
 
-    // Display info
+    // Show data
     document.getElementById("userName").textContent = user.fullName;
     document.getElementById("accountNumber").textContent = user.accountNumber;
     document.getElementById("balance").textContent = user.balance.toFixed(2);
@@ -112,18 +99,12 @@
     document.getElementById("expiry").textContent = user.card.expiry;
     document.getElementById("cvv").textContent = user.card.cvv;
     document.getElementById("cardHolder").textContent = user.card.holder;
+    if (user.profilePic) {
+      document.getElementById("profilePic").src = user.profilePic;
+    }
 
-    // Display history
+    // History
     refreshHistory();
-  }
-
-  function addHistory(desc, amount) {
-    let date = new Date().toLocaleString();
-    user.balance += amount;
-    user.history.unshift({ date, desc, amount, balance: user.balance });
-    saveUser();
-    refreshHistory();
-    document.getElementById("balance").textContent = user.balance.toFixed(2);
   }
 
   function refreshHistory() {
@@ -139,19 +120,6 @@
       tbody.innerHTML += row;
     });
   }
-
-  function saveUser() {
-    let idx = users.findIndex(u => u.email === user.email);
-    users[idx] = user;
-    localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("loggedInUser", JSON.stringify(user));
-  }
-
-  // Actions
-  function sendMoney() { addHistory("Sent Money", -50); }
-  function spend() { addHistory("Purchase", -30); }
-  function cancel() { addHistory("Cancelled Transaction", +30); }
-  function lockAccount() { alert("Account locked! Contact support."); }
 </script>
 
 </body>

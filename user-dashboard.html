@@ -6,18 +6,19 @@
   <style>
     body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 0; }
     .header { background: #d40000; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-    .header h2 { margin: 0; }
+    .header h2 { margin: 0; display: flex; align-items: center; }
+    .profile-pic { width: 40px; height: 40px; border-radius: 50%; margin-left: 10px; object-fit: cover; border: 2px solid white; }
     .container { padding: 20px; }
     .card, .history { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0px 0px 5px rgba(0,0,0,0.1); }
-    .credit-card { background: linear-gradient(135deg, #d40000, #a80000); color: white; padding: 20px; border-radius: 12px; width: 300px; margin: 10px auto; }
-    .credit-card h3 { margin: 0 0 10px; }
+    .credit-card { background: linear-gradient(135deg, #d40000, #a80000); color: white; padding: 20px; border-radius: 12px; width: 300px; margin: 10px auto; position: relative; }
+    .credit-card img { width: 50px; height: 50px; border-radius: 50%; position: absolute; bottom: 10px; right: 10px; border: 2px solid white; }
     button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; }
     .btn { background: #d40000; color: white; }
     .btn:hover { background: #a80000; }
     table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
     th { background: #f4f4f4; }
-
+    .tx-pic { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
     /* Modal */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
     .modal-content { background: white; padding: 20px; border-radius: 8px; width: 350px; }
@@ -29,7 +30,7 @@
 <body>
 
 <div class="header">
-  <h2>Welcome, <span id="userName"></span></h2>
+  <h2>Welcome, <span id="userName"></span> <img id="userPic" class="profile-pic" src=""></h2>
   <button onclick="logout()">Logout</button>
 </div>
 
@@ -48,6 +49,7 @@
       <h3 id="ccName"></h3>
       <p id="ccNumber"></p>
       <p>Exp: <span id="ccExpiry"></span> &nbsp; CVV: <span id="ccCVV"></span></p>
+      <img id="ccPic">
     </div>
   </div>
 
@@ -65,6 +67,7 @@
     <table>
       <thead>
         <tr>
+          <th>Pic</th>
           <th>Date</th>
           <th>Type</th>
           <th>Details</th>
@@ -116,6 +119,7 @@
 
   const fmt = (n) => "$" + Number(n).toFixed(2);
 
+  // Ensure credit card is generated
   if (!user.creditCard) {
     user.creditCard = {
       number: "4" + Math.floor(100000000000000 + Math.random() * 900000000000000),
@@ -126,19 +130,23 @@
     updateUser(user);
   }
 
+  // Display info
   document.getElementById("userName").innerText = user.fullName;
+  document.getElementById("userPic").src = user.picture || "https://via.placeholder.com/40";
   document.getElementById("balance").innerText = fmt(user.balance);
   document.getElementById("accountNumber").innerText = user.accountNumber;
   document.getElementById("ccName").innerText = user.creditCard.name;
   document.getElementById("ccNumber").innerText = user.creditCard.number.replace(/(.{4})/g, "$1 ");
   document.getElementById("ccExpiry").innerText = user.creditCard.expiry;
   document.getElementById("ccCVV").innerText = user.creditCard.cvv;
+  document.getElementById("ccPic").src = user.picture || "https://via.placeholder.com/50";
 
   function renderHistory() {
     const table = document.getElementById("historyTable");
     table.innerHTML = "";
     (user.requests || []).forEach(r => {
       let row = `<tr>
+        <td><img class="tx-pic" src="${user.picture || 'https://via.placeholder.com/30'}"></td>
         <td>${r.date}</td>
         <td>${r.type}</td>
         <td>${r.details}</td>

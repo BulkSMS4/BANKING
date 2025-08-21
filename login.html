@@ -56,6 +56,8 @@
     const password = document.getElementById("password").value;
 
     let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // find user
     let foundUser = users.find(u => u.username === username && u.password === password);
 
     if (!foundUser) {
@@ -72,10 +74,10 @@
   }
 
   function verifyPin() {
-    const enteredPin = document.getElementById("pinInput").value;
+    const enteredPin = document.getElementById("pinInput").value.trim();
 
     if (enteredPin === currentUser.pin) {
-      // Save as logged in
+      // Save logged in user
       localStorage.setItem("loggedInUser", JSON.stringify(currentUser));
       window.location.href = "user-dashboard.html";
     } else {

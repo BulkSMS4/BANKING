@@ -3,26 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Account</title>
+<title>Create Account & Dashboard</title>
 <style>
-  body { font-family: Arial, sans-serif; background: #f2f2f2; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;}
-  .form-box { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); width: 400px; text-align:center; }
-  h2 { margin-bottom: 10px; }
-  p.description { font-size: 14px; color: #555; margin-bottom: 20px; }
-  input, select { padding: 12px; width: 100%; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc; font-size: 15px; }
-  button { padding: 12px; width: 100%; background: #002868; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
-  button:hover { background: #001f5a; }
-  #photoPreview { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 10px auto; border: 2px solid #002868; display: none; }
+body { font-family: Arial, sans-serif; background: #f2f2f2; margin:0; padding:0; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+.form-box, #dashboardContainer { background:white; padding:25px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.2); width:400px; text-align:center; }
+h2 { margin-bottom:10px; }
+p.description { font-size:14px; color:#555; margin-bottom:20px; }
+input, select, button { width:100%; padding:12px; margin:8px 0; border-radius:6px; font-size:15px; }
+input, select { border:1px solid #ccc; }
+button { background:#002868; color:white; border:none; cursor:pointer; font-size:16px; }
+button:hover { background:#001f5a; }
+#photoPreview { width:100px; height:100px; border-radius:50%; object-fit:cover; margin:10px auto; border:2px solid #002868; display:none; }
+.modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
+.modal-content { background:white; padding:20px; border-radius:8px; width:300px; text-align:center; }
+.close { float:right; cursor:pointer; font-size:20px; }
+.card { background:#fff; padding:15px; border-radius:10px; margin-bottom:20px; box-shadow:0 0 5px rgba(0,0,0,0.1); }
+.credit-card { background: linear-gradient(135deg,#b00000,#e60000); color:white; padding:20px; border-radius:15px; margin:10px 0; position:relative; }
+.cc-number { font-size:20px; letter-spacing:3px; margin:15px 0; }
+.cc-info { display:flex; justify-content:space-between; font-size:12px; }
+.cc-footer { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+.cc-pic { width:40px;height:40px;border-radius:50%; border:2px solid white; }
+.network-logo { position:absolute; bottom:10px; right:10px; height:25px; }
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+th, td { border:1px solid #ddd; padding:6px; text-align:center; font-size:12px; }
+th { background:#f4f4f4; }
+.tx-pic { width:25px; height:25px; border-radius:50%; object-fit:cover; }
 </style>
 </head>
 <body>
 
+<!-- Registration Form -->
 <div class="form-box" id="registerBox">
   <h2>Open Your Bank Account</h2>
-  <p class="description">Welcome! Complete this form to securely open your new bank account. Make sure your details are accurate. Your account will be ready immediately with a starting balance of $1,000.</p>
-  
+  <p class="description">Welcome! Fill out this form to create your bank account. Your account will be ready immediately with $1,000 starting balance.</p>
   <img id="photoPreview" src="" alt="Photo Preview">
-  
   <form id="registerForm">
     <input type="text" id="firstName" placeholder="First Name" required>
     <input type="text" id="lastName" placeholder="Last Name" required>
@@ -41,42 +55,73 @@
   </form>
 </div>
 
-<!-- Dashboard Section -->
+<!-- PIN Modal -->
+<div id="pinModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closePINModal()">&times;</span>
+    <h3>Enter your 4-digit PIN</h3>
+    <input type="password" id="pinInput" maxlength="4" placeholder="****">
+    <button onclick="checkPIN()">Submit</button>
+    <p id="pinError" style="color:red; margin-top:5px;"></p>
+  </div>
+</div>
+
+<!-- Dashboard -->
 <div id="dashboardContainer" style="display:none;">
   <h2>Welcome, <span id="userName"></span></h2>
   <img id="userPic" src="" style="width:80px;height:80px;border-radius:50%;border:2px solid #002868;margin-bottom:10px;">
   <p>Account Number: <span id="accountNumber"></span></p>
   <p>Balance: <span id="balance"></span></p>
+
+  <!-- Virtual Credit Card -->
+  <div class="card">
+    <h3>Virtual Credit Card</h3>
+    <div class="credit-card">
+      <div class="cc-number" id="ccNumber"></div>
+      <div class="cc-info">
+        <div>EXP: <span id="ccExpiry"></span></div>
+        <div>CVV: <span id="ccCVV"></span></div>
+      </div>
+      <div class="cc-footer">
+        <div id="ccName"></div>
+        <img id="ccPic" class="cc-pic" src="">
+      </div>
+      <img id="networkLogo" class="network-logo" src="">
+    </div>
+  </div>
+
+  <!-- Transaction History -->
+  <div class="card">
+    <h3>Transaction History</h3>
+    <table>
+      <thead>
+        <tr><th>Pic</th><th>Date</th><th>Type</th><th>Details</th><th>Amount</th><th>Status</th></tr>
+      </thead>
+      <tbody id="historyTable"></tbody>
+    </table>
+  </div>
 </div>
 
 <script>
+// Photo preview
 const photoInput = document.getElementById("photo");
 const photoPreview = document.getElementById("photoPreview");
-
-// Show photo preview when user selects a file
 photoInput.addEventListener("change", function(){
   const file = photoInput.files[0];
   if(file){
     const reader = new FileReader();
-    reader.onload = function(e){
-      photoPreview.src = e.target.result;
-      photoPreview.style.display = "block";
-    }
+    reader.onload = e => { photoPreview.src = e.target.result; photoPreview.style.display="block"; }
     reader.readAsDataURL(file);
-  } else {
-    photoPreview.style.display = "none";
-  }
+  } else photoPreview.style.display="none";
 });
 
+// Registration
 document.getElementById("registerForm").addEventListener("submit", function(e){
   e.preventDefault();
-
   const file = photoInput.files[0];
   const reader = new FileReader();
-
   reader.onload = function(){
-    const photoData = reader.result || "";
-
+    const photoData = reader.result || "https://via.placeholder.com/100";
     const user = {
       firstName: document.getElementById("firstName").value,
       lastName: document.getElementById("lastName").value,
@@ -87,42 +132,81 @@ document.getElementById("registerForm").addEventListener("submit", function(e){
       password: document.getElementById("password").value,
       pin: document.getElementById("pin").value,
       accountType: document.getElementById("accountType").value,
-      photo: photoData || "https://via.placeholder.com/100",
+      photo: photoData,
       balance: 1000,
       requests: [],
       account: { number: 'AC' + Math.floor(100000 + Math.random()*900000) }
     };
-
     let users = JSON.parse(localStorage.getItem("users")) || [];
-    if(users.some(u => u.username === user.username)){
-      alert("❌ Username already exists. Choose another.");
-      return;
-    }
-
+    if(users.some(u=>u.username===user.username)){ alert("Username exists"); return; }
     users.push(user);
     localStorage.setItem("users", JSON.stringify(users));
     localStorage.setItem("loggedInUser", JSON.stringify(user));
-    localStorage.setItem("pinValidated", "true");
-
-    // Hide registration form
-    document.getElementById("registerBox").style.display = "none";
-
-    // Show dashboard
-    const dash = document.getElementById("dashboardContainer");
-    dash.style.display = "block";
-    document.getElementById("userName").innerText = user.fullName;
-    document.getElementById("userPic").src = user.photo;
-    document.getElementById("accountNumber").innerText = user.account.number;
-    document.getElementById("balance").innerText = "$" + user.balance.toFixed(2);
+    document.getElementById("registerBox").style.display="none";
+    openPINModal();
   };
-
-  if(file){
-    reader.readAsDataURL(file);
-  } else {
-    reader.onload(); // Call immediately if no file
-  }
+  if(file) reader.readAsDataURL(file);
+  else reader.onload();
 });
-</script>
 
+// PIN Modal
+let attempts = 0;
+const pinModal = document.getElementById("pinModal");
+function openPINModal(){ pinModal.style.display="flex"; }
+function closePINModal(){ pinModal.style.display="none"; }
+
+function checkPIN(){
+  const user = JSON.parse(localStorage.getItem("loggedInUser"));
+  const pinInput = document.getElementById("pinInput").value;
+  if(pinInput === user.pin){
+    closePINModal();
+    showDashboard(user);
+  } else {
+    attempts++;
+    document.getElementById("pinError").innerText = "Incorrect PIN. Attempts left: " + (3-attempts);
+    if(attempts>=3){ alert("Too many failed attempts"); location.reload(); }
+  }
+}
+
+// Dashboard display
+function showDashboard(user){
+  document.getElementById("dashboardContainer").style.display="block";
+  document.getElementById("userName").innerText = user.fullName;
+  document.getElementById("userPic").src = user.photo;
+  document.getElementById("accountNumber").innerText = user.account.number;
+  document.getElementById("balance").innerText = "$" + user.balance.toFixed(2);
+
+  // Virtual credit card
+  if(!user.creditCard){
+    user.creditCard = {
+      number:'**** **** **** '+Math.floor(1000+Math.random()*9000),
+      expiry:'12/28', cvv:'***',
+      name:user.fullName, type:Math.random()<0.5?'visa':'mastercard'
+    };
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let idx = users.findIndex(u=>u.username===user.username);
+    if(idx!==-1){ users[idx]=user; localStorage.setItem("users",JSON.stringify(users)); }
+    localStorage.setItem("loggedInUser",JSON.stringify(user));
+  }
+  document.getElementById("ccNumber").innerText = user.creditCard.number;
+  document.getElementById("ccExpiry").innerText = user.creditCard.expiry;
+  document.getElementById("ccCVV").innerText = user.creditCard.cvv;
+  document.getElementById("ccName").innerText = user.creditCard.name;
+  document.getElementById("ccPic").src = user.photo;
+  document.getElementById("networkLogo").src = user.creditCard.type==='visa'
+    ? 'https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg'
+    : 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg';
+
+  // Transaction history
+  const table = document.getElementById("historyTable");
+  table.innerHTML = "";
+  (user.requests||[]).forEach(r=>{
+    table.innerHTML += `<tr>
+      <td><img class="tx-pic" src="${user.photo}"></td>
+      <td>${r.date}</td><td>${r.type}</td><td>${r.details}</td><td>$${r.amount.toFixed(2)}</td><td>${r.status}</td>
+    </tr>`;
+  });
+}
+</script>
 </body>
 </html>

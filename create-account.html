@@ -1,336 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Bank of America – Create Account</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root { --boa:#d40000; --ink:#222; --muted:#6b7280; --bg:#f5f6f8; --card:#ffffff; }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: Arial, sans-serif; background: var(--bg); }
-    .wrap { max-width: 860px; margin: 32px auto; padding: 20px; }
-    .card { background: var(--card); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.06); overflow: hidden; }
-    .card-header { padding: 18px 22px; background: var(--boa); color: #fff; }
-    .card-header h2 { margin: 0; font-size: 20px; }
-    .steps { display:flex; gap:8px; padding:12px 16px; background:#fff0f0; color:#fff; }
-    .step { flex:1; height:6px; background:#ffc8c8; border-radius: 6px; overflow: hidden; }
-    .step.active { background:#fff; position: relative; }
-    .step.active::after { content:''; position:absolute; inset:0; background:#fff; }
-    form { padding: 22px; }
-    .grid { display:grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
-    .col-12 { grid-column: span 12; }
-    .col-6 { grid-column: span 6; }
-    .col-4 { grid-column: span 4; }
-    .col-3 { grid-column: span 3; }
-    label { display:block; font-size: 13px; color: var(--ink); margin-bottom: 6px; }
-    input, select { width: 100%; padding: 11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; }
-    input:focus, select:focus { outline:none; border-color: var(--boa); box-shadow: 0 0 0 3px rgba(212,0,0,.12); }
-    .muted { color: var(--muted); font-size: 12px; }
-    .preview { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; display:none; border: 2px solid var(--boa); }
-    .row { display:flex; gap:10px; justify-content: space-between; margin-top: 18px; }
-    .btn { padding: 12px 16px; border:0; border-radius:8px; cursor:pointer; font-weight:600; }
-    .btn-secondary { background:#e5e7eb; color:#111827; }
-    .btn-primary { background: var(--boa); color:#fff; }
-    .req { color: var(--boa); }
-    .terms { display:flex; align-items:center; gap:8px; font-size: 13px; }
-    .error { color: #b91c1c; background:#fee2e2; border:1px solid #fecaca; padding:10px; border-radius:8px; display:none; margin-bottom: 10px; }
-    @media (max-width: 720px) {
-      .col-6, .col-4, .col-3 { grid-column: span 12; }
-      .wrap { padding: 12px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Bank of America – Create Account</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root { --boa:#d40000; --ink:#222; --muted:#6b7280; --bg:#f5f6f8; --card:#ffffff; }
+* { box-sizing: border-box; }
+body { margin:0; font-family: Arial, sans-serif; background: var(--bg); }
+.wrap { max-width: 860px; margin: 32px auto; padding: 20px; }
+.card { background: var(--card); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.06); overflow: hidden; }
+.card-header { padding: 18px 22px; background: var(--boa); color: #fff; }
+.card-header h2 { margin: 0; font-size: 20px; }
+.steps { display:flex; gap:8px; padding:12px 16px; background:#fff0f0; color:#fff; }
+.step { flex:1; height:6px; background:#ffc8c8; border-radius: 6px; overflow: hidden; }
+.step.active { background:#fff; position: relative; }
+.step.active::after { content:''; position:absolute; inset:0; background:#fff; }
+form { padding: 22px; }
+.grid { display:grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
+.col-12 { grid-column: span 12; }
+.col-6 { grid-column: span 6; }
+.col-4 { grid-column: span 4; }
+.col-3 { grid-column: span 3; }
+label { display:block; font-size: 13px; color: var(--ink); margin-bottom: 6px; }
+input, select { width: 100%; padding: 11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; }
+input:focus, select:focus { outline:none; border-color: var(--boa); box-shadow: 0 0 0 3px rgba(212,0,0,.12); }
+.muted { color: var(--muted); font-size: 12px; }
+.preview { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; display:none; border: 2px solid var(--boa); }
+.row { display:flex; gap:10px; justify-content: space-between; margin-top: 18px; }
+.btn { padding: 12px 16px; border:0; border-radius:8px; cursor:pointer; font-weight:600; }
+.btn-secondary { background:#e5e7eb; color:#111827; }
+.btn-primary { background: var(--boa); color:#fff; }
+.req { color: var(--boa); }
+.terms { display:flex; align-items:center; gap:8px; font-size: 13px; }
+.error { color: #b91c1c; background:#fee2e2; border:1px solid #fecaca; padding:10px; border-radius:8px; display:none; margin-bottom: 10px; }
+@media (max-width: 720px) {
+  .col-6, .col-4, .col-3 { grid-column: span 12; }
+  .wrap { padding: 12px; }
+}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="card-header">
-        <h2>Open a Bank of America Account</h2>
-        <div class="steps" aria-hidden="true">
-          <div class="step active" id="s1"></div>
-          <div class="step" id="s2"></div>
-          <div class="step" id="s3"></div>
-          <div class="step" id="s4"></div>
-        </div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="card-header">
+      <h2>Open a Bank of America Account</h2>
+      <div class="steps" aria-hidden="true">
+        <div class="step active" id="s1"></div>
+        <div class="step" id="s2"></div>
+        <div class="step" id="s3"></div>
+        <div class="step" id="s4"></div>
       </div>
-
-      <form id="regForm" novalidate>
-        <div id="alert" class="error"></div>
-
-        <!-- STEP 1: Personal Info -->
-        <section class="step-pane" data-step="1">
-          <div class="grid">
-            <div class="col-6">
-              <label>First Name <span class="req">*</span></label>
-              <input id="firstName" required />
-            </div>
-            <div class="col-6">
-              <label>Last Name <span class="req">*</span></label>
-              <input id="lastName" required />
-            </div>
-            <div class="col-6">
-              <label>Email <span class="req">*</span></label>
-              <input id="email" type="email" required />
-            </div>
-            <div class="col-6">
-              <label>Phone <span class="req">*</span></label>
-              <input id="phone" type="tel" placeholder="+1 555 123 4567" required />
-            </div>
-            <div class="col-6">
-              <label>Date of Birth <span class="req">*</span></label>
-              <input id="dob" type="date" required />
-            </div>
-            <div class="col-6">
-              <label>National ID / SSN <small class="muted">(optional)</small></label>
-              <input id="nationalId" placeholder="Optional" />
-            </div>
-          </div>
-          <div class="row">
-            <span></span>
-            <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-          </div>
-        </section>
-
-        <!-- STEP 2: Address -->
-        <section class="step-pane" data-step="2" hidden>
-          <div class="grid">
-            <div class="col-6">
-              <label>Country <span class="req">*</span></label>
-              <input id="country" required />
-            </div>
-            <div class="col-6">
-              <label>State / Province <span class="req">*</span></label>
-              <input id="state" required />
-            </div>
-            <div class="col-12">
-              <label>Street Address <span class="req">*</span></label>
-              <input id="street" required />
-            </div>
-            <div class="col-6">
-              <label>City <span class="req">*</span></label>
-              <input id="city" required />
-            </div>
-            <div class="col-6">
-              <label>ZIP / Postal Code <span class="req">*</span></label>
-              <input id="zip" required />
-            </div>
-          </div>
-          <div class="row">
-            <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
-            <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-          </div>
-        </section>
-
-        <!-- STEP 3: Account Preferences -->
-        <section class="step-pane" data-step="3" hidden>
-          <div class="grid">
-            <div class="col-6">
-              <label>Account Type <span class="req">*</span></label>
-              <select id="accountType" required>
-                <option value="">Select</option>
-                <option>Checking</option>
-                <option>Savings</option>
-              </select>
-            </div>
-            <div class="col-6">
-              <label>Currency <span class="req">*</span></label>
-              <select id="currency" required>
-                <option value="">Select</option>
-                <option>USD</option>
-                <option>EUR</option>
-                <option>GBP</option>
-                <option>CAD</option>
-                <option>AUD</option>
-              </select>
-            </div>
-            <div class="col-6">
-              <label>Occupation <span class="req">*</span></label>
-              <input id="occupation" required />
-            </div>
-            <div class="col-6">
-              <label>Employer (optional)</label>
-              <input id="employer" />
-            </div>
-          </div>
-          <div class="row">
-            <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
-            <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-          </div>
-        </section>
-
-        <!-- STEP 4: Security & Login -->
-        <section class="step-pane" data-step="4" hidden>
-          <div class="grid">
-            <div class="col-6">
-              <label>Username <span class="req">*</span></label>
-              <input id="username" autocomplete="username" required />
-            </div>
-            <div class="col-6">
-              <label>Password <span class="req">*</span></label>
-              <input id="password" type="password" autocomplete="new-password" required />
-              <div class="muted">Min 6 characters.</div>
-            </div>
-            <div class="col-6">
-              <label>Confirm Password <span class="req">*</span></label>
-              <input id="confirmPassword" type="password" required />
-            </div>
-            <div class="col-3">
-              <label>PIN (4-digit) <span class="req">*</span></label>
-              <input id="pin" type="password" maxlength="4" inputmode="numeric" pattern="\\d{4}" required />
-            </div>
-            <div class="col-3">
-              <label>Confirm PIN <span class="req">*</span></label>
-              <input id="confirmPin" type="password" maxlength="4" inputmode="numeric" pattern="\\d{4}" required />
-            </div>
-
-            <div class="col-12">
-              <label>Profile Photo <small class="muted">(shown on PIN popup)</small></label>
-              <input id="imageUpload" type="file" accept="image/*" />
-              <img id="preview" class="preview" alt="Preview" />
-            </div>
-
-            <div class="col-12 terms">
-              <input id="terms" type="checkbox" />
-              <label for="terms">I agree that this is a demo and my data is stored locally in my browser.</label>
-            </div>
-          </div>
-
-          <div class="row">
-            <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
-            <button type="submit" class="btn btn-primary">Create Account</button>
-          </div>
-        </section>
-      </form>
     </div>
+
+    <form id="regForm" novalidate>
+      <div id="alert" class="error"></div>
+
+      <!-- STEP 1: Personal Info -->
+      <section class="step-pane" data-step="1">
+        <div class="grid">
+          <div class="col-6">
+            <label>First Name <span class="req">*</span></label>
+            <input id="firstName" required />
+          </div>
+          <div class="col-6">
+            <label>Last Name <span class="req">*</span></label>
+            <input id="lastName" required />
+          </div>
+          <div class="col-6">
+            <label>Email <span class="req">*</span></label>
+            <input id="email" type="email" required />
+          </div>
+          <div class="col-6">
+            <label>Phone <span class="req">*</span></label>
+            <input id="phone" type="tel" placeholder="+1 555 123 4567" required />
+          </div>
+          <div class="col-6">
+            <label>Date of Birth <span class="req">*</span></label>
+            <input id="dob" type="date" required />
+          </div>
+          <div class="col-6">
+            <label>National ID / SSN <small class="muted">(optional)</small></label>
+            <input id="nationalId" placeholder="Optional" />
+          </div>
+        </div>
+        <div class="row">
+          <span></span>
+          <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+        </div>
+      </section>
+
+      <!-- STEP 2: Address -->
+      <section class="step-pane" data-step="2" hidden>
+        <div class="grid">
+          <div class="col-6">
+            <label>Country <span class="req">*</span></label>
+            <input id="country" required />
+          </div>
+          <div class="col-6">
+            <label>State / Province <span class="req">*</span></label>
+            <input id="state" required />
+          </div>
+          <div class="col-12">
+            <label>Street Address <span class="req">*</span></label>
+            <input id="street" required />
+          </div>
+          <div class="col-6">
+            <label>City <span class="req">*</span></label>
+            <input id="city" required />
+          </div>
+          <div class="col-6">
+            <label>ZIP / Postal Code <span class="req">*</span></label>
+            <input id="zip" required />
+          </div>
+        </div>
+        <div class="row">
+          <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+          <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+        </div>
+      </section>
+
+      <!-- STEP 3: Account Preferences -->
+      <section class="step-pane" data-step="3" hidden>
+        <div class="grid">
+          <div class="col-6">
+            <label>Account Type <span class="req">*</span></label>
+            <select id="accountType" required>
+              <option value="">Select</option>
+              <option>Checking</option>
+              <option>Savings</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label>Currency <span class="req">*</span></label>
+            <select id="currency" required>
+              <option value="">Select</option>
+              <option>USD</option>
+              <option>EUR</option>
+              <option>GBP</option>
+              <option>CAD</option>
+              <option>AUD</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label>Occupation <span class="req">*</span></label>
+            <input id="occupation" required />
+          </div>
+          <div class="col-6">
+            <label>Employer (optional)</label>
+            <input id="employer" />
+          </div>
+        </div>
+        <div class="row">
+          <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+          <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+        </div>
+      </section>
+
+      <!-- STEP 4: Security & Login -->
+      <section class="step-pane" data-step="4" hidden>
+        <div class="grid">
+          <div class="col-6">
+            <label>Username <span class="req">*</span></label>
+            <input id="username" autocomplete="username" required />
+          </div>
+          <div class="col-6">
+            <label>Password <span class="req">*</span></label>
+            <input id="password" type="password" autocomplete="new-password" required />
+            <div class="muted">Min 6 characters.</div>
+          </div>
+          <div class="col-6">
+            <label>Confirm Password <span class="req">*</span></label>
+            <input id="confirmPassword" type="password" required />
+          </div>
+          <div class="col-3">
+            <label>PIN (4-digit) <span class="req">*</span></label>
+            <input id="pin" type="password" maxlength="4" inputmode="numeric" pattern="\d{4}" required />
+          </div>
+          <div class="col-3">
+            <label>Confirm PIN <span class="req">*</span></label>
+            <input id="confirmPin" type="password" maxlength="4" inputmode="numeric" pattern="\d{4}" required />
+          </div>
+          <div class="col-12">
+            <label>Profile Photo <small class="muted">(shown on PIN popup)</small></label>
+            <input id="imageUpload" type="file" accept="image/*" />
+            <img id="preview" class="preview" alt="Preview" />
+          </div>
+          <div class="col-12 terms">
+            <input id="terms" type="checkbox" />
+            <label for="terms">I agree that this is a demo and my data is stored locally in my browser.</label>
+          </div>
+        </div>
+        <div class="row">
+          <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+          <button type="submit" class="btn btn-primary">Create Account</button>
+        </div>
+      </section>
+    </form>
   </div>
+</div>
 
-  <script>
-    // ---------- Stepper ----------
-    let step = 1;
-    const panes = document.querySelectorAll(".step-pane");
-    function updateStepper() {
-      panes.forEach(p => p.hidden = (Number(p.dataset.step) !== step));
-      for (let i = 1; i <= 4; i++) {
-        document.getElementById('s'+i).classList.toggle('active', i <= step);
-      }
-      document.getElementById("alert").style.display = "none";
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let step = 1;
+  const panes = document.querySelectorAll(".step-pane");
+  const alertBox = document.getElementById("alert");
+
+  function updateStepper() {
+    panes.forEach(p => p.hidden = (Number(p.dataset.step) !== step));
+    for (let i = 1; i <= 4; i++) {
+      document.getElementById('s'+i).classList.toggle('active', i <= step);
     }
-    function nextStep(){ if (step < 4) { step++; updateStepper(); } }
-    function prevStep(){ if (step > 1) { step--; updateStepper(); } }
-    updateStepper();
+    alertBox.style.display = "none";
+  }
 
-    // ---------- Image preview ----------
-    const imgInput = document.getElementById("imageUpload");
-    const preview = document.getElementById("preview");
-    let imageData = "";
-    imgInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        imageData = ev.target.result;
-        preview.src = imageData;
-        preview.style.display = "block";
-      };
-      reader.readAsDataURL(file);
-    });
+  window.nextStep = () => { if (step < 4) { step++; updateStepper(); } }
+  window.prevStep = () => { if (step > 1) { step--; updateStepper(); } }
 
-    // ---------- Helpers ----------
-    const byId = id => document.getElementById(id);
-    const showError = msg => {
-      const a = byId("alert");
-      a.textContent = msg;
-      a.style.display = "block";
-      a.focus();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  updateStepper();
+
+  // Image preview
+  let imageData = "";
+  const imgInput = document.getElementById("imageUpload");
+  const preview = document.getElementById("preview");
+  imgInput.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      imageData = ev.target.result;
+      preview.src = imageData;
+      preview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Helper
+  const byId = id => document.getElementById(id);
+  const showError = msg => {
+    alertBox.textContent = msg;
+    alertBox.style.display = "block";
+    alertBox.focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Submit
+  byId("regForm").addEventListener("submit", e => {
+    e.preventDefault();
+
+    const requiredIds = [
+      "firstName","lastName","email","phone","dob",
+      "country","state","street","city","zip",
+      "accountType","currency","occupation",
+      "username","password","confirmPassword","pin","confirmPin"
+    ];
+    for (const id of requiredIds) {
+      if (!byId(id).value.trim()) return showError("Please complete all required fields.");
+    }
+
+    const email = byId("email").value.trim();
+    if (!/^\S+@\S+\.\S+$/.test(email)) return showError("Please enter a valid email address.");
+
+    const password = byId("password").value;
+    if (password.length < 6) return showError("Password must be at least 6 characters.");
+    if (password !== byId("confirmPassword").value) return showError("Passwords do not match.");
+
+    const pin = byId("pin").value.trim();
+    const confirmPin = byId("confirmPin").value.trim();
+    if (!/^\d{4}$/.test(pin)) return showError("PIN must be exactly 4 digits.");
+    if (pin !== confirmPin) return showError("PINs do not match.");
+
+    if (!byId("terms").checked) return showError("Please agree to the demo terms to continue.");
+
+    const user = {
+      id: "u_" + Math.random().toString(36).slice(2, 10),
+      createdAt: new Date().toISOString(),
+      firstName: byId("firstName").value.trim(),
+      lastName: byId("lastName").value.trim(),
+      fullName: byId("firstName").value.trim() + " " + byId("lastName").value.trim(),
+      email,
+      phone: byId("phone").value.trim(),
+      dob: byId("dob").value,
+      nationalId: byId("nationalId").value.trim(),
+      address: {
+        country: byId("country").value.trim(),
+        state: byId("state").value.trim(),
+        street: byId("street").value.trim(),
+        city: byId("city").value.trim(),
+        zip: byId("zip").value.trim()
+      },
+      account: {
+        number: "BOA" + Math.floor(100000000 + Math.random() * 900000000),
+        type: byId("accountType").value,
+        currency: byId("currency").value
+      },
+      occupation: byId("occupation").value.trim(),
+      employer: byId("employer").value.trim(),
+      username: byId("username").value.trim(),
+      password,
+      pin,
+      image: imageData || "",
+      balance: 0,
+      status: "active",
+      history: [],
+      notifications: []
     };
 
-    // ---------- Submit ----------
-    byId("regForm").addEventListener("submit", (e) => {
-      e.preventDefault();
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    if (users.some(u => u.username.toLowerCase() === user.username.toLowerCase())) {
+      return showError("That username is already taken. Please choose another.");
+    }
+    if (users.some(u => u.email.toLowerCase() === user.email.toLowerCase())) {
+      return showError("An account with this email already exists.");
+    }
 
-      // Basic validations
-      const requiredIds = [
-        "firstName","lastName","email","phone","dob",
-        "country","state","street","city","zip",
-        "accountType","currency","occupation",
-        "username","password","confirmPassword","pin","confirmPin"
-      ];
-      for (const id of requiredIds) {
-        if (!byId(id).value.trim()) {
-          showError("Please complete all required fields.");
-          return;
-        }
-      }
-      const email = byId("email").value.trim();
-      if (!/^\S+@\S+\.\S+$/.test(email)) return showError("Please enter a valid email address.");
+    users.push(user);
+    localStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("loggedInUser", JSON.stringify(user));
 
-      const password = byId("password").value;
-      if (password.length < 6) return showError("Password must be at least 6 characters.");
+    // Show PIN popup (simplified)
+    const enteredPin = prompt("✅ Enter your 4-digit PIN to continue:");
+    if (enteredPin === user.pin) {
+      window.location.href = "dashboard.html"; // Redirect to dashboard
+    } else {
+      alert("Incorrect PIN. Please try logging in.");
+    }
+  });
+});
+</script>
 
-      if (password !== byId("confirmPassword").value) return showError("Passwords do not match.");
-
-      const pin = byId("pin").value.trim();
-      const confirmPin = byId("confirmPin").value.trim();
-      if (!/^\d{4}$/.test(pin)) return showError("PIN must be exactly 4 digits.");
-      if (pin !== confirmPin) return showError("PINs do not match.");
-
-      if (!byId("terms").checked) return showError("Please agree to the demo terms to continue.");
-
-      // Build user object
-      const user = {
-        id: "u_" + Math.random().toString(36).slice(2, 10),
-        createdAt: new Date().toISOString(),
-        firstName: byId("firstName").value.trim(),
-        lastName: byId("lastName").value.trim(),
-        fullName: byId("firstName").value.trim() + " " + byId("lastName").value.trim(),
-        email,
-        phone: byId("phone").value.trim(),
-        dob: byId("dob").value,
-        nationalId: byId("nationalId").value.trim(),
-        address: {
-          country: byId("country").value.trim(),
-          state: byId("state").value.trim(),
-          street: byId("street").value.trim(),
-          city: byId("city").value.trim(),
-          zip: byId("zip").value.trim()
-        },
-        account: {
-          number: "BOA" + Math.floor(100000000 + Math.random() * 900000000),
-          type: byId("accountType").value,
-          currency: byId("currency").value
-        },
-        occupation: byId("occupation").value.trim(),
-        employer: byId("employer").value.trim(),
-        username: byId("username").value.trim(),
-        password,
-        pin,
-        image: imageData || "",
-
-        // Banking state
-        balance: 0,
-        status: "active",     // active | locked | suspended
-        locked: false,
-        history: [],
-        notifications: []
-      };
-
-      // Save to localStorage
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-
-      // Uniqueness checks
-      if (users.some(u => u.username.toLowerCase() === user.username.toLowerCase())) {
-        return showError("That username is already taken. Please choose another.");
-      }
-      if (users.some(u => u.email.toLowerCase() === user.email.toLowerCase())) {
-        return showError("An account with this email already exists.");
-      }
-
-      users.push(user);
-      localStorage.setItem("users", JSON.stringify(users));
-
-      alert("✅ Account created successfully! Please login.");
-      window.location.href = "login.html";
-    });
-  </script>
 </body>
 </html>

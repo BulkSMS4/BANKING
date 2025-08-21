@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Account - Bank of America</title>
+  <title>Create Account</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,98 +11,141 @@
       margin: 0;
       padding: 20px;
     }
-
     .container {
       max-width: 500px;
       margin: auto;
       background: #fff;
-      padding: 25px;
-      border-radius: 8px;
+      padding: 20px;
+      border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     h1 {
-      font-size: 22px;
-      margin-bottom: 15px;
+      text-align: center;
+      color: #222;
     }
-
-    p {
-      font-size: 15px;
-      margin-bottom: 20px;
-    }
-
     .steps {
       margin: 15px 0;
-      font-size: 16px;
+      text-align: center;
     }
-
-    label {
-      display: block;
-      margin: 12px 0 6px;
+    .steps span {
+      margin: 0 10px;
       font-weight: bold;
+      color: #777;
     }
-
-    input, select, button {
+    .steps .active {
+      color: green;
+    }
+    .form-step {
+      display: none;
+    }
+    .form-step.active {
+      display: block;
+    }
+    input, select {
       width: 100%;
-      padding: 12px;
-      font-size: 15px;
+      padding: 10px;
+      margin: 8px 0;
       border: 1px solid #ccc;
-      border-radius: 6px;
-      box-sizing: border-box;
+      border-radius: 5px;
     }
-
     button {
-      margin-top: 20px;
-      background: #0070c9;
+      padding: 10px 20px;
+      background: green;
       color: #fff;
       border: none;
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 16px;
     }
-
-    button:hover {
-      background: #005fa3;
+    button:disabled {
+      background: gray;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Bank of America - Create Account</h1>
-    <p>
-      Welcome to Bank of America online registration.  
-      Please fill out the form below carefully to open your secure digital account.
-    </p>
-
+    <h1>Create Account</h1>
+    <p>Welcome! Please complete the steps below to create your account.</p>
     <div class="steps">
-      <b style="color:green;">Step 1</b> → Step 2 → Step 3 → Step 4
+      <span id="step1" class="active">Step 1</span> →
+      <span id="step2">Step 2</span> →
+      <span id="step3">Step 3</span> →
+      <span id="step4">Step 4</span>
     </div>
 
-    <form action="pin.html" method="POST">
-      <label for="fname">First Name</label>
-      <input type="text" id="fname" name="fname" placeholder="e.g., John" required>
+    <form id="multiStepForm">
+      <!-- Step 1 -->
+      <div class="form-step active">
+        <input type="text" placeholder="First Name" required>
+        <input type="text" placeholder="Last Name" required>
+        <input type="email" placeholder="Email" required>
+        <input type="tel" placeholder="Phone Number" required>
+        <button type="button" onclick="nextStep()">Next</button>
+      </div>
 
-      <label for="lname">Last Name</label>
-      <input type="text" id="lname" name="lname" placeholder="e.g., Smith" required>
+      <!-- Step 2 -->
+      <div class="form-step">
+        <input type="text" placeholder="Username" required>
+        <input type="password" placeholder="Password" required>
+        <input type="password" placeholder="Confirm Password" required>
+        <button type="button" onclick="prevStep()">Back</button>
+        <button type="button" onclick="nextStep()">Next</button>
+      </div>
 
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" placeholder="e.g., john.smith@email.com" required>
+      <!-- Step 3 -->
+      <div class="form-step">
+        <input type="text" placeholder="Address" required>
+        <input type="text" placeholder="City" required>
+        <input type="text" placeholder="State" required>
+        <input type="text" placeholder="Zip Code" required>
+        <button type="button" onclick="prevStep()">Back</button>
+        <button type="button" onclick="nextStep()">Next</button>
+      </div>
 
-      <label for="phone">Phone</label>
-      <input type="tel" id="phone" name="phone" placeholder="e.g., +1 555 123 4567" required>
-
-      <label for="gender">Gender</label>
-      <select id="gender" name="gender" required>
-        <option value="">-- Select --</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-      </select>
-
-      <label for="id">National ID / SSN</label>
-      <input type="text" id="id" name="id" placeholder="e.g., 123-45-6789" required>
-
-      <button type="submit">Next</button>
+      <!-- Step 4 -->
+      <div class="form-step">
+        <input type="text" placeholder="National ID / SSN" required>
+        <select required>
+          <option value="">Select Account Type</option>
+          <option>Checking</option>
+          <option>Savings</option>
+        </select>
+        <button type="button" onclick="prevStep()">Back</button>
+        <button type="submit">Finish</button>
+      </div>
     </form>
   </div>
+
+  <script>
+    let currentStep = 0;
+    const steps = document.querySelectorAll(".form-step");
+    const stepIndicators = [document.getElementById("step1"), document.getElementById("step2"), document.getElementById("step3"), document.getElementById("step4")];
+
+    function showStep(n) {
+      steps.forEach((step, i) => {
+        step.classList.toggle("active", i === n);
+        stepIndicators[i].classList.toggle("active", i === n);
+      });
+    }
+
+    function nextStep() {
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        showStep(currentStep);
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        showStep(currentStep);
+      }
+    }
+
+    document.getElementById("multiStepForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      alert("✅ Account created successfully!");
+      window.location.href = "user-dashboard.html"; // redirect after success
+    });
+  </script>
 </body>
 </html>

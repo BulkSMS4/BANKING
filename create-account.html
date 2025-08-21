@@ -1,334 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Bank of America – Create Account</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-:root { --boa:#d40000; --ink:#222; --muted:#6b7280; --bg:#f5f6f8; --card:#ffffff; }
-* { box-sizing: border-box; }
-body { margin:0; font-family: Arial, sans-serif; background: var(--bg); }
-.wrap { max-width: 860px; margin: 32px auto; padding: 20px; }
-.card { background: var(--card); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.06); overflow: hidden; }
-.card-header { padding: 18px 22px; background: var(--boa); color: #fff; }
-.card-header h2 { margin: 0; font-size: 20px; }
-.steps { display:flex; gap:8px; padding:12px 16px; background:#fff0f0; color:#fff; }
-.step { flex:1; height:6px; background:#ffc8c8; border-radius: 6px; overflow: hidden; }
-.step.active { background:#fff; position: relative; }
-.step.active::after { content:''; position:absolute; inset:0; background:#fff; }
-form { padding: 22px; }
-.grid { display:grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
-.col-12 { grid-column: span 12; }
-.col-6 { grid-column: span 6; }
-.col-4 { grid-column: span 4; }
-.col-3 { grid-column: span 3; }
-label { display:block; font-size: 13px; color: var(--ink); margin-bottom: 6px; }
-input, select { width: 100%; padding: 11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; }
-input:focus, select:focus { outline:none; border-color: var(--boa); box-shadow: 0 0 0 3px rgba(212,0,0,.12); }
-.muted { color: var(--muted); font-size: 12px; }
-.preview { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; display:none; border: 2px solid var(--boa); }
-.row { display:flex; gap:10px; justify-content: space-between; margin-top: 18px; }
-.btn { padding: 12px 16px; border:0; border-radius:8px; cursor:pointer; font-weight:600; }
-.btn-secondary { background:#e5e7eb; color:#111827; }
-.btn-primary { background: var(--boa); color:#fff; }
-.req { color: var(--boa); }
-.terms { display:flex; align-items:center; gap:8px; font-size: 13px; }
-.error { color: #b91c1c; background:#fee2e2; border:1px solid #fecaca; padding:10px; border-radius:8px; display:none; margin-bottom: 10px; }
-@media (max-width: 720px) {
-  .col-6, .col-4, .col-3 { grid-column: span 12; }
-  .wrap { padding: 12px; }
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Bank of America - Create Account</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+    .container { max-width: 700px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
+    .step-pane { display: none; }
+    .step-pane.active { display: block; }
+    .alert { display: none; padding: 10px; margin-bottom: 15px; background: #ffdddd; border: 1px solid #cc0000; }
+    .preview-img { display: none; max-width: 150px; border-radius: 8px; margin-top: 10px; }
+    .stepper span.active { font-weight: bold; color: green; }
+    .pin-popup {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      align-items: center; justify-content: center;
+    }
+    .pin-box {
+      background: #fff; padding: 20px; border-radius: 10px; text-align: center;
+      width: 300px;
+    }
+    .pin-box img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+    .pin-box input { font-size: 20px; padding: 10px; text-align: center; width: 100px; letter-spacing: 5px; }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <h2>Bank of America - Create Account</h2>
+    <p>Welcome to Bank of America online registration. Please fill out the form below carefully to open your secure digital account. Ensure all information matches your government-issued identification.</p>
+    <div id="alert" class="alert"></div>
 
-<div class="wrap">
-  <div class="card">
-    <div class="card-header">
-      <h2>Open a Bank of America Account</h2>
-      <div class="steps" aria-hidden="true">
-        <div class="step active" id="s1"></div>
-        <div class="step" id="s2"></div>
-        <div class="step" id="s3"></div>
-        <div class="step" id="s4"></div>
-      </div>
+    <div class="stepper">
+      <span id="s1">Step 1</span> → 
+      <span id="s2">Step 2</span> → 
+      <span id="s3">Step 3</span> → 
+      <span id="s4">Step 4</span>
     </div>
 
-    <form id="regForm" novalidate>
-      <div id="alert" class="error"></div>
+    <form id="regForm">
+      <!-- Step 1 -->
+      <div class="step-pane" data-step="1">
+        <p><input id="firstName" placeholder="First Name (e.g., John)"></p>
+        <p><input id="lastName" placeholder="Last Name (e.g., Smith)"></p>
+        <p><input id="email" type="email" placeholder="Email (e.g., john.smith@email.com)"></p>
+        <p><input id="phone" type="tel" placeholder="Phone (e.g., +1 555 123 4567)"></p>
+        <p><input id="dob" type="date" placeholder="Date of Birth"></p>
+        <p><input id="nationalId" placeholder="National ID / SSN (e.g., 123-45-6789)"></p>
+        <button type="button" onclick="nextStep()">Next</button>
+      </div>
 
-      <!-- STEP 1: Personal Info -->
-      <section class="step-pane" data-step="1">
-        <div class="grid">
-          <div class="col-6">
-            <label>First Name <span class="req">*</span></label>
-            <input id="firstName" required />
-          </div>
-          <div class="col-6">
-            <label>Last Name <span class="req">*</span></label>
-            <input id="lastName" required />
-          </div>
-          <div class="col-6">
-            <label>Email <span class="req">*</span></label>
-            <input id="email" type="email" required />
-          </div>
-          <div class="col-6">
-            <label>Phone <span class="req">*</span></label>
-            <input id="phone" type="tel" placeholder="+1 555 123 4567" required />
-          </div>
-          <div class="col-6">
-            <label>Date of Birth <span class="req">*</span></label>
-            <input id="dob" type="date" required />
-          </div>
-          <div class="col-6">
-            <label>National ID / SSN <small class="muted">(optional)</small></label>
-            <input id="nationalId" placeholder="Optional" />
-          </div>
-        </div>
-        <div class="row">
-          <span></span>
-          <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-        </div>
-      </section>
+      <!-- Step 2 -->
+      <div class="step-pane" data-step="2">
+        <p><input id="country" placeholder="Country (e.g., United States)"></p>
+        <p><input id="state" placeholder="State (e.g., California)"></p>
+        <p><input id="street" placeholder="Street (e.g., 123 Main St)"></p>
+        <p><input id="city" placeholder="City (e.g., Los Angeles)"></p>
+        <p><input id="zip" placeholder="Zip Code (e.g., 90001)"></p>
+        <button type="button" onclick="prevStep()">Back</button>
+        <button type="button" onclick="nextStep()">Next</button>
+      </div>
 
-      <!-- STEP 2: Address -->
-      <section class="step-pane" data-step="2" hidden>
-        <div class="grid">
-          <div class="col-6">
-            <label>Country <span class="req">*</span></label>
-            <input id="country" required />
-          </div>
-          <div class="col-6">
-            <label>State / Province <span class="req">*</span></label>
-            <input id="state" required />
-          </div>
-          <div class="col-12">
-            <label>Street Address <span class="req">*</span></label>
-            <input id="street" required />
-          </div>
-          <div class="col-6">
-            <label>City <span class="req">*</span></label>
-            <input id="city" required />
-          </div>
-          <div class="col-6">
-            <label>ZIP / Postal Code <span class="req">*</span></label>
-            <input id="zip" required />
-          </div>
-        </div>
-        <div class="row">
-          <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
-          <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-        </div>
-      </section>
+      <!-- Step 3 -->
+      <div class="step-pane" data-step="3">
+        <p><select id="accountType"><option>Savings</option><option>Checking</option></select></p>
+        <p><select id="currency"><option>USD</option><option>EUR</option><option>GBP</option></select></p>
+        <p><input id="occupation" placeholder="Occupation (e.g., Software Engineer)"></p>
+        <p><input id="employer" placeholder="Employer (e.g., Google Inc.)"></p>
+        <p><input id="username" placeholder="Username (e.g., johnsmith123)"></p>
+        <p><input id="password" type="password" placeholder="Password (min 8 characters)"></p>
+        <p><input id="confirmPassword" type="password" placeholder="Confirm Password"></p>
+        <p><input id="pin" type="password" maxlength="4" placeholder="4-digit PIN (e.g., 1234)"></p>
+        <p><input id="confirmPin" type="password" maxlength="4" placeholder="Confirm PIN"></p>
+        <p><input id="imageUpload" type="file" accept="image/*"></p>
+        <img id="preview" class="preview-img">
+        <p><label><input type="checkbox" id="terms"> I agree to the Bank of America terms and conditions</label></p>
+        <button type="button" onclick="prevStep()">Back</button>
+        <button type="button" onclick="nextStep()">Next</button>
+      </div>
 
-      <!-- STEP 3: Account Preferences -->
-      <section class="step-pane" data-step="3" hidden>
-        <div class="grid">
-          <div class="col-6">
-            <label>Account Type <span class="req">*</span></label>
-            <select id="accountType" required>
-              <option value="">Select</option>
-              <option>Checking</option>
-              <option>Savings</option>
-            </select>
-          </div>
-          <div class="col-6">
-            <label>Currency <span class="req">*</span></label>
-            <select id="currency" required>
-              <option value="">Select</option>
-              <option>USD</option>
-              <option>EUR</option>
-              <option>GBP</option>
-              <option>CAD</option>
-              <option>AUD</option>
-            </select>
-          </div>
-          <div class="col-6">
-            <label>Occupation <span class="req">*</span></label>
-            <input id="occupation" required />
-          </div>
-          <div class="col-6">
-            <label>Employer (optional)</label>
-            <input id="employer" />
-          </div>
-        </div>
-        <div class="row">
-          <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
-          <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-        </div>
-      </section>
-
-      <!-- STEP 4: Security & Login -->
-      <section class="step-pane" data-step="4" hidden>
-        <div class="grid">
-          <div class="col-6">
-            <label>Username <span class="req">*</span></label>
-            <input id="username" autocomplete="username" required />
-          </div>
-          <div class="col-6">
-            <label>Password <span class="req">*</span></label>
-            <input id="password" type="password" autocomplete="new-password" required />
-            <div class="muted">Min 6 characters.</div>
-          </div>
-          <div class="col-6">
-            <label>Confirm Password <span class="req">*</span></label>
-            <input id="confirmPassword" type="password" required />
-          </div>
-          <div class="col-3">
-            <label>PIN (4-digit) <span class="req">*</span></label>
-            <input id="pin" type="password" maxlength="4" inputmode="numeric" pattern="\d{4}" required />
-          </div>
-          <div class="col-3">
-            <label>Confirm PIN <span class="req">*</span></label>
-            <input id="confirmPin" type="password" maxlength="4" inputmode="numeric" pattern="\d{4}" required />
-          </div>
-          <div class="col-12">
-            <label>Profile Photo <small class="muted">(shown on PIN popup)</small></label>
-            <input id="imageUpload" type="file" accept="image/*" />
-            <img id="preview" class="preview" alt="Preview" />
-          </div>
-          <div class="col-12 terms">
-            <input id="terms" type="checkbox" />
-            <label for="terms">I agree that this is a demo and my data is stored locally in my browser.</label>
-          </div>
-        </div>
-        <div class="row">
-          <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
-          <button type="submit" class="btn btn-primary">Create Account</button>
-        </div>
-      </section>
+      <!-- Step 4 -->
+      <div class="step-pane" data-step="4">
+        <p>Review your details carefully before submitting your application.</p>
+        <button type="button" onclick="prevStep()">Back</button>
+        <button type="submit">Create Account</button>
+      </div>
     </form>
   </div>
-</div>
+
+  <!-- PIN Popup -->
+  <div id="pinPopup" class="pin-popup">
+    <div class="pin-box">
+      <img id="pinPhoto" src="">
+      <h3>Enter Your 4-digit PIN</h3>
+      <input id="pinEntry" type="password" maxlength="4">
+      <div style="margin-top:15px;">
+        <button onclick="checkPin()">Submit</button>
+      </div>
+    </div>
+  </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   let step = 1;
   const panes = document.querySelectorAll(".step-pane");
   const alertBox = document.getElementById("alert");
+  const pinPopup = document.getElementById("pinPopup");
+  const pinPhoto = document.getElementById("pinPhoto");
+  let imageData = "";
+  let newUser = null;
 
   function updateStepper() {
-    panes.forEach(p => p.hidden = (Number(p.dataset.step) !== step));
-    for (let i = 1; i <= 4; i++) {
-      document.getElementById('s'+i).classList.toggle('active', i <= step);
+    panes.forEach(p => p.style.display = (Number(p.dataset.step) === step) ? "block" : "none");
+    for (let i=1;i<=4;i++) {
+      document.getElementById("s"+i).classList.toggle("active", i <= step);
     }
     alertBox.style.display = "none";
   }
-
-  window.nextStep = () => { if (step < 4) { step++; updateStepper(); } }
-  window.prevStep = () => { if (step > 1) { step--; updateStepper(); } }
-
+  window.nextStep = ()=>{ if(step<4){step++;updateStepper();} }
+  window.prevStep = ()=>{ if(step>1){step--;updateStepper();} }
   updateStepper();
 
   // Image preview
-  let imageData = "";
   const imgInput = document.getElementById("imageUpload");
   const preview = document.getElementById("preview");
-  imgInput.addEventListener("change", e => {
+  imgInput.addEventListener("change", e=>{
     const file = e.target.files[0];
-    if (!file) return;
+    if(!file) return;
     const reader = new FileReader();
-    reader.onload = ev => {
+    reader.onload = ev=>{
       imageData = ev.target.result;
       preview.src = imageData;
-      preview.style.display = "block";
+      preview.style.display="block";
     };
     reader.readAsDataURL(file);
   });
 
-  // Helper
-  const byId = id => document.getElementById(id);
-  const showError = msg => {
-    alertBox.textContent = msg;
-    alertBox.style.display = "block";
-    alertBox.focus();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  // Submit
-  byId("regForm").addEventListener("submit", e => {
+  // Submit handler
+  document.getElementById("regForm").addEventListener("submit", e=>{
     e.preventDefault();
-
-    const requiredIds = [
-      "firstName","lastName","email","phone","dob",
-      "country","state","street","city","zip",
-      "accountType","currency","occupation",
-      "username","password","confirmPassword","pin","confirmPin"
-    ];
-    for (const id of requiredIds) {
-      if (!byId(id).value.trim()) return showError("Please complete all required fields.");
+    function byId(id){return document.getElementById(id).value.trim();}
+    if(!byId("firstName")||!byId("lastName")||!byId("email")||!byId("phone")||!byId("dob")
+      ||!byId("country")||!byId("state")||!byId("street")||!byId("city")||!byId("zip")
+      ||!byId("accountType")||!byId("currency")||!byId("occupation")
+      ||!byId("username")||!byId("password")||!byId("confirmPassword")||!byId("pin")||!byId("confirmPin")){
+      alertBox.innerText="Please complete all required fields.";
+      alertBox.style.display="block"; return;
     }
+    if(byId("password")!==byId("confirmPassword")){alertBox.innerText="Passwords do not match.";alertBox.style.display="block";return;}
+    if(byId("pin")!==byId("confirmPin")){alertBox.innerText="PINs do not match.";alertBox.style.display="block";return;}
+    if(!document.getElementById("terms").checked){alertBox.innerText="Please accept terms.";alertBox.style.display="block";return;}
 
-    const email = byId("email").value.trim();
-    if (!/^\S+@\S+\.\S+$/.test(email)) return showError("Please enter a valid email address.");
-
-    const password = byId("password").value;
-    if (password.length < 6) return showError("Password must be at least 6 characters.");
-    if (password !== byId("confirmPassword").value) return showError("Passwords do not match.");
-
-    const pin = byId("pin").value.trim();
-    const confirmPin = byId("confirmPin").value.trim();
-    if (!/^\d{4}$/.test(pin)) return showError("PIN must be exactly 4 digits.");
-    if (pin !== confirmPin) return showError("PINs do not match.");
-
-    if (!byId("terms").checked) return showError("Please agree to the demo terms to continue.");
-
-    const user = {
-      id: "u_" + Math.random().toString(36).slice(2, 10),
-      createdAt: new Date().toISOString(),
-      firstName: byId("firstName").value.trim(),
-      lastName: byId("lastName").value.trim(),
-      fullName: byId("firstName").value.trim() + " " + byId("lastName").value.trim(),
-      email,
-      phone: byId("phone").value.trim(),
-      dob: byId("dob").value,
-      nationalId: byId("nationalId").value.trim(),
-      address: {
-        country: byId("country").value.trim(),
-        state: byId("state").value.trim(),
-        street: byId("street").value.trim(),
-        city: byId("city").value.trim(),
-        zip: byId("zip").value.trim()
-      },
-      account: {
-        number: "BOA" + Math.floor(100000000 + Math.random() * 900000000),
-        type: byId("accountType").value,
-        currency: byId("currency").value
-      },
-      occupation: byId("occupation").value.trim(),
-      employer: byId("employer").value.trim(),
-      username: byId("username").value.trim(),
-      password,
-      pin,
-      image: imageData || "",
-      balance: 0,
-      status: "active",
-      history: [],
-      notifications: []
+    newUser = {
+      username: byId("username"),
+      pin: byId("pin"),
+      firstName: byId("firstName"),
+      lastName: byId("lastName"),
+      email: byId("email"),
+      image: imageData
     };
-
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    if (users.some(u => u.username.toLowerCase() === user.username.toLowerCase())) {
-      return showError("That username is already taken. Please choose another.");
-    }
-    if (users.some(u => u.email.toLowerCase() === user.email.toLowerCase())) {
-      return showError("An account with this email already exists.");
-    }
-
-    users.push(user);
+    const users = JSON.parse(localStorage.getItem("users")||"[]");
+    users.push(newUser);
     localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("loggedInUser", JSON.stringify(user));
+    localStorage.setItem("loggedInUser", JSON.stringify(newUser));
 
-    // Show PIN popup (simplified)
-    const enteredPin = prompt("✅ Enter your 4-digit PIN to continue:");
-    if (enteredPin === user.pin) {
-      window.location.href = "dashboard.html"; // Redirect to dashboard
-    } else {
-      alert("Incorrect PIN. Please try logging in.");
-    }
+    // Show PIN popup with photo
+    if(imageData){ pinPhoto.src = imageData; }
+    pinPopup.style.display="flex";
   });
+
+  window.checkPin = ()=>{
+    const entry = document.getElementById("pinEntry").value.trim();
+    if(newUser && entry === newUser.pin){
+      window.location.href="user-dashboard.html";
+    } else {
+      alert("Incorrect PIN. Try again.");
+    }
+  };
 });
 </script>
-
 </body>
 </html>

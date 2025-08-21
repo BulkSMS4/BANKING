@@ -1,152 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Create UBA Account</title>
+  <meta charset="UTF-8" />
+  <title>Bank of America – Create Account</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    input, select, button { width: 100%; padding: 10px; margin: 10px 0; }
-    button { background: #d40000; color: white; border: none; cursor: pointer; }
-    .form-step { display: none; }
-    .form-step.active { display: block; }
-    .step-buttons { display: flex; justify-content: space-between; }
+    :root { --boa:#d40000; --ink:#222; --muted:#6b7280; --bg:#f5f6f8; --card:#ffffff; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Arial, sans-serif; background: var(--bg); }
+    .wrap { max-width: 860px; margin: 32px auto; padding: 20px; }
+    .card { background: var(--card); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.06); overflow: hidden; }
+    .card-header { padding: 18px 22px; background: var(--boa); color: #fff; }
+    .card-header h2 { margin: 0; font-size: 20px; }
+    .steps { display:flex; gap:8px; padding:12px 16px; background:#fff0f0; color:#fff; }
+    .step { flex:1; height:6px; background:#ffc8c8; border-radius: 6px; overflow: hidden; }
+    .step.active { background:#fff; position: relative; }
+    .step.active::after { content:''; position:absolute; inset:0; background:#fff; }
+    form { padding: 22px; }
+    .grid { display:grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
+    .col-12 { grid-column: span 12; }
+    .col-6 { grid-column: span 6; }
+    .col-4 { grid-column: span 4; }
+    .col-3 { grid-column: span 3; }
+    label { display:block; font-size: 13px; color: var(--ink); margin-bottom: 6px; }
+    input, select { width: 100%; padding: 11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; }
+    input:focus, select:focus { outline:none; border-color: var(--boa); box-shadow: 0 0 0 3px rgba(212,0,0,.12); }
+    .muted { color: var(--muted); font-size: 12px; }
+    .preview { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; display:none; border: 2px solid var(--boa); }
+    .row { display:flex; gap:10px; justify-content: space-between; margin-top: 18px; }
+    .btn { padding: 12px 16px; border:0; border-radius:8px; cursor:pointer; font-weight:600; }
+    .btn-secondary { background:#e5e7eb; color:#111827; }
+    .btn-primary { background: var(--boa); color:#fff; }
+    .req { color: var(--boa); }
+    .terms { display:flex; align-items:center; gap:8px; font-size: 13px; }
+    .error { color: #b91c1c; background:#fee2e2; border:1px solid #fecaca; padding:10px; border-radius:8px; display:none; margin-bottom: 10px; }
+    @media (max-width: 720px) {
+      .col-6, .col-4, .col-3 { grid-column: span 12; }
+      .wrap { padding: 12px; }
+    }
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">
+        <h2>Open a Bank of America Account</h2>
+        <div class="steps" aria-hidden="true">
+          <div class="step active" id="s1"></div>
+          <div class="step" id="s2"></div>
+          <div class="step" id="s3"></div>
+          <div class="step" id="s4"></div>
+        </div>
+      </div>
 
-<h2>CREATE YOUR BANK ACCOUNT</h2>
-<p>Fill all the form fields to proceed.</p>
+      <form id="regForm" novalidate>
+        <div id="alert" class="error"></div>
 
-<form id="multiStepForm">
-  <!-- Step 1: Personal Info -->
-  <div class="form-step active">
-    <h3>Personal Info</h3>
-    <input type="text" id="first" placeholder="First Name (e.g. John)" required />
-    <input type="text" id="last" placeholder="Last Name (e.g. Doe)" required />
-    <select id="currency" required>
-      <option value="">Select Currency</option>
-      <option>USD</option>
-      <option>GHS</option>
-      <option>EUR</option>
-      <option>GBP</option>
-      <option>CAD</option>
-      <option>AUD</option>
-      <option>NGN</option>
-      <option>INR</option>
-    </select>
-    <select id="account" required>
-      <option value="">Select Account Type</option>
-      <option>Savings</option>
-      <option>Current</option>
-    </select>
-    <input type="text" id="occupation" placeholder="Occupation (e.g. Engineer)" required />
-    <input type="text" id="country" placeholder="Country (e.g. USA)" required />
-    <input type="text" id="address" placeholder="Street Address" required />
-    <input type="text" id="city" placeholder="City" required />
-    <input type="text" id="state" placeholder="State" required />
-    <input type="text" id="zip" placeholder="Zip Code" required />
-    <div class="step-buttons">
-      <span></span>
-      <button type="button" onclick="nextStep()">Next</button>
+        <!-- STEP 1: Personal Info -->
+        <section class="step-pane" data-step="1">
+          <div class="grid">
+            <div class="col-6">
+              <label>First Name <span class="req">*</span></label>
+              <input id="firstName" required />
+            </div>
+            <div class="col-6">
+              <label>Last Name <span class="req">*</span></label>
+              <input id="lastName" required />
+            </div>
+            <div class="col-6">
+              <label>Email <span class="req">*</span></label>
+              <input id="email" type="email" required />
+            </div>
+            <div class="col-6">
+              <label>Phone <span class="req">*</span></label>
+              <input id="phone" type="tel" placeholder="+1 555 123 4567" required />
+            </div>
+            <div class="col-6">
+              <label>Date of Birth <span class="req">*</span></label>
+              <input id="dob" type="date" required />
+            </div>
+            <div class="col-6">
+              <label>National ID / SSN <small class="muted">(optional)</small></label>
+              <input id="nationalId" placeholder="Optional" />
+            </div>
+          </div>
+          <div class="row">
+            <span></span>
+            <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+          </div>
+        </section>
+
+        <!-- STEP 2: Address -->
+        <section class="step-pane" data-step="2" hidden>
+          <div class="grid">
+            <div class="col-6">
+              <label>Country <span class="req">*</span></label>
+              <input id="country" required />
+            </div>
+            <div class="col-6">
+              <label>State / Province <span class="req">*</span></label>
+              <input id="state" required />
+            </div>
+            <div class="col-12">
+              <label>Street Address <span class="req">*</span></label>
+              <input id="street" required />
+            </div>
+            <div class="col-6">
+              <label>City <span class="req">*</span></label>
+              <input id="city" required />
+            </div>
+            <div class="col-6">
+              <label>ZIP / Postal Code <span class="req">*</span></label>
+              <input id="zip" required />
+            </div>
+          </div>
+          <div class="row">
+            <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+            <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+          </div>
+        </section>
+
+        <!-- STEP 3: Account Preferences -->
+        <section class="step-pane" data-step="3" hidden>
+          <div class="grid">
+            <div class="col-6">
+              <label>Account Type <span class="req">*</span></label>
+              <select id="accountType" required>
+                <option value="">Select</option>
+                <option>Checking</option>
+                <option>Savings</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label>Currency <span class="req">*</span></label>
+              <select id="currency" required>
+                <option value="">Select</option>
+                <option>USD</option>
+                <option>EUR</option>
+                <option>GBP</option>
+                <option>CAD</option>
+                <option>AUD</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label>Occupation <span class="req">*</span></label>
+              <input id="occupation" required />
+            </div>
+            <div class="col-6">
+              <label>Employer (optional)</label>
+              <input id="employer" />
+            </div>
+          </div>
+          <div class="row">
+            <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+            <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+          </div>
+        </section>
+
+        <!-- STEP 4: Security & Login -->
+        <section class="step-pane" data-step="4" hidden>
+          <div class="grid">
+            <div class="col-6">
+              <label>Username <span class="req">*</span></label>
+              <input id="username" autocomplete="username" required />
+            </div>
+            <div class="col-6">
+              <label>Password <span class="req">*</span></label>
+              <input id="password" type="password" autocomplete="new-password" required />
+              <div class="muted">Min 6 characters.</div>
+            </div>
+            <div class="col-6">
+              <label>Confirm Password <span class="req">*</span></label>
+              <input id="confirmPassword" type="password" required />
+            </div>
+            <div class="col-3">
+              <label>PIN (4-digit) <span class="req">*</span></label>
+              <input id="pin" type="password" maxlength="4" inputmode="numeric" pattern="\\d{4}" required />
+            </div>
+            <div class="col-3">
+              <label>Confirm PIN <span class="req">*</span></label>
+              <input id="confirmPin" type="password" maxlength="4" inputmode="numeric" pattern="\\d{4}" required />
+            </div>
+
+            <div class="col-12">
+              <label>Profile Photo <small class="muted">(shown on PIN popup)</small></label>
+              <input id="imageUpload" type="file" accept="image/*" />
+              <img id="preview" class="preview" alt="Preview" />
+            </div>
+
+            <div class="col-12 terms">
+              <input id="terms" type="checkbox" />
+              <label for="terms">I agree that this is a demo and my data is stored locally in my browser.</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+            <button type="submit" class="btn btn-primary">Create Account</button>
+          </div>
+        </section>
+      </form>
     </div>
   </div>
 
-  <!-- Step 2: Create Login -->
-  <div class="form-step">
-    <h3>Create Login</h3>
-    <input type="email" id="email" placeholder="Email (e.g. john@example.com)" required />
-    <input type="tel" id="phone" placeholder="Phone Number (e.g. +1234567890)" required />
-    <input type="text" id="username" placeholder="Username (e.g. johnDoe99)" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <input type="password" id="confirm" placeholder="Confirm Password" required />
-    <div class="step-buttons">
-      <button type="button" onclick="prevStep()">Preview</button>
-      <button type="button" onclick="nextStep()">Next</button>
-    </div>
-  </div>
+  <script>
+    // ---------- Stepper ----------
+    let step = 1;
+    const panes = document.querySelectorAll(".step-pane");
+    function updateStepper() {
+      panes.forEach(p => p.hidden = (Number(p.dataset.step) !== step));
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById('s'+i).classList.toggle('active', i <= step);
+      }
+      document.getElementById("alert").style.display = "none";
+    }
+    function nextStep(){ if (step < 4) { step++; updateStepper(); } }
+    function prevStep(){ if (step > 1) { step--; updateStepper(); } }
+    updateStepper();
 
-  <!-- Step 3: Identity Verification -->
-  <div class="form-step">
-    <h3>Verify Your Identity</h3>
-    <input type="text" id="ssn" placeholder="SSN / TIN (e.g. 123-45-6789)" required />
-    <input type="text" id="confirm-ssn" placeholder="Confirm SSN / TIN" required />
-    <label for="dob">Date of Birth <small>(e.g. 06/15/1990)</small></label>
-    <input type="date" id="dob" required />
-    <div class="step-buttons">
-      <button type="button" onclick="prevStep()">Preview</button>
-      <button type="submit">Submit</button>
-    </div>
-  </div>
-</form>
-
-<script>
-  let currentStep = 0;
-  const steps = document.querySelectorAll(".form-step");
-
-  function showStep(index) {
-    steps.forEach((step, i) => {
-      step.classList.toggle("active", i === index);
+    // ---------- Image preview ----------
+    const imgInput = document.getElementById("imageUpload");
+    const preview = document.getElementById("preview");
+    let imageData = "";
+    imgInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        imageData = ev.target.result;
+        preview.src = imageData;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
     });
-  }
 
-  function nextStep() {
-    if (currentStep < steps.length - 1) {
-      currentStep++;
-      showStep(currentStep);
-    }
-  }
-
-  function prevStep() {
-    if (currentStep > 0) {
-      currentStep--;
-      showStep(currentStep);
-    }
-  }
-
-  document.getElementById("multiStepForm").onsubmit = function (e) {
-    e.preventDefault();
-
-    // password check
-    if (document.getElementById("password").value !== document.getElementById("confirm").value) {
-      alert("Passwords do not match!");
-      return;
-    }
-
-    // SSN check
-    if (document.getElementById("ssn").value !== document.getElementById("confirm-ssn").value) {
-      alert("SSN/TIN does not match!");
-      return;
-    }
-
-    const user = {
-      fullName: document.getElementById("first").value + " " + document.getElementById("last").value,
-      email: document.getElementById("email").value,
-      phone: document.getElementById("phone").value,
-      username: document.getElementById("username").value,
-      password: document.getElementById("password").value,
-      accountNumber: "UBA" + Math.floor(100000000 + Math.random() * 900000000),
-      balance: 0,
-      history: [],
-      locked: false
+    // ---------- Helpers ----------
+    const byId = id => document.getElementById(id);
+    const showError = msg => {
+      const a = byId("alert");
+      a.textContent = msg;
+      a.style.display = "block";
+      a.focus();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    // Save user
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    users.push(user);
-    localStorage.setItem("users", JSON.stringify(users));
+    // ---------- Submit ----------
+    byId("regForm").addEventListener("submit", (e) => {
+      e.preventDefault();
 
-    // Auto-login new user
-    localStorage.setItem("loggedInUser", JSON.stringify(user));
+      // Basic validations
+      const requiredIds = [
+        "firstName","lastName","email","phone","dob",
+        "country","state","street","city","zip",
+        "accountType","currency","occupation",
+        "username","password","confirmPassword","pin","confirmPin"
+      ];
+      for (const id of requiredIds) {
+        if (!byId(id).value.trim()) {
+          showError("Please complete all required fields.");
+          return;
+        }
+      }
+      const email = byId("email").value.trim();
+      if (!/^\S+@\S+\.\S+$/.test(email)) return showError("Please enter a valid email address.");
 
-    alert("Account created successfully!");
+      const password = byId("password").value;
+      if (password.length < 6) return showError("Password must be at least 6 characters.");
 
-    // Redirect to dashboard
-    window.location.href = "user-dashboard.html";
-  };
+      if (password !== byId("confirmPassword").value) return showError("Passwords do not match.");
 
-  // Initially show step 0
-  showStep(currentStep);
-</script>
+      const pin = byId("pin").value.trim();
+      const confirmPin = byId("confirmPin").value.trim();
+      if (!/^\d{4}$/.test(pin)) return showError("PIN must be exactly 4 digits.");
+      if (pin !== confirmPin) return showError("PINs do not match.");
 
+      if (!byId("terms").checked) return showError("Please agree to the demo terms to continue.");
+
+      // Build user object
+      const user = {
+        id: "u_" + Math.random().toString(36).slice(2, 10),
+        createdAt: new Date().toISOString(),
+        firstName: byId("firstName").value.trim(),
+        lastName: byId("lastName").value.trim(),
+        fullName: byId("firstName").value.trim() + " " + byId("lastName").value.trim(),
+        email,
+        phone: byId("phone").value.trim(),
+        dob: byId("dob").value,
+        nationalId: byId("nationalId").value.trim(),
+        address: {
+          country: byId("country").value.trim(),
+          state: byId("state").value.trim(),
+          street: byId("street").value.trim(),
+          city: byId("city").value.trim(),
+          zip: byId("zip").value.trim()
+        },
+        account: {
+          number: "BOA" + Math.floor(100000000 + Math.random() * 900000000),
+          type: byId("accountType").value,
+          currency: byId("currency").value
+        },
+        occupation: byId("occupation").value.trim(),
+        employer: byId("employer").value.trim(),
+        username: byId("username").value.trim(),
+        password,
+        pin,
+        image: imageData || "",
+
+        // Banking state
+        balance: 0,
+        status: "active",     // active | locked | suspended
+        locked: false,
+        history: [],
+        notifications: []
+      };
+
+      // Save to localStorage
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+
+      // Uniqueness checks
+      if (users.some(u => u.username.toLowerCase() === user.username.toLowerCase())) {
+        return showError("That username is already taken. Please choose another.");
+      }
+      if (users.some(u => u.email.toLowerCase() === user.email.toLowerCase())) {
+        return showError("An account with this email already exists.");
+      }
+
+      users.push(user);
+      localStorage.setItem("users", JSON.stringify(users));
+
+      alert("✅ Account created successfully! Please login.");
+      window.location.href = "login.html";
+    });
+  </script>
 </body>
 </html>

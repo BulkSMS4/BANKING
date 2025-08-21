@@ -7,145 +7,135 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f7f7f7;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       margin: 0;
-      padding: 20px;
     }
-    .container {
-      max-width: 500px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
+    .register-box {
+      background: white;
+      padding: 25px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      width: 400px;
+      max-height: 95vh;
+      overflow-y: auto;
     }
-    h1 {
+    h2 {
       text-align: center;
-      color: #222;
-    }
-    .steps {
-      margin: 15px 0;
-      text-align: center;
-    }
-    .steps span {
-      margin: 0 10px;
-      font-weight: bold;
-      color: #777;
-    }
-    .steps .active {
-      color: green;
-    }
-    .form-step {
-      display: none;
-    }
-    .form-step.active {
-      display: block;
+      margin-bottom: 15px;
     }
     input, select {
+      padding: 12px;
       width: 100%;
-      padding: 10px;
-      margin: 8px 0;
+      margin: 10px 0;
+      border-radius: 6px;
       border: 1px solid #ccc;
-      border-radius: 5px;
+      font-size: 15px;
     }
     button {
-      padding: 10px 20px;
-      background: green;
-      color: #fff;
+      padding: 12px;
+      width: 100%;
+      background: #002868;
+      color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
     }
-    button:disabled {
-      background: gray;
+    button:hover {
+      background: #001f5a;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Create Account</h1>
-    <p>Welcome! Please complete the steps below to create your account.</p>
-    <div class="steps">
-      <span id="step1" class="active">Step 1</span> →
-      <span id="step2">Step 2</span> →
-      <span id="step3">Step 3</span> →
-      <span id="step4">Step 4</span>
-    </div>
+  <div class="register-box">
+    <h2>Create Account</h2>
 
-    <form id="multiStepForm">
-      <!-- Step 1 -->
-      <div class="form-step active">
-        <input type="text" placeholder="First Name" required>
-        <input type="text" placeholder="Last Name" required>
-        <input type="email" placeholder="Email" required>
-        <input type="tel" placeholder="Phone Number" required>
-        <button type="button" onclick="nextStep()">Next</button>
-      </div>
+    <!-- Basic Info -->
+    <input type="text" id="firstName" placeholder="First Name" required>
+    <input type="text" id="lastName" placeholder="Last Name" required>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
 
-      <!-- Step 2 -->
-      <div class="form-step">
-        <input type="text" placeholder="Username" required>
-        <input type="password" placeholder="Password" required>
-        <input type="password" placeholder="Confirm Password" required>
-        <button type="button" onclick="prevStep()">Back</button>
-        <button type="button" onclick="nextStep()">Next</button>
-      </div>
+    <!-- Address -->
+    <input type="text" id="address" placeholder="Address" required>
+    <input type="text" id="city" placeholder="City" required>
+    <input type="text" id="state" placeholder="State/Province" required>
+    <input type="text" id="country" placeholder="Country" required>
+    <input type="text" id="postal" placeholder="Postal Code" required>
 
-      <!-- Step 3 -->
-      <div class="form-step">
-        <input type="text" placeholder="Address" required>
-        <input type="text" placeholder="City" required>
-        <input type="text" placeholder="State" required>
-        <input type="text" placeholder="Zip Code" required>
-        <button type="button" onclick="prevStep()">Back</button>
-        <button type="button" onclick="nextStep()">Next</button>
-      </div>
+    <!-- Login Details -->
+    <input type="password" id="password" placeholder="Password" required>
+    <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+    <input type="text" id="pin" placeholder="4-digit PIN" maxlength="4" required>
 
-      <!-- Step 4 -->
-      <div class="form-step">
-        <input type="text" placeholder="National ID / SSN" required>
-        <select required>
-          <option value="">Select Account Type</option>
-          <option>Checking</option>
-          <option>Savings</option>
-        </select>
-        <button type="button" onclick="prevStep()">Back</button>
-        <button type="submit">Finish</button>
-      </div>
-    </form>
+    <!-- Profile Photo -->
+    <label>Upload Profile Photo</label>
+    <input type="file" id="photo" accept="image/*">
+
+    <button onclick="createAccount()">Register</button>
   </div>
 
   <script>
-    let currentStep = 0;
-    const steps = document.querySelectorAll(".form-step");
-    const stepIndicators = [document.getElementById("step1"), document.getElementById("step2"), document.getElementById("step3"), document.getElementById("step4")];
+    function createAccount() {
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const city = document.getElementById("city").value.trim();
+      const state = document.getElementById("state").value.trim();
+      const country = document.getElementById("country").value.trim();
+      const postal = document.getElementById("postal").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
+      const pin = document.getElementById("pin").value.trim();
+      const photoFile = document.getElementById("photo").files[0];
 
-    function showStep(n) {
-      steps.forEach((step, i) => {
-        step.classList.toggle("active", i === n);
-        stepIndicators[i].classList.toggle("active", i === n);
-      });
-    }
+      if (!firstName || !lastName || !username || !email || !phone || !address || !city || !state || !country || !postal || !password || !confirmPassword || !pin) {
+        alert("⚠️ Please fill all fields");
+        return;
+      }
+      if (password !== confirmPassword) {
+        alert("⚠️ Passwords do not match");
+        return;
+      }
+      if (pin.length !== 4 || isNaN(pin)) {
+        alert("⚠️ PIN must be exactly 4 digits");
+        return;
+      }
 
-    function nextStep() {
-      if (currentStep < steps.length - 1) {
-        currentStep++;
-        showStep(currentStep);
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+
+      if (users.some(u => u.username === username)) {
+        alert("⚠️ Username already exists. Please choose another.");
+        return;
+      }
+
+      if (photoFile) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          saveUser(firstName, lastName, username, email, phone, address, city, state, country, postal, password, pin, e.target.result, users);
+        };
+        reader.readAsDataURL(photoFile);
+      } else {
+        saveUser(firstName, lastName, username, email, phone, address, city, state, country, postal, password, pin, "default-avatar.png", users);
       }
     }
 
-    function prevStep() {
-      if (currentStep > 0) {
-        currentStep--;
-        showStep(currentStep);
-      }
+    function saveUser(firstName, lastName, username, email, phone, address, city, state, country, postal, password, pin, photo, users) {
+      const newUser = { firstName, lastName, username, email, phone, address, city, state, country, postal, password, pin, photo };
+      users.push(newUser);
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("✅ Account created successfully! Please log in.");
+      window.location.href = "login.html";
     }
-
-    document.getElementById("multiStepForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      alert("✅ Account created successfully!");
-      window.location.href = "user-dashboard.html"; // redirect after success
-    });
   </script>
 </body>
 </html>

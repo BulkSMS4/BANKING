@@ -36,36 +36,30 @@ input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px so
 .card-holder { font-size:14px; text-transform:uppercase; margin-top:10px;}
 .cc-pic { width:50px; height:50px; border-radius:50%; border:2px solid white; }
 .network-logo { position:absolute; bottom:15px; right:20px; height:30px; }
+
+/* PIN Modal */
+#pinModal { display:flex; flex-direction:column; align-items:center; justify-content:center;}
+#pinModal input { max-width:150px; text-align:center; font-size:20px; letter-spacing:8px;}
 </style>
 </head>
 <body>
 
-<script>
-let user = JSON.parse(localStorage.getItem("loggedInUser"));
-if (!user) {
-  alert("No user logged in. Redirecting to login.");
-  window.location.href = "login.html";
-} else {
-  let attempts = 0;
-  while (attempts < 3) {
-    const enteredPin = prompt("Enter your 4-digit PIN to access dashboard:");
-    if (enteredPin === user.pin) break;
-    attempts++;
-    alert("Incorrect PIN. Attempts left: " + (3 - attempts));
-    if (attempts >= 3) {
-      alert("Too many failed attempts. Redirecting to login.");
-      window.location.href = "login.html";
-    }
-  }
-}
-</script>
+<!-- PIN Modal -->
+<div id="pinModal" class="modal">
+  <div class="modal-content">
+    <h3>Enter your 4-digit PIN</h3>
+    <input type="password" id="pinInput" maxlength="4" placeholder="****">
+    <button class="btn" onclick="checkPIN()">Submit</button>
+    <p id="pinError" style="color:red; margin-top:5px;"></p>
+  </div>
+</div>
 
-<div class="header">
+<div class="header" style="display:none;" id="dashboardHeader">
   <h2>Welcome, <span id="userName"></span> <img id="userPic" class="profile-pic" src=""></h2>
   <button onclick="logout()">Logout</button>
 </div>
 
-<div class="container">
+<div class="container" id="dashboardContainer" style="display:none;">
 
   <!-- Balance -->
   <div class="card">
@@ -127,7 +121,7 @@ if (!user) {
 
 </div>
 
-<!-- Modals -->
+<!-- Action Modals -->
 <div id="withdrawModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal('withdrawModal')">&times;</span>
@@ -158,33 +152,59 @@ if (!user) {
 </div>
 
 <script>
-const fmt = n => "$" + Number(n).toFixed(2);
+let user = JSON.parse(localStorage.getItem("loggedInUser"));
+if(!user){ window.location.href="login.html"; }
 
-// Generate credit card if missing
-if(!user.creditCard){
-  user.creditCard = {
-    number: '**** **** **** ' + String(Math.floor(1000 + Math.random()*9000)),
-    expiry: '12/28',
-    cvv: '***',
-    name: user.fullName,
-    type: Math.random()<0.5?'visa':'mastercard'
-  };
-  updateUser(user);
+let attempts = 0;
+const pinModal = document.getElementById("pinModal");
+const dashboardHeader = document.getElementById("dashboardHeader");
+const dashboardContainer = document.getElementById("dashboardContainer");
+pinModal.style.display = "flex";
+
+function checkPIN(){
+  const pinInput = document.getElementById("pinInput").value;
+  if(pinInput === user.pin){
+    pinModal.style.display = "none";
+    dashboardHeader.style.display = "flex";
+    dashboardContainer.style.display = "block";
+    loadDashboard();
+  } else {
+    attempts++;
+    document.getElementById("pinError").innerText = "Incorrect PIN. Attempts left: " + (3 - attempts);
+    if(attempts >= 3){
+      alert("Too many failed attempts. Redirecting to login.");
+      window.location.href="login.html";
+    }
+  }
 }
 
-// Populate dashboard
-document.getElementById("userName").innerText = user.fullName;
-document.getElementById("userPic").src = user.image || "https://via.placeholder.com/40";
-document.getElementById("balance").innerText = fmt(user.balance || 0);
-document.getElementById("accountNumber").innerText = user.account.number;
-document.getElementById("ccName").innerText = user.creditCard.name;
-document.getElementById("ccNumber").innerText = user.creditCard.number;
-document.getElementById("ccExpiry").innerText = user.creditCard.expiry;
-document.getElementById("ccCVV").innerText = user.creditCard.cvv;
-document.getElementById("ccPic").src = user.image || "https://via.placeholder.com/50";
-document.getElementById('networkLogo').src = user.creditCard.type==='visa'
-  ? 'https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg'
-  : 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg';
+function fmt(n){ return "$" + Number(n).toFixed(2); }
+
+function loadDashboard(){
+  if(!user.creditCard){
+    user.creditCard = { 
+      number: '**** **** **** ' + String(Math.floor(1000 + Math.random()*9000)),
+      expiry: '12/28', cvv: '***', name: user.fullName, 
+      type: Math.random()<0.5?'visa':'mastercard'
+    };
+    updateUser(user);
+  }
+
+  document.getElementById("userName").innerText = user.fullName;
+  document.getElementById("userPic").src = user.image || "https://via.placeholder.com/40";
+  document.getElementById("balance").innerText = fmt(user.balance||0);
+  document.getElementById("accountNumber").innerText = user.account.number;
+  document.getElementById("ccName").innerText = user.creditCard.name;
+  document.getElementById("ccNumber").innerText = user.creditCard.number;
+  document.getElementById("ccExpiry").innerText = user.creditCard.expiry;
+  document.getElementById("ccCVV").innerText = user.creditCard.cvv;
+  document.getElementById("ccPic").src = user.image || "https://via.placeholder.com/50";
+  document.getElementById('networkLogo').src = user.creditCard.type==='visa'
+    ? 'https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg'
+    : 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg';
+
+  renderHistory();
+}
 
 function renderHistory(){
   const table = document.getElementById("historyTable");
@@ -200,7 +220,6 @@ function renderHistory(){
     </tr>`;
   });
 }
-renderHistory();
 
 function addRequest(type, details, amount){
   if(!user.requests) user.requests=[];
@@ -251,9 +270,13 @@ function logout(){
   window.location.href="login.html";
 }
 
-function openModal(id){ document.getElementById(id).style.display="flex"; }
-function closeModal(id){ document.getElementById(id).style.display="none"; }
-</script>
+function openModal(id){
+  document.getElementById(id).style.display = "flex";
+}
 
+function closeModal(id){
+  document.getElementById(id).style.display = "none";
+}
+</script>
 </body>
 </html>

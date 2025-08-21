@@ -14,14 +14,12 @@
       height: 100vh;
       margin: 0;
     }
-    .register-box {
+    .form-box {
       background: white;
       padding: 25px;
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
       width: 400px;
-      max-height: 95vh;
-      overflow-y: auto;
     }
     h2 {
       text-align: center;
@@ -44,7 +42,6 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 16px;
-      margin-top: 10px;
     }
     button:hover {
       background: #001f5a;
@@ -52,91 +49,60 @@
   </style>
 </head>
 <body>
-  <div class="register-box">
-    <h2>Create Account</h2>
-
-    <!-- We wrap inputs in a form -->
+  <div class="form-box">
+    <h2>Open Bank Account</h2>
     <form id="registerForm">
       <input type="text" id="firstName" placeholder="First Name" required>
       <input type="text" id="lastName" placeholder="Last Name" required>
-      <input type="text" id="username" placeholder="Username" required>
-      <input type="email" id="email" placeholder="Email Address" required>
-      <input type="tel" id="phone" placeholder="Phone Number" required>
-
-      <input type="text" id="address" placeholder="Address" required>
-      <input type="text" id="city" placeholder="City" required>
-      <input type="text" id="state" placeholder="State/Province" required>
-      <input type="text" id="country" placeholder="Country" required>
-      <input type="text" id="postal" placeholder="Postal Code" required>
-
-      <input type="password" id="password" placeholder="Password" required>
-      <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
-      <input type="text" id="pin" placeholder="4-digit PIN" maxlength="4" required>
-
-      <label>Upload Profile Photo</label>
-      <input type="file" id="photo" accept="image/*">
-
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="text" id="phone" placeholder="Phone Number" required>
+      <input type="text" id="username" placeholder="Choose Username" required>
+      <input type="password" id="password" placeholder="Choose Password" required>
+      <input type="number" id="pin" placeholder="4-Digit PIN" required minlength="4" maxlength="4">
+      <select id="accountType" required>
+        <option value="">-- Select Account Type --</option>
+        <option value="Savings">Savings Account</option>
+        <option value="Checking">Checking Account</option>
+      </select>
+      <input type="file" id="photo" accept="image/*" required>
       <button type="submit">Register</button>
     </form>
   </div>
 
   <script>
-    document.getElementById("registerForm").addEventListener("submit", function(event) {
-      event.preventDefault(); // stop form reload
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+      e.preventDefault();
 
-      const firstName = document.getElementById("firstName").value.trim();
-      const lastName = document.getElementById("lastName").value.trim();
-      const username = document.getElementById("username").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const address = document.getElementById("address").value.trim();
-      const city = document.getElementById("city").value.trim();
-      const state = document.getElementById("state").value.trim();
-      const country = document.getElementById("country").value.trim();
-      const postal = document.getElementById("postal").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const confirmPassword = document.getElementById("confirmPassword").value.trim();
-      const pin = document.getElementById("pin").value.trim();
+      const reader = new FileReader();
       const photoFile = document.getElementById("photo").files[0];
 
-      if (!firstName || !lastName || !username || !email || !phone || !address || !city || !state || !country || !postal || !password || !confirmPassword || !pin) {
-        alert("⚠️ Please fill all fields");
-        return;
-      }
-      if (password !== confirmPassword) {
-        alert("⚠️ Passwords do not match");
-        return;
-      }
-      if (pin.length !== 4 || isNaN(pin)) {
-        alert("⚠️ PIN must be exactly 4 digits");
-        return;
-      }
+      reader.onload = function() {
+        const user = {
+          firstName: document.getElementById("firstName").value,
+          lastName: document.getElementById("lastName").value,
+          email: document.getElementById("email").value,
+          phone: document.getElementById("phone").value,
+          username: document.getElementById("username").value,
+          password: document.getElementById("password").value,
+          pin: document.getElementById("pin").value,
+          accountType: document.getElementById("accountType").value,
+          photo: reader.result,
+          balance: 1000, // initial balance
+          transactions: []
+        };
 
-      let users = JSON.parse(localStorage.getItem("users")) || [];
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        users.push(user);
+        localStorage.setItem("users", JSON.stringify(users));
 
-      if (users.some(u => u.username === username)) {
-        alert("⚠️ Username already exists. Please choose another.");
-        return;
-      }
+        alert("✅ Account created successfully!");
+        window.location.href = "login.html";
+      };
 
       if (photoFile) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          saveUser(firstName, lastName, username, email, phone, address, city, state, country, postal, password, pin, e.target.result, users);
-        };
         reader.readAsDataURL(photoFile);
-      } else {
-        saveUser(firstName, lastName, username, email, phone, address, city, state, country, postal, password, pin, "default-avatar.png", users);
       }
     });
-
-    function saveUser(firstName, lastName, username, email, phone, address, city, state, country, postal, password, pin, photo, users) {
-      const newUser = { firstName, lastName, username, email, phone, address, city, state, country, postal, password, pin, photo };
-      users.push(newUser);
-      localStorage.setItem("users", JSON.stringify(users));
-      alert("✅ Account created successfully! Please log in.");
-      window.location.href = "login.html";
-    }
   </script>
 </body>
 </html>

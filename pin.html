@@ -1,91 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Enter PIN - UBA</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter PIN</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
-      text-align: center;
-      padding: 50px;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
-
-    .container {
-      background-color: white;
-      max-width: 400px;
-      margin: auto;
-      padding: 30px;
+    .pin-box {
+      background: white;
+      padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    h2 {
-      color: #d40000;
-    }
-
-    p {
-      margin: 10px 0;
-      color: #444;
-    }
-
-    input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      font-size: 18px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       text-align: center;
-      margin-top: 15px;
-      margin-bottom: 25px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+      width: 300px;
     }
-
-    button {
-      background-color: #d40000;
-      color: white;
-      padding: 12px;
+    .pin-box img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      object-fit: cover;
+    }
+    input {
+      padding: 10px;
       width: 100%;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
-
-    button:hover {
-      background-color: #a80000;
+    button {
+      padding: 10px;
+      width: 100%;
+      background: #002868;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-
-  <div class="container">
-    <h2 id="username">Welcome</h2>
-    <p>Enter your 4-digit PIN</p>
-
-    <form id="pinForm">
-      <input type="password" id="pin" maxlength="4" placeholder="••••" required />
-      <button type="submit">Submit</button>
-    </form>
+  <div class="pin-box">
+    <img id="profilePic" src="" alt="User Picture">
+    <h3>Enter Your PIN</h3>
+    <input type="password" id="pinInput" placeholder="Enter PIN">
+    <button onclick="checkPin()">Unlock</button>
   </div>
 
   <script>
-    // Show the user's name
-    const name = sessionStorage.getItem("userName") || "User";
-    document.getElementById("username").innerText = `Hello ${name}`;
+    // Load user from localStorage
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+    const profilePic = document.getElementById("profilePic");
 
-    // Fake PIN validation
-    document.getElementById("pinForm").onsubmit = function(e) {
-      e.preventDefault();
-      const pin = document.getElementById("pin").value;
-      if (pin === "1234") {
-        // You can change the PIN to any value you want
-        alert("PIN verified!");
+    if (user && user.photo) {
+      profilePic.src = user.photo; // show their uploaded photo
+    } else {
+      profilePic.src = "default-avatar.png"; // fallback if no photo
+    }
+
+    function checkPin() {
+      const enteredPin = document.getElementById("pinInput").value;
+
+      if (user && enteredPin === user.pin) {
         window.location.href = "user-dashboard.html";
       } else {
         alert("Incorrect PIN. Try again.");
       }
-    };
+    }
   </script>
-
 </body>
 </html>

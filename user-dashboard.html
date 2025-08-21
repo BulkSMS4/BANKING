@@ -152,18 +152,32 @@ input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px so
 </div>
 
 <script>
+// Load logged-in user
 let user = JSON.parse(localStorage.getItem("loggedInUser"));
 if(!user){ window.location.href="login.html"; }
 
-let attempts = 0;
+// Check if PIN has been validated
+let pinValidated = localStorage.getItem("pinValidated");
+
 const pinModal = document.getElementById("pinModal");
 const dashboardHeader = document.getElementById("dashboardHeader");
 const dashboardContainer = document.getElementById("dashboardContainer");
-pinModal.style.display = "flex";
 
+if(pinValidated === "true"){
+  pinModal.style.display = "none";
+  dashboardHeader.style.display = "flex";
+  dashboardContainer.style.display = "block";
+  loadDashboard();
+} else {
+  pinModal.style.display = "flex";
+}
+
+// PIN check function
+let attempts = 0;
 function checkPIN(){
   const pinInput = document.getElementById("pinInput").value;
   if(pinInput === user.pin){
+    localStorage.setItem("pinValidated", "true"); // mark as validated
     pinModal.style.display = "none";
     dashboardHeader.style.display = "flex";
     dashboardContainer.style.display = "block";
@@ -173,11 +187,12 @@ function checkPIN(){
     document.getElementById("pinError").innerText = "Incorrect PIN. Attempts left: " + (3 - attempts);
     if(attempts >= 3){
       alert("Too many failed attempts. Redirecting to login.");
-      window.location.href="login.html";
+      logout();
     }
   }
 }
 
+// Dashboard functions
 function fmt(n){ return "$" + Number(n).toFixed(2); }
 
 function loadDashboard(){
@@ -267,16 +282,13 @@ function updateUser(u){
 
 function logout(){
   localStorage.removeItem("loggedInUser");
+  localStorage.removeItem("pinValidated");
   window.location.href="login.html";
 }
 
-function openModal(id){
-  document.getElementById(id).style.display = "flex";
-}
+function openModal(id){ document.getElementById(id).style.display = "flex"; }
+function closeModal(id){ document.getElementById(id).style.display = "none"; }
 
-function closeModal(id){
-  document.getElementById(id).style.display = "none";
-}
 </script>
 </body>
 </html>

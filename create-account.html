@@ -58,7 +58,7 @@
       <input type="text" id="phone" placeholder="Phone Number" required>
       <input type="text" id="username" placeholder="Choose Username" required>
       <input type="password" id="password" placeholder="Choose Password" required>
-      <input type="number" id="pin" placeholder="4-Digit PIN" required minlength="4" maxlength="4">
+      <input type="number" id="pin" placeholder="4-Digit PIN" required min="1000" max="9999">
       <select id="accountType" required>
         <option value="">-- Select Account Type --</option>
         <option value="Savings">Savings Account</option>
@@ -70,32 +70,58 @@
   </div>
 
   <script>
-    document.getElementById("registerForm").addEventListener("submit", function(e) {
+    const form = document.getElementById("registerForm");
+
+    form.addEventListener("submit", function(e) {
       e.preventDefault();
 
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const pin = document.getElementById("pin").value.trim();
+      const accountType = document.getElementById("accountType").value;
       const photoFile = document.getElementById("photo").files[0];
+
       if (!photoFile) {
         alert("Please upload a photo!");
         return;
       }
 
+      if (pin.length !== 4) {
+        alert("PIN must be 4 digits!");
+        return;
+      }
+
+      // Read the photo
       const reader = new FileReader();
       reader.onload = function() {
         const user = {
-          firstName: document.getElementById("firstName").value,
-          lastName: document.getElementById("lastName").value,
-          email: document.getElementById("email").value,
-          phone: document.getElementById("phone").value,
-          username: document.getElementById("username").value,
-          password: document.getElementById("password").value,
-          pin: document.getElementById("pin").value,
-          accountType: document.getElementById("accountType").value,
+          firstName,
+          lastName,
+          email,
+          phone,
+          username,
+          password,
+          pin,
+          accountType,
           photo: reader.result,
-          balance: 1000, // initial balance
+          balance: 1000,
           transactions: []
         };
 
+        // Load existing users
         let users = JSON.parse(localStorage.getItem("users")) || [];
+
+        // Check if username already exists
+        if (users.some(u => u.username === username)) {
+          alert("❌ Username already exists!");
+          return;
+        }
+
+        // Add new user
         users.push(user);
         localStorage.setItem("users", JSON.stringify(users));
 

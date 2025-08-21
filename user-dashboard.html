@@ -1,51 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>User Dashboard</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 0; }
-    .header { background: #d40000; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-    .header h2 { margin: 0; display: flex; align-items: center; }
-    .profile-pic { width: 40px; height: 40px; border-radius: 50%; margin-left: 10px; object-fit: cover; border: 2px solid white; }
-    .container { padding: 20px; }
-    .card, .history { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0px 0px 5px rgba(0,0,0,0.1); }
-    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; }
-    .btn { background: #d40000; color: white; }
-    .btn:hover { background: #a80000; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-    th { background: #f4f4f4; }
-    .tx-pic { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+<meta charset="UTF-8">
+<title>User Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root { --boa:#d40000; --bg:#f5f5f5; --card:#fff; --text:#222; }
+body { font-family: Arial, sans-serif; margin:0; padding:0; background: var(--bg); }
+.header { background: var(--boa); color: white; padding: 15px; display:flex; justify-content:space-between; align-items:center; }
+.header h2 { margin:0; display:flex; align-items:center; }
+.profile-pic { width:40px; height:40px; border-radius:50%; margin-left:10px; object-fit:cover; border:2px solid white; }
+.container { padding:20px; }
+.card, .history { background: var(--card); padding:20px; border-radius:8px; margin-bottom:20px; box-shadow:0 0 5px rgba(0,0,0,0.1); }
+button { padding:10px 20px; margin:5px; border:none; border-radius:6px; cursor:pointer; }
+.btn { background: var(--boa); color:white; }
+.btn:hover { background:#a80000; }
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+th, td { border:1px solid #ddd; padding:8px; text-align:center; }
+th { background:#f4f4f4; }
+.tx-pic { width:30px; height:30px; border-radius:50%; object-fit:cover; }
 
-    /* Modal */
-    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-    .modal-content { background: white; padding: 20px; border-radius: 8px; width: 350px; }
-    .modal-content h3 { margin-top: 0; }
-    .close { float: right; font-size: 20px; cursor: pointer; }
-    input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
+/* Modal */
+.modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
+.modal-content { background:white; padding:20px; border-radius:8px; width:350px; }
+.close { float:right; font-size:20px; cursor:pointer; }
+input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px solid #ccc; }
 
-    /* Credit Card */
-    .credit-card {
-      background: linear-gradient(135deg, #b00000, #e60000);
-      color: white;
-      padding: 25px;
-      border-radius: 15px;
-      width: 350px;
-      margin: 10px auto;
-      font-family: "OCR A Std", monospace;
-      position: relative;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }
-    .boa-logo { height: 40px; margin-bottom: 20px; }
-    .cc-number { font-size: 22px; letter-spacing: 4px; margin: 20px 0; }
-    .cc-info { display: flex; justify-content: space-between; margin: 15px 0; font-size: 14px; }
-    .cc-info span { font-size: 10px; display: block; color: #ddd; }
-    .cc-footer { display: flex; justify-content: space-between; align-items: center; }
-    .card-holder { font-size: 14px; text-transform: uppercase; margin-top: 10px; }
-    .cc-pic { width: 50px; height: 50px; border-radius: 50%; border: 2px solid white; }
-    .network-logo { position: absolute; bottom: 15px; right: 20px; height: 30px; }
-  </style>
+/* Credit Card */
+.credit-card { background: linear-gradient(135deg, #b00000, #e60000); color:white; padding:25px; border-radius:15px; width:350px; margin:10px auto; font-family:"OCR A Std", monospace; position:relative; box-shadow:0 4px 15px rgba(0,0,0,0.4);}
+.boa-logo { height:40px; margin-bottom:20px; }
+.cc-number { font-size:22px; letter-spacing:4px; margin:20px 0; }
+.cc-info { display:flex; justify-content:space-between; margin:15px 0; font-size:14px; }
+.cc-info span { font-size:10px; display:block; color:#ddd; }
+.cc-footer { display:flex; justify-content:space-between; align-items:center; }
+.card-holder { font-size:14px; text-transform:uppercase; margin-top:10px; }
+.cc-pic { width:50px; height:50px; border-radius:50%; border:2px solid white; }
+.network-logo { position:absolute; bottom:15px; right:20px; height:30px; }
+</style>
 </head>
 <body>
 
@@ -55,7 +46,6 @@
 </div>
 
 <div class="container">
-
   <!-- Balance -->
   <div class="card">
     <h3>Account Balance: <span id="balance"></span></h3>
@@ -67,8 +57,7 @@
     <h3>Your Virtual Credit Card</h3>
     <div class="credit-card">
       <div class="cc-header">
-        <img src="https://1000logos.net/wp-content/uploads/2017/06/Bank-of-America-Logo-2001.png" 
-             class="boa-logo" alt="Bank of America Logo">
+        <img src="https://1000logos.net/wp-content/uploads/2017/06/Bank-of-America-Logo-2001.png" class="boa-logo" alt="Bank of America Logo">
       </div>
       <div class="cc-number" id="ccNumber">**** **** **** 1234</div>
       <div class="cc-info">
@@ -114,10 +103,9 @@
       <tbody id="historyTable"></tbody>
     </table>
   </div>
-
 </div>
 
-<!-- Modals (withdraw, transfer, loan) unchanged -->
+<!-- Modals -->
 <div id="withdrawModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal('withdrawModal')">&times;</span>
@@ -126,6 +114,7 @@
     <button class="btn" onclick="submitWithdraw()">Submit Request</button>
   </div>
 </div>
+
 <div id="transferModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal('transferModal')">&times;</span>
@@ -136,6 +125,7 @@
     <button class="btn" onclick="submitTransfer()">Submit Request</button>
   </div>
 </div>
+
 <div id="loanModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal('loanModal')">&times;</span>
@@ -146,135 +136,65 @@
 </div>
 
 <script>
-  let user = JSON.parse(localStorage.getItem("loggedInUser"));
-  if (!user) window.location.href = "login.html";
+// Load logged in user
+let user = JSON.parse(localStorage.getItem("loggedInUser"));
+if (!user) window.location.href = "login.html";
 
-  const fmt = (n) => "$" + Number(n).toFixed(2);
+// PIN verification
+let attempts = 0;
+while (attempts < 3) {
+  let enteredPin = prompt("Enter your 4-digit PIN:");
+  if (enteredPin === user.pin) break;
+  attempts++;
+  alert("Incorrect PIN. Attempts left: " + (3 - attempts));
+  if (attempts >= 3) { alert("Too many failed attempts"); window.location.href="login.html"; }
+}
 
-  // Helper: generate card number (Luhn compliant)
-  function generateCardNumber(type='visa') {
-    let prefix = type === 'visa' ? '4' : '5';
-    let number = prefix;
-    while(number.length < 15) number += Math.floor(Math.random()*10);
-    let sum = 0;
-    for (let i=0;i<15;i++) {
-      let digit = parseInt(number[i]);
-      if (i%2===0) digit*=2;
-      if(digit>9) digit-=9;
-      sum+=digit;
-    }
-    let check = (10 - (sum % 10)) % 10;
-    number += check;
-    return number.match(/.{1,4}/g).join(' ');
-  }
+// Map registration fields to dashboard fields
+user.accountNumber = user.account.number;
+user.picture = user.image;
 
-  function generateExpiry() {
-    let month = String(Math.floor(Math.random()*12+1)).padStart(2,'0');
-    let year = String(new Date().getFullYear() + Math.floor(Math.random()*5+1)).slice(-2);
-    return `${month}/${year}`;
-  }
+// Format currency
+const fmt = n => "$" + Number(n).toFixed(2);
 
-  function generateCVV() { return String(Math.floor(Math.random()*900+100)); }
+// Generate virtual card if missing
+if (!user.creditCard) {
+  function genCardNumber() { let n='4'; while(n.length<16)n+=Math.floor(Math.random()*10); return n.match(/.{1,4}/g).join(' '); }
+  function genExpiry() { let m=String(Math.floor(Math.random()*12+1)).padStart(2,'0'); let y=String(new Date().getFullYear()+Math.floor(Math.random()*5+1)).slice(-2); return m+'/'+y; }
+  function genCVV() { return String(Math.floor(Math.random()*900+100)); }
+  user.creditCard = { number: genCardNumber(), expiry: genExpiry(), cvv: genCVV(), name: user.fullName, type:'visa' };
+  let users = JSON.parse(localStorage.getItem("users")||"[]"); 
+  let idx = users.findIndex(x=>x.username===user.username); if(idx!==-1) users[idx]=user; 
+  localStorage.setItem("users", JSON.stringify(users)); localStorage.setItem("loggedInUser", JSON.stringify(user));
+}
 
-  // Ensure credit card
-  if(!user.creditCard){
-    let type = Math.random()<0.5?'visa':'mastercard';
-    let number = generateCardNumber(type);
-    user.creditCard = {
-      number,
-      expiry: generateExpiry(),
-      cvv: generateCVV(),
-      name: user.fullName,
-      type
-    };
-    updateUser(user);
-  }
+// Populate dashboard
+document.getElementById("userName").innerText = user.fullName;
+document.getElementById("userPic").src = user.picture || "https://via.placeholder.com/40";
+document.getElementById("balance").innerText = fmt(user.balance || 0);
+document.getElementById("accountNumber").innerText = user.accountNumber;
+document.getElementById("ccName").innerText = user.creditCard.name;
+document.getElementById("ccNumber").innerText = user.creditCard.number;
+document.getElementById("ccExpiry").innerText = user.creditCard.expiry;
+document.getElementById("ccCVV").innerText = user.creditCard.cvv;
+document.getElementById("ccPic").src = user.picture || "https://via.placeholder.com/50";
+document.getElementById('networkLogo').src = user.creditCard.type==='visa' 
+  ? 'https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg'
+  : 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg';
 
-  // Display info
-  document.getElementById("userName").innerText = user.fullName;
-  document.getElementById("userPic").src = user.picture || "https://via.placeholder.com/40";
-  document.getElementById("balance").innerText = fmt(user.balance);
-  document.getElementById("accountNumber").innerText = user.accountNumber;
-  document.getElementById("ccName").innerText = user.creditCard.name;
-  document.getElementById("ccNumber").innerText = user.creditCard.number;
-  document.getElementById("ccExpiry").innerText = user.creditCard.expiry;
-  document.getElementById("ccCVV").innerText = user.creditCard.cvv;
-  document.getElementById("ccPic").src = user.picture || "https://via.placeholder.com/50";
+// Transaction history
+function renderHistory() {
+  const table = document.getElementById("historyTable");
+  table.innerHTML = "";
+  (user.requests||[]).forEach(r=>{
+    table.innerHTML+=`<tr>
+      <td><img class="tx-pic" src="${user.picture||'https://via.placeholder.com/30'}"></td>
+      <td>${r.date}</td><td>${r.type}</td><td>${r.details}</td>
+      <td>${fmt(r.amount)}</td><td>${r.status}</td>
+    </tr>`;
+  });
+}
+renderHistory();
 
-  // Set network logo
-  document.getElementById('networkLogo').src = user.creditCard.type==='visa' 
-    ? 'https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg' 
-    : 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg';
-
-  function renderHistory() {
-    const table = document.getElementById("historyTable");
-    table.innerHTML = "";
-    (user.requests || []).forEach(r => {
-      let row = `<tr>
-        <td><img class="tx-pic" src="${user.picture || 'https://via.placeholder.com/30'}"></td>
-        <td>${r.date}</td>
-        <td>${r.type}</td>
-        <td>${r.details}</td>
-        <td>${fmt(r.amount)}</td>
-        <td>${r.status}</td>
-      </tr>`;
-      table.innerHTML += row;
-    });
-  }
-  renderHistory();
-
-  function addRequest(type, details, amount) {
-    if (!user.requests) user.requests = [];
-    user.requests.push({
-      id: Date.now(),
-      date: new Date().toLocaleString(),
-      type, details, amount,
-      status: "Pending"
-    });
-    updateUser(user);
-    renderHistory();
-    alert(type + " request submitted and pending admin approval.");
-  }
-
-  function submitWithdraw() {
-    let amt = Number(document.getElementById("withdrawAmount").value);
-    if (amt <= 0) { alert("Invalid amount"); return; }
-    addRequest("Withdraw", "Cash withdrawal", amt);
-    closeModal('withdrawModal');
-  }
-
-  function submitTransfer() {
-    let amt = Number(document.getElementById("transferAmount").value);
-    let rec = document.getElementById("recipient").value;
-    let recAcc = document.getElementById("recipientAcc").value;
-    if (!rec || !recAcc || amt <= 0) { alert("Invalid transfer"); return; }
-    addRequest("Transfer", `To ${rec} (${recAcc})`, amt);
-    closeModal('transferModal');
-  }
-
-  function submitLoan() {
-    let amt = Number(document.getElementById("loanAmount").value);
-    if (amt <= 0) { alert("Invalid loan"); return; }
-    addRequest("Loan", "Loan request", amt);
-    closeModal('loanModal');
-  }
-
-  function updateUser(u) {
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let idx = users.findIndex(x => x.username === u.username);
-    if (idx !== -1) users[idx] = u;
-    localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("loggedInUser", JSON.stringify(u));
-  }
-
-  function logout() {
-    localStorage.removeItem("loggedInUser");
-    window.location.href = "login.html";
-  }
-
-  function openModal(id) { document.getElementById(id).style.display = "flex"; }
-  function closeModal(id) { document.getElementById(id).style.display = "none"; }
-</script>
-
-</body>
-</html>
+// Add request
+function addRequest(type, details, amount){

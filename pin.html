@@ -68,29 +68,25 @@
   </div>
 
   <script>
-    // Load current user and display photo
+    // Load current user
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     const profilePhoto = document.getElementById("profilePhoto");
 
-    if (currentUser && currentUser.photo) {
+    if (!currentUser) {
+      alert("❌ No user logged in");
+      window.location.href = "login.html";
+    } else if (currentUser.photo) {
       profilePhoto.src = currentUser.photo;
     } else {
-      profilePhoto.src = "https://via.placeholder.com/120?text=No+Photo"; // fallback
+      profilePhoto.src = "https://via.placeholder.com/120?text=No+Photo";
     }
 
     document.getElementById("pinForm").addEventListener("submit", function(e) {
       e.preventDefault();
-
-      if (!currentUser) {
-        alert("❌ No user logged in");
-        window.location.href = "login.html";
-        return;
-      }
-
       const enteredPin = document.getElementById("pinInput").value;
 
       if (enteredPin === currentUser.pin) {
-        // PIN correct → redirect to dashboard
+        // PIN correct → go to dashboard
         window.location.href = "user-dashboard.html";
       } else {
         alert("❌ Incorrect PIN. Try again.");

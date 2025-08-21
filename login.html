@@ -55,9 +55,10 @@
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
 
+    // get users from localStorage
     let users = JSON.parse(localStorage.getItem("users")) || [];
+    console.log("Users in storage:", users); // Debug
 
-    // find user
     let foundUser = users.find(u => u.username === username && u.password === password);
 
     if (!foundUser) {
@@ -65,19 +66,17 @@
       return;
     }
 
-    // Store current user temporarily
     currentUser = foundUser;
 
-    // Show PIN popup
+    // Show PIN popup with picture
     document.getElementById("pinPopup").style.display = "flex";
     document.getElementById("userImage").src = foundUser.image || "https://via.placeholder.com/80";
   }
 
   function verifyPin() {
-    const enteredPin = document.getElementById("pinInput").value.trim();
+    const enteredPin = document.getElementById("pinInput").value;
 
     if (enteredPin === currentUser.pin) {
-      // Save logged in user
       localStorage.setItem("loggedInUser", JSON.stringify(currentUser));
       window.location.href = "user-dashboard.html";
     } else {

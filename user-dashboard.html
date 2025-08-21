@@ -2,48 +2,70 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>User Dashboard</title>
+<title>Bank Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body { font-family: Arial, sans-serif; background:#f2f2f2; margin:0; padding:0;}
-.header { background:#d40000; color:white; padding:15px; display:flex; justify-content:space-between; align-items:center;}
-.header h2 { margin:0; display:flex; align-items:center;}
+body { font-family: Arial, sans-serif; background:#f2f2f2; margin:0; padding:0; }
+
+/* Header */
+.header { background:#d40000; color:white; padding:15px; display:flex; justify-content:space-between; align-items:center; display:none;}
+.header h2 { margin:0; display:flex; align-items:center; }
 .profile-pic { width:50px; height:50px; border-radius:50%; margin-left:10px; object-fit:cover; border:2px solid white; }
-.container { padding:20px;}
-.card, .history { background:white; padding:20px; border-radius:10px; margin-bottom:20px; box-shadow:0 0 8px rgba(0,0,0,0.1);}
-button { padding:12px 20px; margin:5px; border:none; border-radius:6px; cursor:pointer;}
-.btn { background:#d40000; color:white;}
-.btn:hover { background:#a80000;}
-table { width:100%; border-collapse:collapse; margin-top:15px;}
-th, td { border:1px solid #ddd; padding:8px; text-align:center;}
-th { background:#f4f4f4;}
-.tx-pic { width:30px; height:30px; border-radius:50%; object-fit:cover;}
+
+/* Dashboard container */
+.container { padding:20px; display:none; }
+.card, .history { background:white; padding:20px; border-radius:10px; margin-bottom:20px; box-shadow:0 0 8px rgba(0,0,0,0.1); }
+button { padding:12px 20px; margin:5px; border:none; border-radius:6px; cursor:pointer; }
+.btn { background:#d40000; color:white; }
+.btn:hover { background:#a80000; }
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+th, td { border:1px solid #ddd; padding:8px; text-align:center; }
+th { background:#f4f4f4; }
+.tx-pic { width:30px; height:30px; border-radius:50%; object-fit:cover; }
 
 /* Credit Card */
-.credit-card { background: linear-gradient(135deg,#b00000,#e60000); color:white; padding:25px; border-radius:15px; width:350px; margin:10px auto; font-family:"OCR A Std", monospace; position:relative; box-shadow:0 4px 15px rgba(0,0,0,0.4);}
-.cc-number { font-size:22px; letter-spacing:4px; margin:20px 0;}
-.cc-info { display:flex; justify-content:space-between; margin:15px 0; font-size:14px;}
-.cc-info span { font-size:10px; display:block; color:#ddd;}
-.cc-footer { display:flex; justify-content:space-between; align-items:center;}
-.card-holder { font-size:14px; text-transform:uppercase; margin-top:10px;}
+.credit-card { background: linear-gradient(135deg,#b00000,#e60000); color:white; padding:25px; border-radius:15px; width:350px; margin:10px auto; font-family:"OCR A Std", monospace; position:relative; box-shadow:0 4px 15px rgba(0,0,0,0.4); }
+.cc-number { font-size:22px; letter-spacing:4px; margin:20px 0; }
+.cc-info { display:flex; justify-content:space-between; margin:15px 0; font-size:14px; }
+.cc-info span { font-size:10px; display:block; color:#ddd; }
+.cc-footer { display:flex; justify-content:space-between; align-items:center; }
+.card-holder { font-size:14px; text-transform:uppercase; margin-top:10px; }
 .cc-pic { width:50px; height:50px; border-radius:50%; border:2px solid white; }
 .network-logo { position:absolute; bottom:15px; right:20px; height:30px; }
 
 /* Modal */
 .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
-.modal-content { background:white; padding:20px; border-radius:10px; width:350px; }
+.modal-content { background:white; padding:20px; border-radius:10px; width:350px; display:flex; flex-direction:column; align-items:center; }
 .modal-content h3 { margin-top:0; }
 .close { float:right; font-size:20px; cursor:pointer; }
 input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px solid #ccc; }
+
+/* PIN Modal */
+#pinModal { display:flex; justify-content:center; align-items:center; position:fixed; z-index:1000; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); flex-direction:column; }
+#pinModal .modal-content { width:300px; }
+#pinModal input { max-width:150px; text-align:center; font-size:20px; letter-spacing:8px; margin:10px 0; padding:10px; }
 </style>
 </head>
 <body>
 
+<!-- PIN Modal -->
+<div id="pinModal">
+  <div class="modal-content">
+    <h3>Enter Your 4-Digit PIN</h3>
+    <img id="pinPic" src="" style="width:60px;height:60px;border-radius:50%;border:2px solid #d40000;margin-bottom:10px;">
+    <input type="password" id="pinInput" maxlength="4" placeholder="****">
+    <button class="btn" onclick="checkPIN()">Submit</button>
+    <p id="pinError" style="color:red; margin-top:5px;"></p>
+  </div>
+</div>
+
+<!-- Dashboard Header -->
 <div class="header" id="dashboardHeader">
   <h2>Welcome, <span id="userName"></span> <img id="userPic" class="profile-pic" src=""></h2>
   <button onclick="logout()">Logout</button>
 </div>
 
+<!-- Dashboard Container -->
 <div class="container" id="dashboardContainer">
 
   <!-- User Details -->
@@ -85,6 +107,14 @@ input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px so
     </div>
   </div>
 
+  <!-- Actions -->
+  <div class="card">
+    <h3>Quick Actions</h3>
+    <button class="btn" onclick="openModal('withdrawModal')">Withdraw</button>
+    <button class="btn" onclick="openModal('transferModal')">Transfer</button>
+    <button class="btn" onclick="openModal('loanModal')">Request Loan</button>
+  </div>
+
   <!-- Transaction History -->
   <div class="history card">
     <h3>Transaction Requests</h3>
@@ -105,48 +135,108 @@ input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px so
 
 </div>
 
+<!-- Withdraw Modal -->
+<div id="withdrawModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('withdrawModal')">&times;</span>
+    <h3>Withdraw Funds</h3>
+    <input type="number" id="withdrawAmount" placeholder="Enter amount">
+    <button class="btn" onclick="submitWithdraw()">Submit</button>
+  </div>
+</div>
+
+<!-- Transfer Modal -->
+<div id="transferModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('transferModal')">&times;</span>
+    <h3>Transfer Funds</h3>
+    <input type="text" id="recipient" placeholder="Recipient Name">
+    <input type="text" id="recipientAcc" placeholder="Recipient Account Number">
+    <input type="number" id="transferAmount" placeholder="Enter amount">
+    <button class="btn" onclick="submitTransfer()">Submit</button>
+  </div>
+</div>
+
+<!-- Loan Modal -->
+<div id="loanModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('loanModal')">&times;</span>
+    <h3>Request Loan</h3>
+    <input type="number" id="loanAmount" placeholder="Enter loan amount">
+    <button class="btn" onclick="submitLoan()">Submit</button>
+  </div>
+</div>
+
 <script>
-// Load user from localStorage
+// Load logged-in user
 let user = JSON.parse(localStorage.getItem("loggedInUser"));
 if(!user) window.location.href="login.html";
+
+let attempts = 0;
+const pinModal = document.getElementById("pinModal");
+const dashboardHeader = document.getElementById("dashboardHeader");
+const dashboardContainer = document.getElementById("dashboardContainer");
+
+document.getElementById("pinPic").src = user.photo || "https://via.placeholder.com/60";
+
+function checkPIN(){
+  const pinInput = document.getElementById("pinInput").value;
+  if(pinInput === user.pin){
+    pinModal.style.display = "none";
+    dashboardHeader.style.display = "flex";
+    dashboardContainer.style.display = "block";
+    loadDashboard();
+  } else {
+    attempts++;
+    document.getElementById("pinError").innerText = "Incorrect PIN. Attempts left: " + (3 - attempts);
+    if(attempts >= 3){
+      alert("Too many failed attempts. Redirecting to login.");
+      window.location.href="login.html";
+    }
+  }
+}
 
 // Format currency
 function fmt(n){ return "$" + Number(n).toFixed(2); }
 
-// Display user info
-document.getElementById("userName").innerText = user.fullName;
-document.getElementById("userPic").src = user.photo || "https://via.placeholder.com/50";
-document.getElementById("fullName").innerText = user.fullName;
-document.getElementById("email").innerText = user.email;
-document.getElementById("phone").innerText = user.phone;
-document.getElementById("gender").innerText = user.gender;
-document.getElementById("dob").innerText = user.dob;
-document.getElementById("ssn").innerText = user.ssn;
-document.getElementById("address").innerText = user.address;
-document.getElementById("nationality").innerText = user.nationality;
-document.getElementById("accountType").innerText = user.accountType;
-document.getElementById("accountNumber").innerText = user.accountNumber;
-document.getElementById("balance").innerText = fmt(user.balance||0);
+// Load dashboard
+function loadDashboard(){
+  document.getElementById("userName").innerText = user.fullName;
+  document.getElementById("userPic").src = user.photo || "https://via.placeholder.com/50";
+  document.getElementById("fullName").innerText = user.fullName;
+  document.getElementById("email").innerText = user.email;
+  document.getElementById("phone").innerText = user.phone;
+  document.getElementById("gender").innerText = user.gender;
+  document.getElementById("dob").innerText = user.dob;
+  document.getElementById("ssn").innerText = user.ssn;
+  document.getElementById("address").innerText = user.address;
+  document.getElementById("nationality").innerText = user.nationality;
+  document.getElementById("accountType").innerText = user.accountType;
+  document.getElementById("accountNumber").innerText = user.accountNumber;
+  document.getElementById("balance").innerText = fmt(user.balance||0);
 
-// Credit Card
-if(!user.creditCard){
-  user.creditCard = { 
-    number: '**** **** **** ' + String(Math.floor(1000 + Math.random()*9000)),
-    expiry: '12/28', cvv: '***', name: user.fullName, 
-    type: Math.random()<0.5?'visa':'mastercard'
-  };
-  localStorage.setItem("loggedInUser", JSON.stringify(user));
+  if(!user.creditCard){
+    user.creditCard = { 
+      number: '**** **** **** ' + String(Math.floor(1000 + Math.random()*9000)),
+      expiry: '12/28', cvv: '***', name: user.fullName, 
+      type: Math.random()<0.5?'visa':'mastercard'
+    };
+    localStorage.setItem("loggedInUser", JSON.stringify(user));
+  }
+
+  document.getElementById("ccName").innerText = user.creditCard.name;
+  document.getElementById("ccNumber").innerText = user.creditCard.number;
+  document.getElementById("ccExpiry").innerText = user.creditCard.expiry;
+  document.getElementById("ccCVV").innerText = user.creditCard.cvv;
+  document.getElementById("ccPic").src = user.photo || "https://via.placeholder.com/50";
+  document.getElementById('networkLogo').src = user.creditCard.type==='visa'
+    ? 'https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg'
+    : 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg';
+
+  renderHistory();
 }
-document.getElementById("ccName").innerText = user.creditCard.name;
-document.getElementById("ccNumber").innerText = user.creditCard.number;
-document.getElementById("ccExpiry").innerText = user.creditCard.expiry;
-document.getElementById("ccCVV").innerText = user.creditCard.cvv;
-document.getElementById("ccPic").src = user.photo || "https://via.placeholder.com/50";
-document.getElementById('networkLogo').src = user.creditCard.type==='visa'
-  ? 'https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg'
-  : 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg';
 
-// Transaction history
+// Transaction History
 function renderHistory(){
   const table = document.getElementById("historyTable");
   table.innerHTML = "";
@@ -161,7 +251,54 @@ function renderHistory(){
     </tr>`;
   });
 }
-renderHistory();
+
+// Add transaction request
+function addRequest(type, details, amount){
+  if(!user.requests) user.requests=[];
+  user.requests.push({
+    id: Date.now(),
+    date: new Date().toLocaleString(),
+    type, details, amount,
+    status: "Pending"
+  });
+  localStorage.setItem("loggedInUser", JSON.stringify(user));
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let idx = users.findIndex(u=>u.username===user.username);
+  if(idx!==-1) users[idx]=user;
+  localStorage.setItem("users", JSON.stringify(users));
+  renderHistory();
+  alert(type + " request submitted and pending admin approval.");
+}
+
+// Withdraw
+function submitWithdraw(){
+  let amt = Number(document.getElementById("withdrawAmount").value);
+  if(amt<=0){ alert("Invalid amount"); return; }
+  addRequest("Withdraw","Cash withdrawal",amt);
+  closeModal('withdrawModal');
+}
+
+// Transfer
+function submitTransfer(){
+  let amt = Number(document.getElementById("transferAmount").value);
+  let rec = document.getElementById("recipient").value;
+  let recAcc = document.getElementById("recipientAcc").value;
+  if(!rec||!recAcc||amt<=0){ alert("Invalid transfer"); return; }
+  addRequest("Transfer",`To ${rec} (${recAcc})`,amt);
+  closeModal('transferModal');
+}
+
+// Loan
+function submitLoan(){
+  let amt = Number(document.getElementById("loanAmount").value);
+  if(amt<=0){ alert("Invalid loan"); return; }
+  addRequest("Loan","Loan request",amt);
+  closeModal('loanModal');
+}
+
+// Modal open/close
+function openModal(id){ document.getElementById(id).style.display="flex"; }
+function closeModal(id){ document.getElementById(id).style.display="none"; }
 
 // Logout
 function logout(){
@@ -169,6 +306,5 @@ function logout(){
   window.location.href="login.html";
 }
 </script>
-
 </body>
 </html>

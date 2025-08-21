@@ -1,153 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Capital One | Sign In</title>
+  <meta charset="UTF-8">
+  <title>Bank of America - Login</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
+    body { font-family: Arial, sans-serif; background: #f2f2f2; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .login-box { background: white; padding: 30px; border-radius: 8px; width: 350px; text-align: center; box-shadow: 0px 0px 10px rgba(0,0,0,0.2); }
+    h2 { color: #d40000; margin-bottom: 20px; }
+    input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+    button { background: #d40000; color: white; border: none; cursor: pointer; font-size: 16px; }
+    button:hover { background: #a80000; }
 
-    .login-container {
-      max-width: 400px;
-      margin: 80px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    /* PIN popup */
+    #pinPopup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center; align-items: center;
     }
-
-    .logo {
-      text-align: center;
-      margin-bottom: 20px;
+    .popup-content {
+      background: white; padding: 20px; border-radius: 8px; width: 300px; text-align: center;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
     }
-
-    .logo img {
-      width: 150px;
+    .popup-content img {
+      width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; object-fit: cover;
     }
-
-    h2 {
-      text-align: center;
-      color: #003366;
-      margin-bottom: 20px;
-    }
-
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    label {
-      font-size: 14px;
-    }
-
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      margin-top: 5px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #003366;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 15px;
-    }
-
-    button:hover {
-      background: #002244;
-    }
-
-    .links {
-      margin-top: 15px;
-      text-align: center;
-    }
-
-    .links a {
-      color: #003366;
-      text-decoration: none;
-      font-size: 14px;
-      display: block;
-      margin-top: 5px;
-    }
-
-    .error {
-      color: red;
-      text-align: center;
-      font-size: 14px;
-    }
+    .popup-content h3 { margin: 10px 0; }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <div class="logo">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Capital_One_logo.svg" alt="Capital One" />
-    </div>
-    <h2>Sign In</h2>
-    <div class="error" id="errorMsg"></div>
-    <input type="email" id="email" placeholder="Email address" required />
-    <input type="password" id="password" placeholder="Password" required />
-    
-    <div class="checkbox-row">
-      <input type="checkbox" id="rememberMe" />
-      <label for="rememberMe">Remember me</label>
-    </div>
 
-    <button onclick="login()">Login</button>
+<div class="login-box">
+  <h2>Bank of America Login</h2>
+  <input type="text" id="username" placeholder="Username" required>
+  <input type="password" id="password" placeholder="Password" required>
+  <button onclick="login()">Login</button>
+</div>
 
-    <div class="links">
-      <a href="forgot.html">Forgot Password?</a>
-      <a href="create-account.html">Create Account</a>
-    </div>
+<!-- PIN Popup -->
+<div id="pinPopup">
+  <div class="popup-content">
+    <img id="userImage" src="" alt="User Image">
+    <h3>Enter your PIN</h3>
+    <input type="password" id="pinInput" maxlength="4" placeholder="****">
+    <button onclick="verifyPin()">Submit PIN</button>
   </div>
+</div>
 
-  <!-- Firebase SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+<script>
+  let currentUser = null;
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
-      authDomain: "capital-one-16a95.firebaseapp.com",
-      projectId: "capital-one-16a95",
-      storageBucket: "capital-one-16a95.appspot.com",
-      messagingSenderId: "1061937867911",
-      appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
-    };
+  function login() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let foundUser = users.find(u => u.username === username && u.password === password);
 
-    window.login = async function () {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const rememberMe = document.getElementById('rememberMe').checked;
-      const errorMsg = document.getElementById('errorMsg');
+    if (!foundUser) {
+      alert("❌ Invalid username or password!");
+      return;
+    }
 
-      const persistenceType = rememberMe ? browserLocalPersistence : browserSessionPersistence;
+    // Store current user temporarily
+    currentUser = foundUser;
 
-      try {
-        await setPersistence(auth, persistenceType);
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "user-dashboard.html";
-      } catch (error) {
-        errorMsg.textContent = "Invalid email or password.";
-      }
-    };
-  </script>
+    // Show PIN popup
+    document.getElementById("pinPopup").style.display = "flex";
+    document.getElementById("userImage").src = foundUser.image || "https://via.placeholder.com/80";
+  }
+
+  function verifyPin() {
+    const enteredPin = document.getElementById("pinInput").value;
+
+    if (enteredPin === currentUser.pin) {
+      // Save as logged in
+      localStorage.setItem("loggedInUser", JSON.stringify(currentUser));
+      window.location.href = "user-dashboard.html";
+    } else {
+      alert("❌ Incorrect PIN!");
+    }
+  }
+</script>
+
 </body>
 </html>

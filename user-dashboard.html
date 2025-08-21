@@ -2,135 +2,157 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
+  <title>User Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f8f8f8; }
-    h2 { color: #d40000; }
-    .card { background: white; padding: 15px; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    input, textarea, select, button { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
-    button { background: #d40000; color: white; border: none; cursor: pointer; }
-    button:hover { background: #a60000; }
-    .user-list { margin-top: 20px; }
-    .user { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px; background: #fafafa; }
-    .actions button { margin-right: 5px; }
-    label { font-weight: bold; }
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; }
+    header { background:#d40000; color:white; padding:15px; text-align:center; }
+    .profile { display:flex; align-items:center; gap:10px; justify-content:center; }
+    .profile img { width:50px; height:50px; border-radius:50%; object-fit:cover; }
+    .container { padding:20px; }
+    .balance { font-size:22px; margin:20px 0; }
+    .actions button { margin:5px; padding:10px 15px; border:none; border-radius:5px; cursor:pointer; background:#d40000; color:white; }
+    .history { margin-top:20px; }
+    .history h3 { margin-bottom:10px; }
+    .history ul { list-style:none; padding:0; }
+    .history li { background:white; padding:10px; margin-bottom:5px; border-radius:5px; }
+    .popup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; }
+    .popup-content { background:white; padding:20px; border-radius:10px; width:300px; }
+    .popup-content input, .popup-content textarea { width:100%; margin:10px 0; padding:8px; }
+    .popup-content button { margin-top:10px; width:100%; background:#d40000; color:white; border:none; padding:10px; cursor:pointer; border-radius:5px; }
+    .announcement { background:yellow; color:black; padding:10px; text-align:center; margin:10px 0; border-radius:5px; }
+    .suspended { background:red; color:white; padding:20px; text-align:center; font-size:20px; border-radius:10px; margin:20px 0; }
   </style>
 </head>
 <body>
 
-  <h2>Admin Dashboard</h2>
+<header>
+  <div class="profile">
+    <img id="userImage" src="https://via.placeholder.com/50" alt="Profile">
+    <h2 id="username">User Dashboard</h2>
+  </div>
+</header>
 
-  <!-- Global Settings -->
-  <div class="card">
-    <h3>Global Settings</h3>
-    <label>Popup Message (announcement)</label>
-    <textarea id="popupMessage" placeholder="Write a message to appear on all user dashboards"></textarea>
+<div class="container" id="dashboardContent">
+  <div id="announcementBox"></div>
+  <div id="suspendedBox"></div>
 
-    <label>Dashboard Theme Color</label>
-    <input type="color" id="themeColor" value="#d40000" />
-
-    <button onclick="saveSettings()">Save Settings</button>
-    <button onclick="clearMessage()">Remove Popup Message</button>
+  <div class="balance">
+    Balance: <span id="balance">$0.00</span>
   </div>
 
-  <!-- User Management -->
-  <div class="card">
-    <h3>Manage Users</h3>
-    <div id="userList" class="user-list"></div>
+  <div class="actions" id="actionsBox">
+    <button onclick="openPopup('withdraw')">Withdraw</button>
+    <button onclick="openPopup('transfer')">International Transfer</button>
+    <button onclick="openPopup('loan')">Request Loan</button>
   </div>
+
+  <div class="history">
+    <h3>Transaction History</h3>
+    <ul id="historyList"></ul>
+  </div>
+</div>
+
+<!-- Popup -->
+<div class="popup" id="popupForm">
+  <div class="popup-content">
+    <h3 id="popupTitle"></h3>
+    <form id="actionForm">
+      <input type="number" id="amount" placeholder="Enter amount" required>
+      <textarea id="details" placeholder="Additional details" required></textarea>
+      <button type="submit">Submit</button>
+      <button type="button" onclick="closePopup()">Cancel</button>
+    </form>
+  </div>
+</div>
 
 <script>
-  // Load users
-  function loadUsers() {
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let html = "";
-    users.forEach((user, index) => {
-      html += `
-        <div class="user">
-          <p><b>Name:</b> ${user.fullName}</p>
-          <p><b>Email:</b> ${user.email}</p>
-          <p><b>Balance:</b> $${user.balance.toFixed(2)}</p>
-          <div class="actions">
-            <button onclick="creditUser(${index})">Credit</button>
-            <button onclick="spendUser(${index})">Spend</button>
-            <button onclick="cancelTransaction(${index})">Cancel Txn</button>
-            <button onclick="lockUser(${index})">Lock Account</button>
-            <button onclick="toggleSuspend(${index})">${user.suspended ? "Unsuspend" : "Suspend"}</button>
-          </div>
-        </div>
-      `;
-    });
-    document.getElementById("userList").innerHTML = html;
-  }
-
-  // Credit user
-  function creditUser(index) {
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let amount = parseFloat(prompt("Enter amount to credit:"));
-    if (!isNaN(amount)) {
-      users[index].balance += amount;
-      saveUsers(users);
-    }
-  }
-
-  // Spend user funds
-  function spendUser(index) {
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let amount = parseFloat(prompt("Enter amount to spend:"));
-    if (!isNaN(amount) && amount <= users[index].balance) {
-      users[index].balance -= amount;
-      saveUsers(users);
-    }
-  }
-
-  // Cancel transaction (reset last action)
-  function cancelTransaction(index) {
-    alert("Feature: Cancel last transaction – not yet implemented fully.");
-  }
-
-  // Lock account
-  function lockUser(index) {
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    users[index].locked = true;
-    saveUsers(users);
-  }
-
-  // Suspend/Unsuspend user
-  function toggleSuspend(index) {
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    users[index].suspended = !users[index].suspended;
-    saveUsers(users);
-  }
-
-  // Save settings globally
-  function saveSettings() {
-    let settings = {
-      message: document.getElementById("popupMessage").value,
-      themeColor: document.getElementById("themeColor").value
-    };
-    localStorage.setItem("settings", JSON.stringify(settings));
-    alert("Settings saved!");
-  }
-
-  function clearMessage() {
-    let settings = JSON.parse(localStorage.getItem("settings")) || {};
-    settings.message = "";
-    localStorage.setItem("settings", JSON.stringify(settings));
-    alert("Popup message cleared!");
-  }
-
-  function saveUsers(users) {
-    localStorage.setItem("users", JSON.stringify(users));
-    loadUsers();
-  }
-
-  // Load on start
-  loadUsers();
-
-  // Load settings if exist
+  let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let requests = JSON.parse(localStorage.getItem("requests")) || [];
   let settings = JSON.parse(localStorage.getItem("settings")) || {};
-  if (settings.message) document.getElementById("popupMessage").value = settings.message;
-  if (settings.themeColor) document.getElementById("themeColor").value = settings.themeColor;
+
+  // Load dashboard
+  if (currentUser) {
+    document.getElementById("username").innerText = currentUser.username;
+    document.getElementById("userImage").src = currentUser.image || "https://via.placeholder.com/50";
+
+    // Load balance
+    let user = users.find(u => u.username === currentUser.username);
+    if (user) {
+      document.getElementById("balance").innerText = (user.currency || "$") + user.balance.toFixed(2);
+    }
+
+    // Suspended?
+    if (user && user.suspended) {
+      document.getElementById("suspendedBox").innerHTML = `<div class="suspended">⚠️ Account Suspended by Admin</div>`;
+      document.getElementById("actionsBox").style.display = "none";
+    }
+
+    // Announcement
+    if (settings.announcement) {
+      document.getElementById("announcementBox").innerHTML = `<div class="announcement">${settings.announcement}</div>`;
+    }
+
+    // Theme color
+    if (settings.color) {
+      document.body.style.background = settings.color;
+    }
+
+    // Load history
+    loadHistory(user.username);
+  } else {
+    alert("No user logged in");
+    window.location.href = "login.html";
+  }
+
+  function loadHistory(username) {
+    let user = users.find(u => u.username === username);
+    let historyList = document.getElementById("historyList");
+    historyList.innerHTML = "";
+    if (user && user.history) {
+      user.history.forEach(item => {
+        let li = document.createElement("li");
+        li.textContent = `${item.date} - ${item.type}: ${item.amount} (${item.details})`;
+        historyList.appendChild(li);
+      });
+    }
+  }
+
+  // Popup handling
+  let currentAction = "";
+  function openPopup(action) {
+    currentAction = action;
+    document.getElementById("popupTitle").innerText = action === "withdraw" ? "Withdraw Request" :
+                                                     action === "transfer" ? "International Transfer" :
+                                                     "Loan Request";
+    document.getElementById("popupForm").style.display = "flex";
+  }
+
+  function closePopup() {
+    document.getElementById("popupForm").style.display = "none";
+  }
+
+  // Submit action
+  document.getElementById("actionForm").onsubmit = function(e) {
+    e.preventDefault();
+    let amount = document.getElementById("amount").value;
+    let details = document.getElementById("details").value;
+
+    let request = {
+      user: currentUser.username,
+      type: currentAction,
+      amount: parseFloat(amount),
+      details,
+      status: "pending",
+      date: new Date().toLocaleString()
+    };
+
+    requests.push(request);
+    localStorage.setItem("requests", JSON.stringify(requests));
+
+    alert("Request submitted! Waiting for admin approval.");
+    closePopup();
+  };
 </script>
 
 </body>

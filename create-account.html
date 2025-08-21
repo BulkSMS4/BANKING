@@ -55,34 +55,35 @@
   <div class="register-box">
     <h2>Create Account</h2>
 
-    <!-- Basic Info -->
-    <input type="text" id="firstName" placeholder="First Name" required>
-    <input type="text" id="lastName" placeholder="Last Name" required>
-    <input type="text" id="username" placeholder="Username" required>
-    <input type="email" id="email" placeholder="Email Address" required>
-    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <!-- We wrap inputs in a form -->
+    <form id="registerForm">
+      <input type="text" id="firstName" placeholder="First Name" required>
+      <input type="text" id="lastName" placeholder="Last Name" required>
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <input type="tel" id="phone" placeholder="Phone Number" required>
 
-    <!-- Address -->
-    <input type="text" id="address" placeholder="Address" required>
-    <input type="text" id="city" placeholder="City" required>
-    <input type="text" id="state" placeholder="State/Province" required>
-    <input type="text" id="country" placeholder="Country" required>
-    <input type="text" id="postal" placeholder="Postal Code" required>
+      <input type="text" id="address" placeholder="Address" required>
+      <input type="text" id="city" placeholder="City" required>
+      <input type="text" id="state" placeholder="State/Province" required>
+      <input type="text" id="country" placeholder="Country" required>
+      <input type="text" id="postal" placeholder="Postal Code" required>
 
-    <!-- Login Details -->
-    <input type="password" id="password" placeholder="Password" required>
-    <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
-    <input type="text" id="pin" placeholder="4-digit PIN" maxlength="4" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+      <input type="text" id="pin" placeholder="4-digit PIN" maxlength="4" required>
 
-    <!-- Profile Photo -->
-    <label>Upload Profile Photo</label>
-    <input type="file" id="photo" accept="image/*">
+      <label>Upload Profile Photo</label>
+      <input type="file" id="photo" accept="image/*">
 
-    <button onclick="createAccount()">Register</button>
+      <button type="submit">Register</button>
+    </form>
   </div>
 
   <script>
-    function createAccount() {
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+      event.preventDefault(); // stop form reload
+
       const firstName = document.getElementById("firstName").value.trim();
       const lastName = document.getElementById("lastName").value.trim();
       const username = document.getElementById("username").value.trim();
@@ -127,7 +128,7 @@
       } else {
         saveUser(firstName, lastName, username, email, phone, address, city, state, country, postal, password, pin, "default-avatar.png", users);
       }
-    }
+    });
 
     function saveUser(firstName, lastName, username, email, phone, address, city, state, country, postal, password, pin, photo, users) {
       const newUser = { firstName, lastName, username, email, phone, address, city, state, country, postal, password, pin, photo };

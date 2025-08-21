@@ -5,23 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Open Bank Account</title>
 <style>
-body { font-family: Arial; background:#f2f2f2; display:flex; justify-content:center; padding:20px; }
-.form-box { background:white; padding:25px; border-radius:10px; width:400px; box-shadow:0 2px 10px rgba(0,0,0,0.2); text-align:center; }
-h2 { margin-bottom:10px; }
-p.description { font-size:14px; color:#555; margin-bottom:20px; }
-input, select, button { width:100%; padding:12px; margin:8px 0; border-radius:6px; font-size:15px; }
-input, select { border:1px solid #ccc; }
-button { background:#002868; color:white; border:none; cursor:pointer; }
+body { font-family: Arial; background:#f2f2f2; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
+.form-box { background:white; padding:25px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.2); width:400px; }
+h2 { text-align:center; margin-bottom:15px; }
+p.description { text-align:center; color:#555; margin-bottom:15px; }
+input, select { padding:12px; width:100%; margin:10px 0; border-radius:6px; border:1px solid #ccc; font-size:15px; }
+button { padding:12px; width:100%; background:#002868; color:white; border:none; border-radius:6px; cursor:pointer; font-size:16px; }
 button:hover { background:#001f5a; }
-#photoPreview { width:100px; height:100px; border-radius:50%; object-fit:cover; margin:10px auto; border:2px solid #002868; display:none; }
 </style>
 </head>
 <body>
-
 <div class="form-box">
-  <h2>Create Bank Account</h2>
-  <p class="description">Fill out the form below to open your bank account. Your account starts with $1,000.</p>
-  <img id="photoPreview" src="" alt="Photo Preview">
+  <h2>Open Your Bank Account</h2>
+  <p class="description">Fill in your details to create a new account and start banking securely.</p>
   <form id="registerForm">
     <input type="text" id="firstName" placeholder="First Name" required>
     <input type="text" id="lastName" placeholder="Last Name" required>
@@ -29,38 +25,25 @@ button:hover { background:#001f5a; }
     <input type="text" id="phone" placeholder="Phone Number" required>
     <input type="text" id="username" placeholder="Choose Username" required>
     <input type="password" id="password" placeholder="Choose Password" required>
-    <input type="number" id="pin" placeholder="4-Digit PIN" required minlength="4" maxlength="4">
+    <input type="number" id="pin" placeholder="4-Digit PIN" required min="1000" max="9999">
     <select id="accountType" required>
       <option value="">-- Select Account Type --</option>
       <option value="Savings">Savings Account</option>
       <option value="Checking">Checking Account</option>
     </select>
-    <input type="file" id="photo" accept="image/*">
+    <input type="file" id="photo" accept="image/*" required>
     <button type="submit">Register</button>
   </form>
-  <p>Already have an account? <a href="login.html">Login here</a></p>
 </div>
 
 <script>
-// Photo preview
-const photoInput = document.getElementById("photo");
-const photoPreview = document.getElementById("photoPreview");
-photoInput.addEventListener("change", function(){
-  const file = photoInput.files[0];
-  if(file){
-    const reader = new FileReader();
-    reader.onload = e => { photoPreview.src = e.target.result; photoPreview.style.display="block"; }
-    reader.readAsDataURL(file);
-  } else photoPreview.style.display="none";
-});
-
-// Registration
 document.getElementById("registerForm").addEventListener("submit", function(e){
   e.preventDefault();
-  const file = photoInput.files[0];
+
   const reader = new FileReader();
+  const photoFile = document.getElementById("photo").files[0];
+
   reader.onload = function(){
-    const photoData = reader.result || "https://via.placeholder.com/100";
     const user = {
       firstName: document.getElementById("firstName").value,
       lastName: document.getElementById("lastName").value,
@@ -71,20 +54,31 @@ document.getElementById("registerForm").addEventListener("submit", function(e){
       password: document.getElementById("password").value,
       pin: document.getElementById("pin").value,
       accountType: document.getElementById("accountType").value,
-      photo: photoData,
+      photo: reader.result,
       balance: 1000,
-      requests: [],
-      account: { number: 'AC' + Math.floor(100000 + Math.random()*900000) }
+      account: { number: "AC" + Math.floor(100000 + Math.random()*900000) },
+      requests: []
     };
+
+    // Save to localStorage
     let users = JSON.parse(localStorage.getItem("users")) || [];
-    if(users.some(u=>u.username===user.username)){ alert("Username already exists"); return; }
+    // Check if username exists
+    if(users.some(u=>u.username===user.username)){
+      alert("Username already exists!");
+      return;
+    }
     users.push(user);
     localStorage.setItem("users", JSON.stringify(users));
-    alert("✅ Account created! You can now login.");
+
+    alert("✅ Account created successfully! Please login.");
     window.location.href = "login.html";
   };
-  if(file) reader.readAsDataURL(file);
-  else reader.onload();
+
+  if(photoFile){
+    reader.readAsDataURL(photoFile);
+  } else {
+    alert("Please upload a profile picture.");
+  }
 });
 </script>
 </body>

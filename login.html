@@ -3,70 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login</title>
+<title>Login - Bank Account</title>
 <style>
-body { font-family: Arial; background:#f2f2f2; display:flex; justify-content:center; padding:20px; }
-.form-box { background:white; padding:25px; border-radius:10px; width:400px; box-shadow:0 2px 10px rgba(0,0,0,0.2); text-align:center; }
-input, button { width:100%; padding:12px; margin:8px 0; border-radius:6px; font-size:15px; }
-input { border:1px solid #ccc; }
-button { background:#002868; color:white; border:none; cursor:pointer; }
+body { font-family: Arial; background:#f2f2f2; display:flex; justify-content:center; align-items:flex-start; padding-top:50px; margin:0; }
+.form-box { background:white; padding:35px 30px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); width:420px; max-width:95%; }
+h2 { text-align:center; margin-bottom:10px; font-size:24px; }
+p.description { text-align:center; color:#555; margin-bottom:25px; font-size:15px; }
+input { padding:14px; width:100%; margin:12px 0; border-radius:8px; border:1px solid #ccc; font-size:16px; }
+button { padding:14px; width:100%; background:#002868; color:white; border:none; border-radius:8px; cursor:pointer; font-size:17px; margin-top:10px; }
 button:hover { background:#001f5a; }
-a { color:#002868; }
-.modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
-.modal-content { background:white; padding:20px; border-radius:8px; width:300px; text-align:center; }
+p.error { color:red; font-size:14px; text-align:center; }
 </style>
 </head>
 <body>
 
-<div class="form-box" id="loginBox">
-  <h2>Login</h2>
-  <input type="text" id="loginUsername" placeholder="Username" required>
-  <input type="password" id="loginPassword" placeholder="Password" required>
-  <button onclick="login()">Login</button>
-  <p>No account? <a href="create-account.html">Register here</a></p>
-  <p id="loginError" style="color:red;"></p>
+<div class="form-box">
+  <h2>Login to Your Account</h2>
+  <p class="description">Enter your email and password to access your bank account dashboard.</p>
+  <form id="loginForm">
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="submit">Login</button>
+    <p class="error" id="errorMsg"></p>
+  </form>
 </div>
 
-<!-- PIN Modal -->
-<div id="pinModal" class="modal">
-  <div class="modal-content">
-    <h3>Enter your 4-digit PIN</h3>
-    <input type="password" id="pinInput" maxlength="4" placeholder="****">
-    <button onclick="checkPIN()">Submit</button>
-    <p id="pinError" style="color:red;"></p>
-  </div>
-</div>
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-<script>
-let currentUser = null;
-let attempts = 0;
+const firebaseConfig = {
+  apiKey: "AIzaSyCzqzO69UPV23oBHU3JAcvZjwEcsv3TtJY",
+  authDomain: "bank-of-america-92490.firebaseapp.com",
+  projectId: "bank-of-america-92490",
+  storageBucket: "bank-of-america-92490.firebasestorage.app",
+  messagingSenderId: "926628493178",
+  appId: "1:926628493178:web:775a66629b654d80f348c3"
+};
 
-function login(){
-  const username = document.getElementById("loginUsername").value;
-  const password = document.getElementById("loginPassword").value;
-  const users = JSON.parse(localStorage.getItem("users")) || [];
-  const user = users.find(u => u.username === username && u.password === password);
-  if(user){
-    currentUser = user;
-    localStorage.setItem("loggedInUser", JSON.stringify(user));
-    document.getElementById("loginBox").style.display="none";
-    document.getElementById("pinModal").style.display="flex";
-  } else {
-    document.getElementById("loginError").innerText = "Invalid username or password.";
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const errorMsg = document.getElementById("errorMsg");
+
+  try {
+    // Login with Firebase Auth
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const uid = userCredential.user.uid;
+
+    // Fetch user details from Firestore
+    const userDoc = await getDoc(doc(db, "users", uid));
+    if(!userDoc.exists()){
+      errorMsg.innerText = "User data not found!";
+      return;
+    }
+
+    // Save user locally for dashboard
+    localStorage.setItem("loggedInUser", JSON.stringify(userDoc.data()));
+
+    // Redirect to dashboard
+    window.location.href = "dashboard.html";
+
+  } catch(err){
+    errorMsg.innerText = "Login failed: " + err.message;
   }
-}
-
-function checkPIN(){
-  const pinInput = document.getElementById("pinInput").value;
-  if(pinInput === currentUser.pin){
-    localStorage.setItem("loggedInUser", JSON.stringify(currentUser));
-    window.location.href="dashboard.html";
-  } else {
-    attempts++;
-    document.getElementById("pinError").innerText = "Incorrect PIN. Attempts left: " + (3-attempts);
-    if(attempts >=3){ alert("Too many attempts."); location.reload(); }
-  }
-}
+});
 </script>
+
 </body>
 </html>

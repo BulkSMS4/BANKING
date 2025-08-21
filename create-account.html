@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Account</title>
+  <title>Create Bank Account</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -73,9 +73,13 @@
     document.getElementById("registerForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      const reader = new FileReader();
       const photoFile = document.getElementById("photo").files[0];
+      if (!photoFile) {
+        alert("Please upload a photo!");
+        return;
+      }
 
+      const reader = new FileReader();
       reader.onload = function() {
         const user = {
           firstName: document.getElementById("firstName").value,
@@ -99,9 +103,7 @@
         window.location.href = "login.html";
       };
 
-      if (photoFile) {
-        reader.readAsDataURL(photoFile);
-      }
+      reader.readAsDataURL(photoFile);
     });
   </script>
 </body>

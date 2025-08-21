@@ -2,88 +2,76 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Bank of America - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Login</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f2f2f2; display: flex; justify-content: center; align-items: center; height: 100vh; }
-    .login-box { background: white; padding: 30px; border-radius: 8px; width: 350px; text-align: center; box-shadow: 0px 0px 10px rgba(0,0,0,0.2); }
-    h2 { color: #d40000; margin-bottom: 20px; }
-    input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
-    button { background: #d40000; color: white; border: none; cursor: pointer; font-size: 16px; }
-    button:hover { background: #a80000; }
-
-    /* PIN popup */
-    #pinPopup {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      justify-content: center; align-items: center;
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    .popup-content {
-      background: white; padding: 20px; border-radius: 8px; width: 300px; text-align: center;
-      box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+    .login-box {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      width: 320px;
+      text-align: center;
     }
-    .popup-content img {
-      width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; object-fit: cover;
+    input {
+      padding: 12px;
+      width: 100%;
+      margin: 12px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
     }
-    .popup-content h3 { margin: 10px 0; }
+    button {
+      padding: 12px;
+      width: 100%;
+      background: #002868;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #001f5a;
+    }
   </style>
 </head>
 <body>
-
-<div class="login-box">
-  <h2>Bank of America Login</h2>
-  <input type="text" id="username" placeholder="Username" required>
-  <input type="password" id="password" placeholder="Password" required>
-  <button onclick="login()">Login</button>
-</div>
-
-<!-- PIN Popup -->
-<div id="pinPopup">
-  <div class="popup-content">
-    <img id="userImage" src="" alt="User Image">
-    <h3>Enter your PIN</h3>
-    <input type="password" id="pinInput" maxlength="4" placeholder="****">
-    <button onclick="verifyPin()">Submit PIN</button>
+  <div class="login-box">
+    <h2>User Login</h2>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="login()">Login</button>
   </div>
-</div>
 
-<script>
-  let currentUser = null;
+  <script>
+    function login() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-  function login() {
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value;
+      // Load registered users from localStorage
+      let users = JSON.parse(localStorage.getItem("users")) || [];
 
-    // get users from localStorage
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    console.log("Users in storage:", users); // Debug
+      // Check if user exists
+      const foundUser = users.find(u => u.username === username && u.password === password);
 
-    let foundUser = users.find(u => u.username === username && u.password === password);
-
-    if (!foundUser) {
-      alert("❌ Invalid username or password!");
-      return;
+      if (foundUser) {
+        // Save logged-in user
+        localStorage.setItem("loggedInUser", JSON.stringify(foundUser));
+        window.location.href = "pin.html";
+      } else {
+        alert("❌ Invalid username or password");
+      }
     }
-
-    currentUser = foundUser;
-
-    // Show PIN popup with picture
-    document.getElementById("pinPopup").style.display = "flex";
-    document.getElementById("userImage").src = foundUser.image || "https://via.placeholder.com/80";
-  }
-
-  function verifyPin() {
-    const enteredPin = document.getElementById("pinInput").value;
-
-    if (enteredPin === currentUser.pin) {
-      localStorage.setItem("loggedInUser", JSON.stringify(currentUser));
-      window.location.href = "user-dashboard.html";
-    } else {
-      alert("❌ Incorrect PIN!");
-    }
-  }
-</script>
-
+  </script>
 </body>
 </html>

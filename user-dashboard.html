@@ -8,15 +8,22 @@
     .header { background: #d40000; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
     .header h2 { margin: 0; }
     .container { padding: 20px; }
-    .card, .actions, .history { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0px 0px 5px rgba(0,0,0,0.1); }
+    .card, .history { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0px 0px 5px rgba(0,0,0,0.1); }
     .credit-card { background: linear-gradient(135deg, #d40000, #a80000); color: white; padding: 20px; border-radius: 12px; width: 300px; margin: 10px auto; }
     .credit-card h3 { margin: 0 0 10px; }
-    input, button, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
-    button { background: #d40000; color: white; border: none; cursor: pointer; font-size: 15px; }
-    button:hover { background: #a80000; }
+    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; }
+    .btn { background: #d40000; color: white; }
+    .btn:hover { background: #a80000; }
     table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
     th { background: #f4f4f4; }
+
+    /* Modal */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 20px; border-radius: 8px; width: 350px; }
+    .modal-content h3 { margin-top: 0; }
+    .close { float: right; font-size: 20px; cursor: pointer; }
+    input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
   </style>
 </head>
 <body>
@@ -45,25 +52,16 @@
   </div>
 
   <!-- Actions -->
-  <div class="actions">
-    <h3>Withdraw Funds</h3>
-    <input type="number" id="withdrawAmount" placeholder="Enter amount">
-    <button onclick="withdraw()">Withdraw</button>
-
-    <h3>International Transfer</h3>
-    <input type="text" id="recipient" placeholder="Recipient Name">
-    <input type="text" id="recipientAcc" placeholder="Recipient Account Number">
-    <input type="number" id="transferAmount" placeholder="Enter amount">
-    <button onclick="transfer()">Transfer</button>
-
-    <h3>Request Loan</h3>
-    <input type="number" id="loanAmount" placeholder="Enter loan amount">
-    <button onclick="requestLoan()">Request Loan</button>
+  <div class="card">
+    <h3>Quick Actions</h3>
+    <button class="btn" onclick="openModal('withdrawModal')">Withdraw</button>
+    <button class="btn" onclick="openModal('transferModal')">International Transfer</button>
+    <button class="btn" onclick="openModal('loanModal')">Request Loan</button>
   </div>
 
   <!-- History -->
   <div class="history">
-    <h3>Transaction History</h3>
+    <h3>Transaction Requests</h3>
     <table>
       <thead>
         <tr>
@@ -71,7 +69,7 @@
           <th>Type</th>
           <th>Details</th>
           <th>Amount</th>
-          <th>Balance</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody id="historyTable"></tbody>
@@ -80,17 +78,47 @@
 
 </div>
 
+<!-- Withdraw Modal -->
+<div id="withdrawModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('withdrawModal')">&times;</span>
+    <h3>Withdraw Funds</h3>
+    <input type="number" id="withdrawAmount" placeholder="Enter amount">
+    <button class="btn" onclick="submitWithdraw()">Submit Request</button>
+  </div>
+</div>
+
+<!-- Transfer Modal -->
+<div id="transferModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('transferModal')">&times;</span>
+    <h3>International Transfer</h3>
+    <input type="text" id="recipient" placeholder="Recipient Name">
+    <input type="text" id="recipientAcc" placeholder="Recipient Account Number">
+    <input type="number" id="transferAmount" placeholder="Enter amount">
+    <button class="btn" onclick="submitTransfer()">Submit Request</button>
+  </div>
+</div>
+
+<!-- Loan Modal -->
+<div id="loanModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('loanModal')">&times;</span>
+    <h3>Request Loan</h3>
+    <input type="number" id="loanAmount" placeholder="Enter loan amount">
+    <button class="btn" onclick="submitLoan()">Submit Request</button>
+  </div>
+</div>
+
 <script>
   let user = JSON.parse(localStorage.getItem("loggedInUser"));
-  if (!user) window.location.href = "login.html"; // redirect if not logged in
+  if (!user) window.location.href = "login.html";
 
-  // Helper: format as money
   const fmt = (n) => "$" + Number(n).toFixed(2);
 
-  // Generate credit card if missing
   if (!user.creditCard) {
     user.creditCard = {
-      number: "4" + Math.floor(100000000000000 + Math.random() * 900000000000000), // Visa-like
+      number: "4" + Math.floor(100000000000000 + Math.random() * 900000000000000),
       expiry: (new Date().getMonth()+1).toString().padStart(2,"0") + "/" + ((new Date().getFullYear()+3).toString().slice(-2)),
       cvv: Math.floor(100 + Math.random() * 900),
       name: user.fullName
@@ -98,89 +126,81 @@
     updateUser(user);
   }
 
-  // Display user info
   document.getElementById("userName").innerText = user.fullName;
   document.getElementById("balance").innerText = fmt(user.balance);
   document.getElementById("accountNumber").innerText = user.accountNumber;
-
   document.getElementById("ccName").innerText = user.creditCard.name;
   document.getElementById("ccNumber").innerText = user.creditCard.number.replace(/(.{4})/g, "$1 ");
   document.getElementById("ccExpiry").innerText = user.creditCard.expiry;
   document.getElementById("ccCVV").innerText = user.creditCard.cvv;
 
-  // History render
   function renderHistory() {
     const table = document.getElementById("historyTable");
     table.innerHTML = "";
-    (user.history || []).forEach(tx => {
+    (user.requests || []).forEach(r => {
       let row = `<tr>
-        <td>${tx.date}</td>
-        <td>${tx.type}</td>
-        <td>${tx.details}</td>
-        <td>${fmt(tx.amount)}</td>
-        <td>${fmt(tx.balance)}</td>
+        <td>${r.date}</td>
+        <td>${r.type}</td>
+        <td>${r.details}</td>
+        <td>${fmt(r.amount)}</td>
+        <td>${r.status}</td>
       </tr>`;
       table.innerHTML += row;
     });
   }
   renderHistory();
 
-  // Withdraw
-  function withdraw() {
-    let amt = Number(document.getElementById("withdrawAmount").value);
-    if (amt <= 0 || amt > user.balance) { alert("Invalid amount"); return; }
-    user.balance -= amt;
-    addHistory("Withdraw", "Cash withdrawal", -amt);
-    updateUser(user);
-  }
-
-  // Transfer
-  function transfer() {
-    let amt = Number(document.getElementById("transferAmount").value);
-    let rec = document.getElementById("recipient").value;
-    let recAcc = document.getElementById("recipientAcc").value;
-    if (!rec || !recAcc || amt <= 0 || amt > user.balance) { alert("Invalid transfer"); return; }
-    user.balance -= amt;
-    addHistory("Transfer", `To ${rec} (${recAcc})`, -amt);
-    updateUser(user);
-  }
-
-  // Loan
-  function requestLoan() {
-    let amt = Number(document.getElementById("loanAmount").value);
-    if (amt <= 0) { alert("Invalid loan"); return; }
-    user.balance += amt;
-    addHistory("Loan", "Loan credited", amt);
-    updateUser(user);
-  }
-
-  // Add to history
-  function addHistory(type, details, amount) {
-    if (!user.history) user.history = [];
-    user.history.push({
+  function addRequest(type, details, amount) {
+    if (!user.requests) user.requests = [];
+    user.requests.push({
+      id: Date.now(),
       date: new Date().toLocaleString(),
       type, details, amount,
-      balance: user.balance
+      status: "Pending"
     });
     updateUser(user);
     renderHistory();
+    alert(type + " request submitted and pending admin approval.");
   }
 
-  // Save user updates
+  function submitWithdraw() {
+    let amt = Number(document.getElementById("withdrawAmount").value);
+    if (amt <= 0) { alert("Invalid amount"); return; }
+    addRequest("Withdraw", "Cash withdrawal", amt);
+    closeModal('withdrawModal');
+  }
+
+  function submitTransfer() {
+    let amt = Number(document.getElementById("transferAmount").value);
+    let rec = document.getElementById("recipient").value;
+    let recAcc = document.getElementById("recipientAcc").value;
+    if (!rec || !recAcc || amt <= 0) { alert("Invalid transfer"); return; }
+    addRequest("Transfer", `To ${rec} (${recAcc})`, amt);
+    closeModal('transferModal');
+  }
+
+  function submitLoan() {
+    let amt = Number(document.getElementById("loanAmount").value);
+    if (amt <= 0) { alert("Invalid loan"); return; }
+    addRequest("Loan", "Loan request", amt);
+    closeModal('loanModal');
+  }
+
   function updateUser(u) {
     let users = JSON.parse(localStorage.getItem("users")) || [];
     let idx = users.findIndex(x => x.username === u.username);
     if (idx !== -1) users[idx] = u;
     localStorage.setItem("users", JSON.stringify(users));
     localStorage.setItem("loggedInUser", JSON.stringify(u));
-    document.getElementById("balance").innerText = fmt(u.balance);
   }
 
-  // Logout
   function logout() {
     localStorage.removeItem("loggedInUser");
     window.location.href = "login.html";
   }
+
+  function openModal(id) { document.getElementById(id).style.display = "flex"; }
+  function closeModal(id) { document.getElementById(id).style.display = "none"; }
 </script>
 
 </body>

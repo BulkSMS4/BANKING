@@ -7,51 +7,64 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f9f9f9;
+      background: #f2f2f2;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
+      margin: 0;
     }
     .pin-box {
       background: white;
-      padding: 20px;
+      padding: 25px;
       border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
       text-align: center;
-      width: 300px;
+      width: 320px;
     }
     .pin-box img {
-      width: 80px;
-      height: 80px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       margin-bottom: 15px;
       object-fit: cover;
+      border: 2px solid #ccc;
+    }
+    h3 {
+      margin: 10px 0;
+      color: #002868;
     }
     input {
-      padding: 10px;
+      padding: 12px;
       width: 100%;
-      margin: 10px 0;
-      border-radius: 5px;
+      margin: 12px 0;
+      border-radius: 6px;
       border: 1px solid #ccc;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 5px;
     }
     button {
-      padding: 10px;
+      padding: 12px;
       width: 100%;
-      background: #002868;
+      background: #d40000;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #a80000;
     }
   </style>
 </head>
 <body>
   <div class="pin-box">
-    <img id="profilePic" src="" alt="User Picture">
+    <img id="profilePic" src="default-avatar.png" alt="User Picture">
     <h3>Enter Your PIN</h3>
-    <input type="password" id="pinInput" placeholder="Enter PIN">
+    <input type="password" id="pinInput" placeholder="****" maxlength="4">
     <button onclick="checkPin()">Unlock</button>
   </div>
 
@@ -60,19 +73,17 @@
     const user = JSON.parse(localStorage.getItem("loggedInUser"));
     const profilePic = document.getElementById("profilePic");
 
-    if (user && user.photo) {
-      profilePic.src = user.photo; // show their uploaded photo
-    } else {
-      profilePic.src = "default-avatar.png"; // fallback if no photo
+    if (user && user.image) {
+      profilePic.src = user.image; // show uploaded profile image
     }
 
     function checkPin() {
-      const enteredPin = document.getElementById("pinInput").value;
+      const enteredPin = document.getElementById("pinInput").value.trim();
 
       if (user && enteredPin === user.pin) {
         window.location.href = "user-dashboard.html";
       } else {
-        alert("Incorrect PIN. Try again.");
+        alert("❌ Incorrect PIN. Try again.");
       }
     }
   </script>

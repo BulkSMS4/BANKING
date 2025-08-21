@@ -10,8 +10,6 @@
     .profile-pic { width: 40px; height: 40px; border-radius: 50%; margin-left: 10px; object-fit: cover; border: 2px solid white; }
     .container { padding: 20px; }
     .card, .history { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0px 0px 5px rgba(0,0,0,0.1); }
-    .credit-card { background: linear-gradient(135deg, #d40000, #a80000); color: white; padding: 20px; border-radius: 12px; width: 300px; margin: 10px auto; position: relative; }
-    .credit-card img { width: 50px; height: 50px; border-radius: 50%; position: absolute; bottom: 10px; right: 10px; border: 2px solid white; }
     button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; }
     .btn { background: #d40000; color: white; }
     .btn:hover { background: #a80000; }
@@ -19,12 +17,34 @@
     th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
     th { background: #f4f4f4; }
     .tx-pic { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+
     /* Modal */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
     .modal-content { background: white; padding: 20px; border-radius: 8px; width: 350px; }
     .modal-content h3 { margin-top: 0; }
     .close { float: right; font-size: 20px; cursor: pointer; }
     input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
+
+    /* Credit Card */
+    .credit-card {
+      background: linear-gradient(135deg, #b00000, #e60000);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      width: 350px;
+      margin: 10px auto;
+      font-family: "OCR A Std", monospace;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+    .boa-logo { height: 40px; margin-bottom: 20px; }
+    .cc-number { font-size: 22px; letter-spacing: 4px; margin: 20px 0; }
+    .cc-info { display: flex; justify-content: space-between; margin: 15px 0; font-size: 14px; }
+    .cc-info span { font-size: 10px; display: block; color: #ddd; }
+    .cc-footer { display: flex; justify-content: space-between; align-items: center; }
+    .card-holder { font-size: 14px; text-transform: uppercase; margin-top: 10px; }
+    .cc-pic { width: 50px; height: 50px; border-radius: 50%; border: 2px solid white; }
+    .network-logo { position: absolute; bottom: 15px; right: 20px; height: 30px; }
   </style>
 </head>
 <body>
@@ -46,10 +66,26 @@
   <div class="card">
     <h3>Your Virtual Credit Card</h3>
     <div class="credit-card">
-      <h3 id="ccName"></h3>
-      <p id="ccNumber"></p>
-      <p>Exp: <span id="ccExpiry"></span> &nbsp; CVV: <span id="ccCVV"></span></p>
-      <img id="ccPic">
+      <div class="cc-header">
+        <img src="https://1000logos.net/wp-content/uploads/2017/06/Bank-of-America-Logo-2001.png" 
+             class="boa-logo" alt="Bank of America Logo">
+      </div>
+      <div class="cc-number" id="ccNumber">**** **** **** 1234</div>
+      <div class="cc-info">
+        <div>
+          <span>EXP</span>
+          <div id="ccExpiry">12/28</div>
+        </div>
+        <div>
+          <span>CVV</span>
+          <div id="ccCVV">***</div>
+        </div>
+      </div>
+      <div class="cc-footer">
+        <div class="card-holder" id="ccName">John Doe</div>
+        <img id="ccPic" class="cc-pic" src="https://via.placeholder.com/50">
+      </div>
+      <img id="networkLogo" class="network-logo" src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg">
     </div>
   </div>
 
@@ -81,7 +117,7 @@
 
 </div>
 
-<!-- Withdraw Modal -->
+<!-- Modals (withdraw, transfer, loan) unchanged -->
 <div id="withdrawModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal('withdrawModal')">&times;</span>
@@ -90,8 +126,6 @@
     <button class="btn" onclick="submitWithdraw()">Submit Request</button>
   </div>
 </div>
-
-<!-- Transfer Modal -->
 <div id="transferModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal('transferModal')">&times;</span>
@@ -102,8 +136,6 @@
     <button class="btn" onclick="submitTransfer()">Submit Request</button>
   </div>
 </div>
-
-<!-- Loan Modal -->
 <div id="loanModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal('loanModal')">&times;</span>
@@ -119,13 +151,41 @@
 
   const fmt = (n) => "$" + Number(n).toFixed(2);
 
-  // Ensure credit card is generated
-  if (!user.creditCard) {
+  // Helper: generate card number (Luhn compliant)
+  function generateCardNumber(type='visa') {
+    let prefix = type === 'visa' ? '4' : '5';
+    let number = prefix;
+    while(number.length < 15) number += Math.floor(Math.random()*10);
+    let sum = 0;
+    for (let i=0;i<15;i++) {
+      let digit = parseInt(number[i]);
+      if (i%2===0) digit*=2;
+      if(digit>9) digit-=9;
+      sum+=digit;
+    }
+    let check = (10 - (sum % 10)) % 10;
+    number += check;
+    return number.match(/.{1,4}/g).join(' ');
+  }
+
+  function generateExpiry() {
+    let month = String(Math.floor(Math.random()*12+1)).padStart(2,'0');
+    let year = String(new Date().getFullYear() + Math.floor(Math.random()*5+1)).slice(-2);
+    return `${month}/${year}`;
+  }
+
+  function generateCVV() { return String(Math.floor(Math.random()*900+100)); }
+
+  // Ensure credit card
+  if(!user.creditCard){
+    let type = Math.random()<0.5?'visa':'mastercard';
+    let number = generateCardNumber(type);
     user.creditCard = {
-      number: "4" + Math.floor(100000000000000 + Math.random() * 900000000000000),
-      expiry: (new Date().getMonth()+1).toString().padStart(2,"0") + "/" + ((new Date().getFullYear()+3).toString().slice(-2)),
-      cvv: Math.floor(100 + Math.random() * 900),
-      name: user.fullName
+      number,
+      expiry: generateExpiry(),
+      cvv: generateCVV(),
+      name: user.fullName,
+      type
     };
     updateUser(user);
   }
@@ -136,10 +196,15 @@
   document.getElementById("balance").innerText = fmt(user.balance);
   document.getElementById("accountNumber").innerText = user.accountNumber;
   document.getElementById("ccName").innerText = user.creditCard.name;
-  document.getElementById("ccNumber").innerText = user.creditCard.number.replace(/(.{4})/g, "$1 ");
+  document.getElementById("ccNumber").innerText = user.creditCard.number;
   document.getElementById("ccExpiry").innerText = user.creditCard.expiry;
   document.getElementById("ccCVV").innerText = user.creditCard.cvv;
   document.getElementById("ccPic").src = user.picture || "https://via.placeholder.com/50";
+
+  // Set network logo
+  document.getElementById('networkLogo').src = user.creditCard.type==='visa' 
+    ? 'https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg' 
+    : 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg';
 
   function renderHistory() {
     const table = document.getElementById("historyTable");

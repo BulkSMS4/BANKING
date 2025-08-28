@@ -3,216 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Dashboard - Capital One Trust</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background: #f4f6f8; }
-    header { background: navy; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
-    header h2 { font-size: 20px; }
-    .menu-icon { cursor: pointer; font-size: 22px; }
-    .sidebar {
-      width: 220px; height: 100vh; background: #001f3f; position: fixed; top: 0; left: -250px;
-      padding-top: 50px; transition: left 0.3s; color: white;
-    }
-    .sidebar.active { left: 0; }
-    .sidebar a {
-      display: block; padding: 12px 20px; text-decoration: none; color: white;
-    }
-    .sidebar a:hover { background: #003366; }
-    main { margin-left: 0; padding: 20px; transition: margin-left 0.3s; }
-    .content { display: none; }
-    .active-content { display: block; }
-
-    /* Profile card */
-    .profile-card {
-      background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      display: flex; align-items: center; gap: 20px; margin-bottom: 20px;
-    }
-    .profile-card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; }
-    .balance {
-      font-size: 22px; font-weight: bold; color: green;
-    }
-
-    /* Forms */
-    form input, form textarea {
-      width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;
-    }
-    form button {
-      padding: 10px 15px; background: navy; color: white; border: none; border-radius: 5px;
-    }
-    form button:hover { background: darkred; }
-
-    /* Transactions */
-    .transaction {
-      background: white; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 5px solid;
-    }
-    .deposit { border-color: green; }
-    .withdrawal { border-color: red; }
-  </style>
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h2>Capital One Trust</h2>
-    <span class="menu-icon" onclick="toggleMenu()">☰</span>
-  </header>
-
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <a href="#" onclick="showContent('dashboard')">Dashboard</a>
-    <a href="#" onclick="showContent('deposit')">Deposit</a>
-    <a href="#" onclick="showContent('withdrawal')">Withdrawal</a>
-    <a href="#" onclick="showContent('history')">History</a>
-    <a href="#" onclick="showContent('settings')">Settings</a>
-    <a href="#" onclick="logout()">Logout</a>
+  <!-- PIN LOCK SCREEN -->
+  <div id="pin-screen" class="pin-screen">
+    <div class="pin-box">
+      <img id="pin-photo" class="profile-photo" src="" alt="User Photo">
+      <h2 id="pin-name">Welcome</h2>
+      <input type="password" id="pin-input" placeholder="Enter PIN">
+      <button onclick="unlockDashboard()">Unlock</button>
+    </div>
   </div>
 
-  <!-- Main -->
-  <main id="main">
-    <!-- Dashboard -->
-    <section id="dashboard" class="content active-content">
-      <div class="profile-card">
-        <img id="profilePic" src="" alt="Profile Picture">
-        <div>
-          <h3 id="userName"></h3>
-          <p id="userEmail"></p>
-          <p id="userDOB"></p>
-          <p id="userAddress"></p>
-          <p class="balance">Balance: $<span id="userBalance">0.00</span></p>
-        </div>
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="dashboard hidden">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>Menu</h2>
+      <ul>
+        <li onclick="showSection('home')">🏠 Dashboard</li>
+        <li onclick="showSection('deposit')">➕ Deposit</li>
+        <li onclick="showSection('withdraw')">➖ Withdraw</li>
+        <li onclick="showSection('history')">📜 History</li>
+        <li onclick="showSection('settings')">⚙️ Settings</li>
+        <li onclick="logout()">🚪 Logout</li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+      <div id="home" class="section">
+        <img id="user-photo" class="profile-photo" src="" alt="User Photo">
+        <h2 id="user-name">User</h2>
+        <p>Email: <span id="user-email"></span></p>
+        <h3>Balance: $<span id="balance">0</span></h3>
       </div>
-    </section>
 
-    <!-- Deposit -->
-    <section id="deposit" class="content">
-      <h3>Deposit Funds</h3>
-      <form onsubmit="deposit(event)">
-        <input type="number" id="depositAmount" placeholder="Enter Amount" required>
-        <button type="submit">Deposit</button>
-      </form>
-    </section>
+      <div id="deposit" class="section hidden">
+        <h2>Deposit Money</h2>
+        <input type="number" id="deposit-amount" placeholder="Enter amount">
+        <button onclick="deposit()">Deposit</button>
+      </div>
 
-    <!-- Withdrawal -->
-    <section id="withdrawal" class="content">
-      <h3>Withdraw Funds</h3>
-      <form onsubmit="withdraw(event)">
-        <input type="number" id="withdrawAmount" placeholder="Enter Amount" required>
-        <button type="submit">Withdraw</button>
-      </form>
-    </section>
+      <div id="withdraw" class="section hidden">
+        <h2>Withdraw Money</h2>
+        <input type="number" id="withdraw-amount" placeholder="Enter amount">
+        <button onclick="withdraw()">Withdraw</button>
+      </div>
 
-    <!-- History -->
-    <section id="history" class="content">
-      <h3>Transaction History</h3>
-      <div id="transactions"></div>
-    </section>
+      <div id="history" class="section hidden">
+        <h2>Transaction History</h2>
+        <ul id="history-list"></ul>
+      </div>
 
-    <!-- Settings -->
-    <section id="settings" class="content">
-      <h3>Update Profile</h3>
-      <form onsubmit="updateProfile(event)">
-        <input type="text" id="newName" placeholder="Full Name">
-        <input type="email" id="newEmail" placeholder="Email">
-        <input type="date" id="newDOB" placeholder="Date of Birth">
-        <textarea id="newAddress" placeholder="House Address"></textarea>
-        <input type="file" id="newPic" accept="image/*">
-        <button type="submit">Update</button>
-      </form>
-    </section>
-  </main>
+      <div id="settings" class="section hidden">
+        <h2>Update Details</h2>
+        <input type="text" id="new-name" placeholder="Change Name">
+        <input type="email" id="new-email" placeholder="Change Email">
+        <input type="file" id="new-photo" accept="image/*">
+        <button onclick="updateSettings()">Save Changes</button>
+      </div>
+    </div>
+  </div>
 
-  <script>
-    function toggleMenu() {
-      document.getElementById("sidebar").classList.toggle("active");
-    }
-
-    function showContent(id) {
-      document.querySelectorAll(".content").forEach(c => c.classList.remove("active-content"));
-      document.getElementById(id).classList.add("active-content");
-      document.getElementById("sidebar").classList.remove("active"); // close menu after click
-    }
-
-    // Load user
-    let user = JSON.parse(localStorage.getItem("user")) || {
-      name: "Demo User",
-      email: "demo@email.com",
-      dob: "2000-01-01",
-      address: "Demo Address",
-      balance: 500,
-      transactions: [
-        { type: "deposit", amount: 300, date: "2025-01-12" },
-        { type: "withdrawal", amount: 100, date: "2025-02-03" }
-      ],
-      pic: ""
-    };
-
-    function renderUser() {
-      document.getElementById("userName").innerText = user.name;
-      document.getElementById("userEmail").innerText = user.email;
-      document.getElementById("userDOB").innerText = "DOB: " + user.dob;
-      document.getElementById("userAddress").innerText = "Address: " + user.address;
-      document.getElementById("userBalance").innerText = user.balance.toFixed(2);
-      document.getElementById("profilePic").src = user.pic || "https://via.placeholder.com/80";
-      renderTransactions();
-      localStorage.setItem("user", JSON.stringify(user));
-    }
-
-    function deposit(e) {
-      e.preventDefault();
-      let amt = parseFloat(document.getElementById("depositAmount").value);
-      user.balance += amt;
-      user.transactions.push({ type: "deposit", amount: amt, date: new Date().toISOString().split('T')[0] });
-      renderUser();
-      showContent("dashboard");
-    }
-
-    function withdraw(e) {
-      e.preventDefault();
-      let amt = parseFloat(document.getElementById("withdrawAmount").value);
-      if (amt > user.balance) { alert("Insufficient funds!"); return; }
-      user.balance -= amt;
-      user.transactions.push({ type: "withdrawal", amount: amt, date: new Date().toISOString().split('T')[0] });
-      renderUser();
-      showContent("dashboard");
-    }
-
-    function renderTransactions() {
-      let box = document.getElementById("transactions");
-      box.innerHTML = "";
-      user.transactions.forEach(t => {
-        let div = document.createElement("div");
-        div.className = "transaction " + t.type;
-        div.innerText = `${t.type.toUpperCase()} - $${t.amount} on ${t.date}`;
-        box.appendChild(div);
-      });
-    }
-
-    function updateProfile(e) {
-      e.preventDefault();
-      if (document.getElementById("newName").value) user.name = document.getElementById("newName").value;
-      if (document.getElementById("newEmail").value) user.email = document.getElementById("newEmail").value;
-      if (document.getElementById("newDOB").value) user.dob = document.getElementById("newDOB").value;
-      if (document.getElementById("newAddress").value) user.address = document.getElementById("newAddress").value;
-      let file = document.getElementById("newPic").files[0];
-      if (file) {
-        let reader = new FileReader();
-        reader.onload = function(evt) {
-          user.pic = evt.target.result;
-          renderUser();
-        };
-        reader.readAsDataURL(file);
-      } else {
-        renderUser();
-      }
-      showContent("dashboard");
-    }
-
-    function logout() {
-      alert("Logged out!");
-      localStorage.removeItem("user");
-      window.location.href = "login.html"; // redirect to login page
-    }
-
-    renderUser();
-  </script>
+  <script src="script.js"></script>
 </body>
-          </html>
+</html>

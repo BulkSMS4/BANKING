@@ -1,192 +1,319 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Dashboard - Capital One Trust</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { background: #f4f6f9; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f6f9;
+    }
 
     header {
-      background: #003366; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center;
+      background: #0a3d62;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    header h2 { margin: 0; }
-    #menuBtn { font-size: 22px; cursor: pointer; }
+
+    header h2 {
+      margin: 0;
+    }
+
+    .menu-icon {
+      font-size: 28px;
+      cursor: pointer;
+    }
 
     .sidebar {
-      position: fixed; top: 0; left: -250px; width: 250px; height: 100%;
-      background: #002244; color: white; padding-top: 60px;
-      transition: left 0.3s ease;
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background: #1e272e;
+      overflow-x: hidden;
+      transition: 0.3s;
+      padding-top: 60px;
     }
+
     .sidebar a {
-      display: block; padding: 15px; text-decoration: none; color: white;
-      border-bottom: 1px solid #334;
+      padding: 12px 20px;
+      text-decoration: none;
+      font-size: 18px;
+      color: white;
+      display: block;
+      transition: 0.2s;
     }
-    .sidebar a:hover { background: #004488; }
 
-    .content { padding: 20px; }
-    .hidden { display: none; }
-
-    /* Credit card */
-    .credit-card {
-      width: 100%; max-width: 400px; background: linear-gradient(135deg, #003366, #0055aa);
-      color: white; border-radius: 15px; padding: 20px; margin: 0 auto;
+    .sidebar a:hover {
+      background: #3c6382;
     }
-    .card-number { font-size: 22px; margin: 15px 0; letter-spacing: 2px; }
-    .card-details { display: flex; justify-content: space-between; font-size: 14px; }
-    .card-holder { margin-top: 15px; font-weight: bold; }
 
-    .profile-section { text-align: center; margin-top: 15px; }
+    .content {
+      padding: 20px;
+    }
+
+    .card {
+      background: linear-gradient(to right, #0a3d62, #3c6382);
+      color: white;
+      border-radius: 12px;
+      padding: 20px;
+      width: 320px;
+      margin: 20px auto;
+    }
+
+    .card-number {
+      font-size: 22px;
+      letter-spacing: 3px;
+      margin: 15px 0;
+    }
+
+    .card-details {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .balance-box {
+      background: white;
+      color: #0a3d62;
+      padding: 15px;
+      border-radius: 12px;
+      margin: 20px auto;
+      width: 320px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .profile-section {
+      text-align: center;
+      margin-top: 20px;
+    }
+
     .profile-section img {
-      width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #003366;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
     }
 
-    .balance { font-size: 20px; font-weight: bold; margin: 15px 0; text-align: center; }
-
-    .transaction {
-      background: white; padding: 10px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    .hidden {
+      display: none;
     }
-    .deposit { color: green; }
-    .withdrawal { color: red; }
 
-    input, button { padding: 10px; margin: 5px 0; width: 100%; border: 1px solid #ccc; border-radius: 5px; }
-    button { background: #003366; color: white; cursor: pointer; }
-    button:hover { background: #0055aa; }
+    button {
+      padding: 10px 20px;
+      background: #0a3d62;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #3c6382;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    table th, table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    table th {
+      background: #0a3d62;
+      color: white;
+    }
   </style>
 </head>
 <body>
-
   <header>
     <h2>Capital One Trust</h2>
-    <span id="menuBtn">&#9776;</span>
+    <span class="menu-icon" onclick="openMenu()">☰</span>
   </header>
 
-  <div class="sidebar" id="sidebar">
-    <a href="#" onclick="showScreen('dashboard')">Dashboard</a>
-    <a href="#" onclick="showScreen('deposit')">Deposit</a>
-    <a href="#" onclick="showScreen('withdraw')">Withdraw</a>
-    <a href="#" onclick="showScreen('history')">History</a>
-    <a href="#" onclick="showScreen('settings')">Settings</a>
-    <a href="#">Logout</a>
+  <!-- Sidebar Menu -->
+  <div id="sidebar" class="sidebar">
+    <a href="#" onclick="showSection('dashboard')">Dashboard</a>
+    <a href="#" onclick="showSection('deposit')">Deposit</a>
+    <a href="#" onclick="showSection('withdrawal')">Withdrawal</a>
+    <a href="#" onclick="showSection('history')">History</a>
+    <a href="#" onclick="showSection('settings')">Settings</a>
+    <a href="#" onclick="closeMenu()">Close</a>
   </div>
 
+  <!-- Content -->
   <div class="content">
-    <!-- Dashboard -->
-    <div id="dashboard">
-      <div class="profile-section">
-        <img id="profilePic" src="https://via.placeholder.com/100" alt="Profile Picture">
-        <p><strong>Welcome, John Doe</strong></p>
-      </div>
-
-      <div class="credit-card">
-        <h3>Capital One Trust</h3>
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="section">
+      <div class="card">
+        <h3>Credit Card</h3>
         <div class="card-number">4532 9123 6789 4521</div>
         <div class="card-details">
-          <div><strong>VALID THRU</strong><br>08/28</div>
-          <div><strong>CVV</strong><br>274</div>
+          <div>VALID: 08/28</div>
+          <div>CVV: 274</div>
         </div>
-        <div class="card-holder">JOHN DOE</div>
+        <div>JOHN DOE</div>
       </div>
-
-      <div class="balance">
-        Current Balance: $<span id="balance">1500</span>
+      <div class="balance-box">
+        Balance: $<span id="balance">1000</span>
+      </div>
+      <div class="profile-section">
+        <img id="profile-pic" src="https://via.placeholder.com/100" alt="Profile">
+        <p id="username">John Doe</p>
       </div>
     </div>
 
-    <!-- Deposit -->
-    <div id="deposit" class="hidden">
-      <h3>Deposit Funds</h3>
-      <input type="number" id="depositAmount" placeholder="Enter amount">
-      <button onclick="makeDeposit()">Deposit</button>
+    <!-- Deposit Section -->
+    <div id="deposit" class="section hidden">
+      <h3>Deposit Money</h3>
+      <input type="number" id="deposit-amount" placeholder="Enter amount">
+      <button onclick="deposit()">Deposit</button>
     </div>
 
-    <!-- Withdraw -->
-    <div id="withdraw" class="hidden">
-      <h3>Withdraw Funds</h3>
-      <input type="number" id="withdrawAmount" placeholder="Enter amount">
-      <button onclick="makeWithdraw()">Withdraw</button>
+    <!-- Withdrawal Section -->
+    <div id="withdrawal" class="section hidden">
+      <h3>Withdraw Money</h3>
+      <input type="number" id="withdraw-amount" placeholder="Enter amount">
+      <button onclick="withdraw()">Withdraw</button>
     </div>
 
-    <!-- History -->
-    <div id="history" class="hidden">
+    <!-- History Section -->
+    <div id="history" class="section hidden">
       <h3>Transaction History</h3>
-      <div id="historyList"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="history-body"></tbody>
+      </table>
     </div>
 
-    <!-- Settings -->
-    <div id="settings" class="hidden">
+    <!-- Settings Section -->
+    <div id="settings" class="section hidden">
       <h3>Update Profile</h3>
-      <input type="file" id="uploadPic" accept="image/*" onchange="updatePicture(event)">
+      <input type="text" id="new-username" placeholder="Enter new name"><br><br>
+      <input type="file" id="upload-pic" accept="image/*"><br><br>
+      <button onclick="updateProfile()">Save</button>
     </div>
   </div>
 
   <script>
-    let sidebar = document.getElementById("sidebar");
-    let menuBtn = document.getElementById("menuBtn");
-    let balance = 1500;
-    let history = [
-      { type: "Deposit", amount: 1000, date: "2024-06-15" },
-      { type: "Withdrawal", amount: 500, date: "2024-07-02" }
-    ];
+    let balance = localStorage.getItem("balance") ? parseFloat(localStorage.getItem("balance")) : 1000;
+    let history = JSON.parse(localStorage.getItem("history")) || [];
 
-    // Toggle Sidebar
-    menuBtn.onclick = function() {
-      sidebar.style.left = sidebar.style.left === "0px" ? "-250px" : "0px";
-    };
+    document.getElementById("balance").innerText = balance;
 
-    function showScreen(screenId) {
-      document.querySelectorAll(".content > div").forEach(div => div.classList.add("hidden"));
-      document.getElementById(screenId).classList.remove("hidden");
-      sidebar.style.left = "-250px"; // close menu after selection
-      if (screenId === "history") renderHistory();
+    // Menu controls
+    function openMenu() {
+      document.getElementById("sidebar").style.width = "250px";
     }
 
+    function closeMenu() {
+      document.getElementById("sidebar").style.width = "0";
+    }
+
+    function showSection(sectionId) {
+      let sections = document.querySelectorAll(".section");
+      sections.forEach(sec => sec.classList.add("hidden"));
+      document.getElementById(sectionId).classList.remove("hidden");
+      closeMenu();
+    }
+
+    // Deposit
+    function deposit() {
+      let amt = parseFloat(document.getElementById("deposit-amount").value);
+      if (!isNaN(amt) && amt > 0) {
+        balance += amt;
+        saveTransaction("Deposit", amt);
+        updateBalance();
+      }
+    }
+
+    // Withdraw
+    function withdraw() {
+      let amt = parseFloat(document.getElementById("withdraw-amount").value);
+      if (!isNaN(amt) && amt > 0 && amt <= balance) {
+        balance -= amt;
+        saveTransaction("Withdrawal", amt);
+        updateBalance();
+      }
+    }
+
+    // Update balance display
     function updateBalance() {
-      document.getElementById("balance").textContent = balance;
+      document.getElementById("balance").innerText = balance.toFixed(2);
+      localStorage.setItem("balance", balance);
     }
 
-    function makeDeposit() {
-      let amount = parseFloat(document.getElementById("depositAmount").value);
-      if (!isNaN(amount) && amount > 0) {
-        balance += amount;
-        history.push({ type: "Deposit", amount, date: new Date().toISOString().split("T")[0] });
-        updateBalance();
-        alert("Deposit successful!");
-      }
+    // Save transaction
+    function saveTransaction(type, amount) {
+      let date = new Date().toLocaleString();
+      history.push({ type, amount, date });
+      localStorage.setItem("history", JSON.stringify(history));
+      renderHistory();
     }
 
-    function makeWithdraw() {
-      let amount = parseFloat(document.getElementById("withdrawAmount").value);
-      if (!isNaN(amount) && amount > 0 && amount <= balance) {
-        balance -= amount;
-        history.push({ type: "Withdrawal", amount, date: new Date().toISOString().split("T")[0] });
-        updateBalance();
-        alert("Withdrawal successful!");
-      } else {
-        alert("Invalid or insufficient funds.");
-      }
-    }
-
+    // Render history
     function renderHistory() {
-      let historyList = document.getElementById("historyList");
-      historyList.innerHTML = "";
-      history.slice().reverse().forEach(tx => {
-        let div = document.createElement("div");
-        div.className = "transaction " + (tx.type === "Deposit" ? "deposit" : "withdrawal");
-        div.innerHTML = `<strong>${tx.type}</strong>: $${tx.amount} <br><small>${tx.date}</small>`;
-        historyList.appendChild(div);
+      let tbody = document.getElementById("history-body");
+      tbody.innerHTML = "";
+      history.forEach(tx => {
+        let row = `<tr>
+          <td>${tx.type}</td>
+          <td>$${tx.amount}</td>
+          <td>${tx.date}</td>
+        </tr>`;
+        tbody.innerHTML += row;
       });
     }
+    renderHistory();
 
-    function updatePicture(event) {
-      let reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById("profilePic").src = e.target.result;
-      };
-      reader.readAsDataURL(event.target.files[0]);
+    // Update profile
+    function updateProfile() {
+      let newName = document.getElementById("new-username").value;
+      if (newName) {
+        document.getElementById("username").innerText = newName;
+        localStorage.setItem("username", newName);
+      }
+
+      let file = document.getElementById("upload-pic").files[0];
+      if (file) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById("profile-pic").src = e.target.result;
+          localStorage.setItem("profilePic", e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
     }
-  </script>
 
+    // Load saved profile
+    window.onload = function() {
+      if (localStorage.getItem("username")) {
+        document.getElementById("username").innerText = localStorage.getItem("username");
+      }
+      if (localStorage.getItem("profilePic")) {
+        document.getElementById("profile-pic").src = localStorage.getItem("profilePic");
+      }
+    };
+  </script>
 </body>
 </html>

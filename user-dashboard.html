@@ -1,289 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>User Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body { font-family: Arial, sans-serif; background: #f2f2f2; margin:0; padding:0;}
-.header { background: #d40000; color: white; padding:15px; display:flex; justify-content:space-between; align-items:center;}
-.header h2 { margin:0; display:flex; align-items:center;}
-.profile-pic { width:40px; height:40px; border-radius:50%; margin-left:10px; object-fit:cover; border:2px solid white; }
-.container { padding:20px;}
-.card, .history { background:white; padding:20px; border-radius:8px; margin-bottom:20px; box-shadow:0 0 5px rgba(0,0,0,0.1);}
-button { padding:10px 20px; margin:5px; border:none; border-radius:6px; cursor:pointer;}
-.btn { background:#d40000; color:white;}
-.btn:hover { background:#a80000;}
-table { width:100%; border-collapse:collapse; margin-top:15px;}
-th, td { border:1px solid #ddd; padding:8px; text-align:center;}
-th { background:#f4f4f4;}
-.tx-pic { width:30px; height:30px; border-radius:50%; object-fit:cover;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - Capital One Trust</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f5f7fa; }
 
-/* Modal */
-.modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
-.modal-content { background:white; padding:20px; border-radius:8px; width:350px; }
-.modal-content h3 { margin-top:0; }
-.close { float:right; font-size:20px; cursor:pointer; }
-input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px solid #ccc; }
+    header {
+      background: #002868; /* Navy Blue */
+      color: #fff;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h2 { font-size: 20px; }
 
-/* Credit Card */
-.credit-card { background: linear-gradient(135deg, #b00000, #e60000); color:white; padding:25px; border-radius:15px; width:350px; margin:10px auto; font-family:"OCR A Std", monospace; position:relative; box-shadow:0 4px 15px rgba(0,0,0,0.4);}
-.boa-logo { height:40px; margin-bottom:20px;}
-.cc-number { font-size:22px; letter-spacing:4px; margin:20px 0;}
-.cc-info { display:flex; justify-content:space-between; margin:15px 0; font-size:14px;}
-.cc-info span { font-size:10px; display:block; color:#ddd;}
-.cc-footer { display:flex; justify-content:space-between; align-items:center;}
-.card-holder { font-size:14px; text-transform:uppercase; margin-top:10px;}
-.cc-pic { width:50px; height:50px; border-radius:50%; border:2px solid white; }
-.network-logo { position:absolute; bottom:15px; right:20px; height:30px; }
+    /* Hamburger */
+    .menu-btn {
+      font-size: 24px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: white;
+    }
 
-/* PIN Modal */
-#pinModal { display:flex; flex-direction:column; align-items:center; justify-content:center;}
-#pinModal input { max-width:150px; text-align:center; font-size:20px; letter-spacing:8px;}
-</style>
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0; left: -250px;
+      width: 250px;
+      height: 100%;
+      background: #003366;
+      color: white;
+      padding: 20px;
+      transition: 0.3s;
+      z-index: 1000;
+    }
+    .sidebar.active { left: 0; }
+    .sidebar a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* Overlay */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 500;
+    }
+    .overlay.active { display: block; }
+
+    /* Dashboard content */
+    .container {
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    /* Credit Card */
+    .credit-card {
+      background: linear-gradient(135deg, #1a237e, #0d47a1);
+      color: white;
+      border-radius: 15px;
+      padding: 20px;
+      width: 100%;
+      max-width: 380px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .card-header { display: flex; justify-content: space-between; }
+    .card-number {
+      font-size: 22px;
+      letter-spacing: 3px;
+      margin: 20px 0;
+    }
+    .card-details {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .card-holder { font-size: 18px; }
+
+    /* User Info */
+    .user-info {
+      margin-top: 30px;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .user-info h3 {
+      margin-bottom: 15px;
+      color: #002868;
+    }
+    .user-info p {
+      margin: 5px 0;
+      font-size: 15px;
+    }
+  </style>
 </head>
 <body>
 
-<!-- PIN Modal -->
-<div id="pinModal" class="modal">
-  <div class="modal-content">
-    <h3>Enter your 4-digit PIN</h3>
-    <input type="password" id="pinInput" maxlength="4" placeholder="****">
-    <button class="btn" onclick="checkPIN()">Submit</button>
-    <p id="pinError" style="color:red; margin-top:5px;"></p>
-  </div>
-</div>
+  <header>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <h2>Capital One Trust</h2>
+  </header>
 
-<div class="header" style="display:none;" id="dashboardHeader">
-  <h2>Welcome, <span id="userName"></span> <img id="userPic" class="profile-pic" src=""></h2>
-  <button onclick="logout()">Logout</button>
-</div>
-
-<div class="container" id="dashboardContainer" style="display:none;">
-
-  <!-- Balance -->
-  <div class="card">
-    <h3>Account Balance: <span id="balance"></span></h3>
-    <p><strong>Account Number:</strong> <span id="accountNumber"></span></p>
-    <p><strong>Phone Number:</strong> <span id="phoneNumber"></span></p>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <h3>Menu</h3>
+    <a href="#">Dashboard</a>
+    <a href="#">Wire Transfer</a>
+    <a href="#">Transactions</a>
+    <a href="#">Logout</a>
   </div>
 
-  <!-- Credit Card -->
-  <div class="card">
-    <h3>Your Virtual Credit Card</h3>
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+  <div class="container">
+    <!-- Credit Card -->
     <div class="credit-card">
-      <div class="cc-header">
-        <img src="https://1000logos.net/wp-content/uploads/2017/06/Bank-of-America-Logo-2001.png" class="boa-logo" alt="Bank of America Logo">
+      <div class="card-header">
+        <h3>Capital One Trust</h3>
       </div>
-      <div class="cc-number" id="ccNumber"></div>
-      <div class="cc-info">
+      <div class="card-number">
+        4532 9123 6789 4521
+      </div>
+      <div class="card-details">
         <div>
-          <span>EXP</span>
-          <div id="ccExpiry"></div>
+          <strong>VALID THRU</strong><br>
+          08/28
         </div>
         <div>
-          <span>CVV</span>
-          <div id="ccCVV"></div>
+          <strong>CVV</strong><br>
+          274
         </div>
       </div>
-      <div class="cc-footer">
-        <div class="card-holder" id="ccName"></div>
-        <img id="ccPic" class="cc-pic" src="">
+      <div class="card-holder">
+        JOHN DOE
       </div>
-      <img id="networkLogo" class="network-logo" src="">
+    </div>
+
+    <!-- User Info -->
+    <div class="user-info">
+      <h3>Account Information</h3>
+      <p><strong>Full Name:</strong> John Doe</p>
+      <p><strong>Date of Birth:</strong> 15th June 1992</p>
+      <p><strong>House Address:</strong> 123 Elm Street, Springfield, USA</p>
+      <p><strong>Account Balance:</strong> $25,400.00</p>
     </div>
   </div>
 
-  <!-- Actions -->
-  <div class="card">
-    <h3>Quick Actions</h3>
-    <button class="btn" onclick="openModal('withdrawModal')">Withdraw</button>
-    <button class="btn" onclick="openModal('transferModal')">International Transfer</button>
-    <button class="btn" onclick="openModal('loanModal')">Request Loan</button>
-  </div>
+  <script>
+    function toggleMenu() {
+      document.getElementById("sidebar").classList.toggle("active");
+      document.getElementById("overlay").classList.toggle("active");
+    }
+  </script>
 
-  <!-- History -->
-  <div class="history">
-    <h3>Transaction History</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Pic</th>
-          <th>Date</th>
-          <th>Type</th>
-          <th>Details</th>
-          <th>Amount</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="historyTable"></tbody>
-    </table>
-  </div>
-
-</div>
-
-<!-- Action Modals -->
-<div id="withdrawModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal('withdrawModal')">&times;</span>
-    <h3>Withdraw Funds</h3>
-    <input type="number" id="withdrawAmount" placeholder="Enter amount">
-    <button class="btn" onclick="submitWithdraw()">Submit Request</button>
-  </div>
-</div>
-
-<div id="transferModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal('transferModal')">&times;</span>
-    <h3>International Transfer</h3>
-    <input type="text" id="recipient" placeholder="Recipient Name">
-    <input type="text" id="recipientAcc" placeholder="Recipient Account Number">
-    <input type="number" id="transferAmount" placeholder="Enter amount">
-    <button class="btn" onclick="submitTransfer()">Submit Request</button>
-  </div>
-</div>
-
-<div id="loanModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal('loanModal')">&times;</span>
-    <h3>Request Loan</h3>
-    <input type="number" id="loanAmount" placeholder="Enter loan amount">
-    <button class="btn" onclick="submitLoan()">Submit Request</button>
-  </div>
-</div>
-
-<!-- Firebase SDK -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCzqzO69UPV23oBHU3JAcvZjwEcsv3TtJY",
-  authDomain: "bank-of-america-92490.firebaseapp.com",
-  projectId: "bank-of-america-92490",
-  storageBucket: "bank-of-america-92490.firebasestorage.app",
-  messagingSenderId: "926628493178",
-  appId: "1:926628493178:web:775a66629b654d80f348c3"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// Load logged-in user
-let user = JSON.parse(localStorage.getItem("loggedInUser"));
-if(!user) window.location.href="login.html";
-
-let attempts = 0;
-const pinModal = document.getElementById("pinModal");
-const dashboardHeader = document.getElementById("dashboardHeader");
-const dashboardContainer = document.getElementById("dashboardContainer");
-
-pinModal.style.display = "flex";
-
-window.checkPIN = () => {
-  const pinInput = document.getElementById("pinInput").value;
-  if(pinInput === user.pin){
-    pinModal.style.display = "none";
-    dashboardHeader.style.display = "flex";
-    dashboardContainer.style.display = "block";
-    loadDashboard();
-  } else {
-    attempts++;
-    document.getElementById("pinError").innerText = "Incorrect PIN. Attempts left: " + (3 - attempts);
-    if(attempts >=3) alert("Too many failed attempts. Redirecting to login.") && (window.location.href="login.html");
-  }
-};
-
-function fmt(n){ return "$" + Number(n).toFixed(2); }
-
-function loadDashboard(){
-  document.getElementById("userName").innerText = user.fullName;
-  document.getElementById("userPic").src = user.photo || "https://via.placeholder.com/40";
-  document.getElementById("balance").innerText = fmt(user.balance||0);
-  document.getElementById("accountNumber").innerText = user.accountNumber;
-  document.getElementById("phoneNumber").innerText = user.phone || "Not provided";
-
-  // credit card setup
-  if(!user.creditCard){
-    user.creditCard = {
-      number: '**** **** **** ' + Math.floor(1000+Math.random()*9000),
-      expiry:'12/28', cvv:'***', name:user.fullName,
-      type: Math.random()<0.5?'visa':'mastercard'
-    };
-    localStorage.setItem("loggedInUser", JSON.stringify(user));
-  }
-
-  document.getElementById("ccName").innerText = user.creditCard.name;
-  document.getElementById("ccNumber").innerText = user.creditCard.number;
-  document.getElementById("ccExpiry").innerText = user.creditCard.expiry;
-  document.getElementById("ccCVV").innerText = user.creditCard.cvv;
-  document.getElementById("ccPic").src = user.photo || "https://via.placeholder.com/50";
-  document.getElementById("networkLogo").src = user.creditCard.type==='visa'
-    ? 'https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg'
-    : 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg';
-
-  renderHistory();
-}
-
-function renderHistory(){
-  const table = document.getElementById("historyTable");
-  table.innerHTML = "";
-
-  // combine new + old history
-  let allHistory = (user.oldHistory || []).concat(user.transactions || []);
-  allHistory.forEach(r=>{
-    table.innerHTML += `<tr>
-      <td><img class="tx-pic" src="${user.photo||'https://via.placeholder.com/30'}"></td>
-      <td>${r.date}</td>
-      <td>${r.type}</td>
-      <td>${r.details}</td>
-      <td>${fmt(r.amount)}</td>
-      <td>${r.status}</td>
-    </tr>`;
-  });
-}
-
-function addRequest(type, details, amount){
-  if(!user.transactions) user.transactions=[];
-  user.transactions.push({ id:Date.now(), date:new Date().toLocaleString(), type, details, amount, status:"Pending" });
-  localStorage.setItem("loggedInUser", JSON.stringify(user));
-  renderHistory();
-  alert(type + " request submitted.");
-}
-
-window.submitWithdraw = () => {
-  const amt = Number(document.getElementById("withdrawAmount").value);
-  if(amt<=0) return alert("Invalid amount");
-  addRequest("Withdraw", "Cash withdrawal", amt);
-  closeModal('withdrawModal');
-};
-
-window.submitTransfer = () => {
-  const amt = Number(document.getElementById("transferAmount").value);
-  const rec = document.getElementById("recipient").value;
-  const recAcc = document.getElementById("recipientAcc").value;
-  if(!rec||!recAcc||amt<=0) return alert("Invalid transfer");
-  addRequest("Transfer", `To ${rec} (${recAcc})`, amt);
-  closeModal('transferModal');
-};
-
-window.submitLoan = () => {
-  const amt = Number(document.getElementById("loanAmount").value);
-  if(amt<=0) return alert("Invalid loan");
-  addRequest("Loan", "Loan request", amt);
-  closeModal('loanModal');
-};
-
-window.logout = () => {
-  localStorage.removeItem("loggedInUser");
-  window.location.href="login.html";
-};
-
-window.openModal = (id)=> document.getElementById(id).style.display="flex";
-window.closeModal = (id)=> document.getElementById(id).style.display="none";
-
-</script>
 </body>
 </html>

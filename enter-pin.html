@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter PIN</title>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; height: 100vh; justify-content: center; align-items: center; background: #f4f4f4; }
+    .container { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 300px; text-align: center; }
+    input { padding: 10px; margin: 10px 0; width: 90%; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 10px; background: navy; color: white; border: none; border-radius: 5px; width: 100%; cursor: pointer; }
+    .links { margin-top: 10px; }
+    .links a { color: navy; text-decoration: none; margin: 0 5px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Enter Your PIN</h2>
+    <input type="password" placeholder="Enter PIN" required>
+    <button>Submit</button>
+
+    <div class="links">
+      <a href="forgot-pin.html">Forgot PIN?</a> | 
+      <a href="reset-pin.html">Reset PIN</a>
+    </div>
+  </div>
+</body>
+</html>

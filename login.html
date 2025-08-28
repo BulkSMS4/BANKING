@@ -19,7 +19,7 @@ p.error { color:red; font-size:14px; text-align:center; }
 
 <div class="form-box">
   <h2>Login to Your Account</h2>
-  <p class="description">Enter your email and password to access your bank account dashboard.</p>
+  <p class="description">Enter your email and password to access your bank account.</p>
   <form id="loginForm">
     <input type="email" id="email" placeholder="Email" required>
     <input type="password" id="password" placeholder="Password" required>
@@ -65,11 +65,11 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
       return;
     }
 
-    // Save user locally for dashboard
-    localStorage.setItem("loggedInUser", JSON.stringify(userDoc.data()));
+    // Save user locally for PIN page
+    localStorage.setItem("currentUser", JSON.stringify({ uid, ...userDoc.data() }));
 
-    // Redirect to dashboard
-    window.location.href = "dashboard.html";
+    // ✅ Redirect to PIN page instead of dashboard
+    window.location.href = "pin.html";
 
   } catch(err){
     errorMsg.innerText = "Login failed: " + err.message;

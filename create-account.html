@@ -40,9 +40,10 @@ button:hover { background:#001f5a; }
       <option value="Other">Other</option>
     </select>
     <input type="date" id="dob" placeholder="Date of Birth" required>
-    <input type="text" id="ssn" placeholder="Social Security Number" required>
-    <input type="text" id="address" placeholder="Address" required>
+    <input type="text" id="address" placeholder="House Address" required>
     <input type="text" id="nationality" placeholder="Nationality" required>
+    <input type="number" id="initialDeposit" placeholder="Initial Deposit Amount" required min="0">
+    
     <button type="submit">Register</button>
   </form>
 </div>
@@ -65,20 +66,17 @@ document.getElementById("registerForm").addEventListener("submit", function(e){
       password: document.getElementById("password").value,
       pin: document.getElementById("pin").value,
       accountType: document.getElementById("accountType").value,
-      photo: reader.result,
+      photo: reader.result, // Base64 image
       gender: document.getElementById("gender").value,
       dob: document.getElementById("dob").value,
-      ssn: document.getElementById("ssn").value,
       address: document.getElementById("address").value,
       nationality: document.getElementById("nationality").value,
-      accountNumber: Math.floor(1000000000 + Math.random()*9000000000), // random 10-digit account number
-      balance: 1000, // initial balance
+      accountNumber: Math.floor(1000000000 + Math.random()*9000000000), // 10-digit number
+      balance: parseFloat(document.getElementById("initialDeposit").value),
       requests: []
     };
 
-    // Save to localStorage
     let users = JSON.parse(localStorage.getItem("users")) || [];
-    // Check if username already exists
     if(users.some(u => u.username === user.username)){
       alert("Username already exists! Choose another.");
       return;

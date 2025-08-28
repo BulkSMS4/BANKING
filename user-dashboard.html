@@ -8,302 +8,285 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f6f9;
+      background: #f5f6fa;
     }
-
-    /* PIN Screen */
-    #pin-screen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    #pin-screen img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      margin-bottom: 15px;
-    }
-    #pin-screen input {
-      padding: 10px;
-      font-size: 18px;
-      margin-bottom: 10px;
+    header {
+      background: #00274d;
+      color: white;
+      padding: 15px;
       text-align: center;
     }
-    #pin-screen button {
-      padding: 10px 20px;
-      background: navy;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    /* Sidebar */
     .sidebar {
-      height: 100%;
-      width: 220px;
       position: fixed;
-      top: 0; left: 0;
-      background: navy;
+      top: 0;
+      left: 0;
+      width: 220px;
+      height: 100%;
+      background: #1a1a2e;
       padding-top: 20px;
-      display: none;
-      flex-direction: column;
-      z-index: 1000;
-    }
-    .sidebar a {
-      padding: 12px 16px;
-      text-decoration: none;
-      font-size: 16px;
       color: white;
-      display: block;
       transition: 0.3s;
     }
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .sidebar a {
+      display: block;
+      padding: 12px;
+      color: white;
+      text-decoration: none;
+      margin: 5px 0;
+      transition: 0.2s;
+    }
     .sidebar a:hover {
-      background: #1e90ff;
+      background: #16213e;
     }
-
-    .menu-btn {
-      font-size: 24px;
-      cursor: pointer;
-      margin: 10px;
-    }
-
-    /* Main content */
-    .main {
-      margin-left: 0;
+    .content {
+      margin-left: 240px;
       padding: 20px;
     }
-    .profile {
+    .user-info {
       text-align: center;
       margin-bottom: 20px;
     }
-    .profile img {
+    .user-info img {
       width: 100px;
       height: 100px;
       border-radius: 50%;
+      margin-bottom: 10px;
+      object-fit: cover;
     }
     .balance {
       background: white;
-      padding: 20px;
+      padding: 15px;
+      border-radius: 10px;
       text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-      border-radius: 10px;
-      box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
       margin-bottom: 20px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
-
-    .section {
-      display: none;
+    .transactions {
       background: white;
-      padding: 20px;
+      padding: 15px;
       border-radius: 10px;
-      box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
-    .active {
-      display: block;
+    .transactions h3 {
+      margin-bottom: 10px;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
     }
-    table th, table td {
+    th, td {
       padding: 10px;
-      border: 1px solid #ddd;
       text-align: left;
+      border-bottom: 1px solid #ddd;
     }
-    table th {
-      background: #f2f2f2;
+    /* PIN screen */
+    #pin-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: #00274d;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      z-index: 1000;
+    }
+    #pin-screen img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      object-fit: cover;
+    }
+    #pin-input {
+      padding: 10px;
+      font-size: 18px;
+      text-align: center;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+    }
+    #pin-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background: #ff9800;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-<!-- PIN Screen -->
-<div id="pin-screen">
-  <img id="pin-picture" src="profile.jpg" alt="Profile">
-  <h3 id="pin-name">Welcome</h3>
-  <input type="password" id="pin-input" placeholder="Enter PIN">
-  <button onclick="checkPIN()">Unlock</button>
-</div>
-
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-  <a href="#" onclick="showSection('dashboard')">Dashboard</a>
-  <a href="#" onclick="showSection('deposit')">Deposit</a>
-  <a href="#" onclick="showSection('withdrawal')">Withdrawal</a>
-  <a href="#" onclick="showSection('history')">History</a>
-  <a href="#" onclick="showSection('settings')">Settings</a>
-  <a href="#">Logout</a>
-</div>
-
-<!-- Main content -->
-<div class="main">
-  <span class="menu-btn" onclick="toggleMenu()">☰ Menu</span>
-
-  <div class="profile">
-    <img id="user-picture" src="profile.jpg" alt="Profile Picture">
-    <h2 id="user-name">User Name</h2>
+  <!-- PIN Screen -->
+  <div id="pin-screen">
+    <img id="pin-photo" src="" alt="User Photo">
+    <h3 id="pin-name"></h3>
+    <input type="password" id="pin-input" placeholder="Enter PIN">
+    <button id="pin-btn">Unlock</button>
   </div>
 
-  <div class="balance">
-    Balance: $<span id="user-balance">2500.00</span>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Menu</h2>
+    <a href="#" onclick="showSection('dashboard')">Dashboard</a>
+    <a href="#" onclick="showSection('deposit')">Deposit</a>
+    <a href="#" onclick="showSection('withdrawal')">Withdrawal</a>
+    <a href="#" onclick="showSection('history')">History</a>
+    <a href="#" onclick="showSection('settings')">Settings</a>
+    <a href="login.html">Logout</a>
   </div>
 
-  <!-- Dashboard -->
-  <div id="dashboard" class="section active">
-    <h3>Welcome to your Dashboard</h3>
-    <p>Manage your account with ease.</p>
+  <!-- Main Content -->
+  <div class="content">
+    <div class="user-info">
+      <img id="user-photo" src="" alt="User Photo">
+      <h2 id="user-name"></h2>
+      <p id="user-email"></p>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard-section">
+      <div class="balance">
+        <h3>Account Balance</h3>
+        <h2 id="user-balance">$0.00</h2>
+      </div>
+    </div>
+
+    <!-- Deposit -->
+    <div id="deposit-section" style="display:none;">
+      <h3>Deposit Funds</h3>
+      <p>Deposit form here...</p>
+    </div>
+
+    <!-- Withdrawal -->
+    <div id="withdrawal-section" style="display:none;">
+      <h3>Withdraw Funds</h3>
+      <p>Withdrawal form here...</p>
+    </div>
+
+    <!-- History -->
+    <div id="history-section" style="display:none;">
+      <div class="transactions">
+        <h3>Transaction History</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="transaction-history"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div id="settings-section" style="display:none;">
+      <h3>Update Profile</h3>
+      <form id="settings-form">
+        <label>Full Name:</label><br>
+        <input type="text" id="set-name"><br><br>
+        <label>Email:</label><br>
+        <input type="email" id="set-email"><br><br>
+        <label>Upload New Picture:</label><br>
+        <input type="file" id="set-photo" accept="image/*"><br><br>
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
   </div>
 
-  <!-- Deposit -->
-  <div id="deposit" class="section">
-    <h3>Deposit Funds</h3>
-    <input type="number" id="deposit-amount" placeholder="Enter Amount">
-    <button onclick="makeDeposit()">Deposit</button>
-  </div>
+  <script>
+    let user = JSON.parse(localStorage.getItem("user")) || {
+      name: "User",
+      email: "user@email.com",
+      photo: "",
+      balance: 5000,
+      pin: "1234"
+    };
 
-  <!-- Withdrawal -->
-  <div id="withdrawal" class="section">
-    <h3>Withdraw Funds</h3>
-    <input type="number" id="withdraw-amount" placeholder="Enter Amount">
-    <button onclick="makeWithdrawal()">Withdraw</button>
-  </div>
+    // PIN screen setup
+    document.getElementById("pin-photo").src = user.photo || "https://via.placeholder.com/120";
+    document.getElementById("pin-name").innerText = user.name;
 
-  <!-- History -->
-  <div id="history" class="section">
-    <h3>Transaction History</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Type</th>
-          <th>Amount</th>
-        </tr>
-      </thead>
-      <tbody id="history-table">
-        <!-- History goes here -->
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Settings -->
-  <div id="settings" class="section">
-    <h3>Update Details</h3>
-    <form onsubmit="updateSettings(event)">
-      <input type="text" id="set-name" placeholder="Full Name"><br><br>
-      <input type="email" id="set-email" placeholder="Email"><br><br>
-      <input type="text" id="set-phone" placeholder="Phone"><br><br>
-      <input type="text" id="set-address" placeholder="Address"><br><br>
-      <input type="date" id="set-dob"><br><br>
-      <input type="password" id="set-pin" placeholder="Change PIN"><br><br>
-      <input type="file" id="set-picture"><br><br>
-      <button type="submit">Save Changes</button>
-    </form>
-  </div>
-</div>
-
-<script>
-  let balance = 2500;
-  let pin = "1234"; 
-  let history = [
-    {date: "2025-08-01", type: "Deposit", amount: 500},
-    {date: "2025-08-05", type: "Withdrawal", amount: 200},
-    {date: "2025-08-10", type: "Deposit", amount: 1000}
-  ];
-
-  // Load History
-  function loadHistory() {
-    let table = document.getElementById("history-table");
-    table.innerHTML = "";
-    history.forEach(tx => {
-      let row = `<tr><td>${tx.date}</td><td>${tx.type}</td><td>$${tx.amount}</td></tr>`;
-      table.innerHTML += row;
-    });
-  }
-  loadHistory();
-
-  // Sidebar toggle
-  function toggleMenu() {
-    let sidebar = document.getElementById("sidebar");
-    sidebar.style.display = (sidebar.style.display === "flex") ? "none" : "flex";
-  }
-
-  // Show Section
-  function showSection(id) {
-    document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-    document.getElementById("sidebar").style.display = "none";
-  }
-
-  // Deposit
-  function makeDeposit() {
-    let amount = parseFloat(document.getElementById("deposit-amount").value);
-    if (!isNaN(amount) && amount > 0) {
-      balance += amount;
-      document.getElementById("user-balance").textContent = balance.toFixed(2);
-      history.push({date: new Date().toLocaleDateString(), type: "Deposit", amount});
-      loadHistory();
-      alert("Deposit Successful!");
-    }
-  }
-
-  // Withdrawal
-  function makeWithdrawal() {
-    let amount = parseFloat(document.getElementById("withdraw-amount").value);
-    if (!isNaN(amount) && amount > 0 && amount <= balance) {
-      balance -= amount;
-      document.getElementById("user-balance").textContent = balance.toFixed(2);
-      history.push({date: new Date().toLocaleDateString(), type: "Withdrawal", amount});
-      loadHistory();
-      alert("Withdrawal Successful!");
-    } else {
-      alert("Invalid Withdrawal!");
-    }
-  }
-
-  // Settings Update
-  function updateSettings(e) {
-    e.preventDefault();
-    let newName = document.getElementById("set-name").value;
-    let newEmail = document.getElementById("set-email").value;
-    let newPhone = document.getElementById("set-phone").value;
-    let newAddress = document.getElementById("set-address").value;
-    let newDob = document.getElementById("set-dob").value;
-    let newPin = document.getElementById("set-pin").value;
-    let newPic = document.getElementById("set-picture").files[0];
-
-    if (newName) document.getElementById("user-name").textContent = newName;
-    if (newPin) pin = newPin;
-
-    if (newPic) {
-      let reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById("user-picture").src = e.target.result;
-        document.getElementById("pin-picture").src = e.target.result;
+    document.getElementById("pin-btn").addEventListener("click", function() {
+      let pinInput = document.getElementById("pin-input").value;
+      if (pinInput === user.pin) {
+        document.getElementById("pin-screen").style.display = "none";
+        loadDashboard();
+      } else {
+        alert("Incorrect PIN!");
       }
-      reader.readAsDataURL(newPic);
-    }
-    alert("Details Updated!");
-  }
+    });
 
-  // PIN Verification
-  function checkPIN() {
-    let entered = document.getElementById("pin-input").value;
-    if (entered === pin) {
-      document.getElementById("pin-screen").style.display = "none";
-    } else {
-      alert("Incorrect PIN!");
-    }
-  }
-</script>
+    function loadDashboard() {
+      document.getElementById("user-photo").src = user.photo || "https://via.placeholder.com/100";
+      document.getElementById("user-name").innerText = user.name;
+      document.getElementById("user-email").innerText = user.email;
+      document.getElementById("user-balance").innerText = "$" + user.balance.toFixed(2);
 
+      // Generate fake transactions
+      let transactions = [
+        {date:"2025-08-01", type:"Deposit", amount:1000, status:"Completed"},
+        {date:"2025-08-10", type:"Withdrawal", amount:500, status:"Pending"},
+        {date:"2025-08-15", type:"Deposit", amount:2000, status:"Completed"}
+      ];
+      let historyBody = document.getElementById("transaction-history");
+      historyBody.innerHTML = "";
+      transactions.forEach(tx => {
+        let row = `<tr>
+          <td>${tx.date}</td>
+          <td>${tx.type}</td>
+          <td>$${tx.amount}</td>
+          <td>${tx.status}</td>
+        </tr>`;
+        historyBody.innerHTML += row;
+      });
+    }
+
+    function showSection(section) {
+      document.querySelectorAll(".content > div").forEach(div => {
+        div.style.display = "none";
+      });
+      document.getElementById(section + "-section").style.display = "block";
+    }
+
+    // Settings Update
+    document.getElementById("settings-form").addEventListener("submit", function(e){
+      e.preventDefault();
+      user.name = document.getElementById("set-name").value || user.name;
+      user.email = document.getElementById("set-email").value || user.email;
+
+      let file = document.getElementById("set-photo").files[0];
+      if (file) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+          user.photo = e.target.result;
+          localStorage.setItem("user", JSON.stringify(user));
+          loadDashboard();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        localStorage.setItem("user", JSON.stringify(user));
+        loadDashboard();
+      }
+      alert("Profile updated successfully!");
+    });
+
+    // Pre-fill settings form
+    document.getElementById("set-name").value = user.name;
+    document.getElementById("set-email").value = user.email;
+  </script>
 </body>
-  </html>
+</html>

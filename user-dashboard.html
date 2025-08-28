@@ -64,7 +64,8 @@ input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px so
   <!-- Balance -->
   <div class="card">
     <h3>Account Balance: <span id="balance"></span></h3>
-    <p>Account Number: <span id="accountNumber"></span></p>
+    <p><strong>Account Number:</strong> <span id="accountNumber"></span></p>
+    <p><strong>Phone Number:</strong> <span id="phoneNumber"></span></p>
   </div>
 
   <!-- Credit Card -->
@@ -103,7 +104,7 @@ input { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px so
 
   <!-- History -->
   <div class="history">
-    <h3>Transaction Requests</h3>
+    <h3>Transaction History</h3>
     <table>
       <thead>
         <tr>
@@ -202,7 +203,9 @@ function loadDashboard(){
   document.getElementById("userPic").src = user.photo || "https://via.placeholder.com/40";
   document.getElementById("balance").innerText = fmt(user.balance||0);
   document.getElementById("accountNumber").innerText = user.accountNumber;
+  document.getElementById("phoneNumber").innerText = user.phone || "Not provided";
 
+  // credit card setup
   if(!user.creditCard){
     user.creditCard = {
       number: '**** **** **** ' + Math.floor(1000+Math.random()*9000),
@@ -227,7 +230,10 @@ function loadDashboard(){
 function renderHistory(){
   const table = document.getElementById("historyTable");
   table.innerHTML = "";
-  (user.transactions||[]).forEach(r=>{
+
+  // combine new + old history
+  let allHistory = (user.oldHistory || []).concat(user.transactions || []);
+  allHistory.forEach(r=>{
     table.innerHTML += `<tr>
       <td><img class="tx-pic" src="${user.photo||'https://via.placeholder.com/30'}"></td>
       <td>${r.date}</td>

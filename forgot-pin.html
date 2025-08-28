@@ -7,55 +7,71 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f6f9;
+      background: #f3f4f6;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
     .container {
-      background: white;
-      padding: 30px;
+      background: #fff;
+      padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      width: 350px;
-      text-align: center;
+      box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+      width: 300px;
     }
-    input {
-      width: 90%;
+    h2 { text-align: center; margin-bottom: 15px; }
+    input, button {
+      width: 100%;
       padding: 10px;
-      margin: 10px 0;
+      margin: 5px 0;
+      border-radius: 5px;
       border: 1px solid #ccc;
-      border-radius: 6px;
     }
     button {
       background: #007bff;
       color: white;
-      padding: 10px;
-      width: 95%;
       border: none;
-      border-radius: 6px;
       cursor: pointer;
     }
-    button:hover {
-      background: #0056b3;
-    }
-    a {
-      display: block;
-      margin-top: 15px;
-      color: #007bff;
-      text-decoration: none;
-    }
+    button:hover { background: #0056b3; }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>Forgot PIN</h2>
-    <p>Enter your registered email to reset your PIN.</p>
-    <form action="reset-pin.html" method="GET">
-      <input type="email" name="email" placeholder="Enter your email" required>
-      <button type="submit">Send Reset Link</button>
-    </form>
+    <p>Enter your registered email to reset your PIN:</p>
+    <input type="email" id="email" placeholder="Enter your email" required>
+    <button onclick="sendResetLink()">Send Reset Link</button>
+    <p id="msg"></p>
   </div>
+
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); // replace with your EmailJS public key
+    })();
+
+    function sendResetLink() {
+      const email = document.getElementById("email").value;
+      if(!email) {
+        document.getElementById("msg").innerText = "Please enter your email.";
+        return;
+      }
+
+      // Generate reset link
+      const resetLink = `${window.location.origin}/reset-pin.html?email=${encodeURIComponent(email)}`;
+
+      emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+        user_email: email,
+        reset_link: resetLink
+      })
+      .then(() => {
+        document.getElementById("msg").innerText = "Reset link sent to your email!";
+      }, (error) => {
+        document.getElementById("msg").innerText = "Error sending email: " + JSON.stringify(error);
+      });
+    }
+  </script>
 </body>
 </html>

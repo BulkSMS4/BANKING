@@ -4,70 +4,306 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+    }
+
+    /* PIN Screen */
+    #pin-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    #pin-screen img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+    }
+    #pin-screen input {
+      padding: 10px;
+      font-size: 18px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    #pin-screen button {
+      padding: 10px 20px;
+      background: navy;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      height: 100%;
+      width: 220px;
+      position: fixed;
+      top: 0; left: 0;
+      background: navy;
+      padding-top: 20px;
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+    }
+    .sidebar a {
+      padding: 12px 16px;
+      text-decoration: none;
+      font-size: 16px;
+      color: white;
+      display: block;
+      transition: 0.3s;
+    }
+    .sidebar a:hover {
+      background: #1e90ff;
+    }
+
+    .menu-btn {
+      font-size: 24px;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    /* Main content */
+    .main {
+      margin-left: 0;
+      padding: 20px;
+    }
+    .profile {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .profile img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+    }
+    .balance {
+      background: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      border-radius: 10px;
+      box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+
+    .section {
+      display: none;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+    }
+    .active {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table th, table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    table th {
+      background: #f2f2f2;
+    }
+  </style>
 </head>
 <body>
-  <!-- PIN LOCK SCREEN -->
-  <div id="pin-screen" class="pin-screen">
-    <div class="pin-box">
-      <img id="pin-photo" class="profile-photo" src="" alt="User Photo">
-      <h2 id="pin-name">Welcome</h2>
-      <input type="password" id="pin-input" placeholder="Enter PIN">
-      <button onclick="unlockDashboard()">Unlock</button>
-    </div>
+
+<!-- PIN Screen -->
+<div id="pin-screen">
+  <img id="pin-picture" src="profile.jpg" alt="Profile">
+  <h3 id="pin-name">Welcome</h3>
+  <input type="password" id="pin-input" placeholder="Enter PIN">
+  <button onclick="checkPIN()">Unlock</button>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <a href="#" onclick="showSection('dashboard')">Dashboard</a>
+  <a href="#" onclick="showSection('deposit')">Deposit</a>
+  <a href="#" onclick="showSection('withdrawal')">Withdrawal</a>
+  <a href="#" onclick="showSection('history')">History</a>
+  <a href="#" onclick="showSection('settings')">Settings</a>
+  <a href="#">Logout</a>
+</div>
+
+<!-- Main content -->
+<div class="main">
+  <span class="menu-btn" onclick="toggleMenu()">☰ Menu</span>
+
+  <div class="profile">
+    <img id="user-picture" src="profile.jpg" alt="Profile Picture">
+    <h2 id="user-name">User Name</h2>
   </div>
 
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="dashboard hidden">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <h2>Menu</h2>
-      <ul>
-        <li onclick="showSection('home')">🏠 Dashboard</li>
-        <li onclick="showSection('deposit')">➕ Deposit</li>
-        <li onclick="showSection('withdraw')">➖ Withdraw</li>
-        <li onclick="showSection('history')">📜 History</li>
-        <li onclick="showSection('settings')">⚙️ Settings</li>
-        <li onclick="logout()">🚪 Logout</li>
-      </ul>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main">
-      <div id="home" class="section">
-        <img id="user-photo" class="profile-photo" src="" alt="User Photo">
-        <h2 id="user-name">User</h2>
-        <p>Email: <span id="user-email"></span></p>
-        <h3>Balance: $<span id="balance">0</span></h3>
-      </div>
-
-      <div id="deposit" class="section hidden">
-        <h2>Deposit Money</h2>
-        <input type="number" id="deposit-amount" placeholder="Enter amount">
-        <button onclick="deposit()">Deposit</button>
-      </div>
-
-      <div id="withdraw" class="section hidden">
-        <h2>Withdraw Money</h2>
-        <input type="number" id="withdraw-amount" placeholder="Enter amount">
-        <button onclick="withdraw()">Withdraw</button>
-      </div>
-
-      <div id="history" class="section hidden">
-        <h2>Transaction History</h2>
-        <ul id="history-list"></ul>
-      </div>
-
-      <div id="settings" class="section hidden">
-        <h2>Update Details</h2>
-        <input type="text" id="new-name" placeholder="Change Name">
-        <input type="email" id="new-email" placeholder="Change Email">
-        <input type="file" id="new-photo" accept="image/*">
-        <button onclick="updateSettings()">Save Changes</button>
-      </div>
-    </div>
+  <div class="balance">
+    Balance: $<span id="user-balance">2500.00</span>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Dashboard -->
+  <div id="dashboard" class="section active">
+    <h3>Welcome to your Dashboard</h3>
+    <p>Manage your account with ease.</p>
+  </div>
+
+  <!-- Deposit -->
+  <div id="deposit" class="section">
+    <h3>Deposit Funds</h3>
+    <input type="number" id="deposit-amount" placeholder="Enter Amount">
+    <button onclick="makeDeposit()">Deposit</button>
+  </div>
+
+  <!-- Withdrawal -->
+  <div id="withdrawal" class="section">
+    <h3>Withdraw Funds</h3>
+    <input type="number" id="withdraw-amount" placeholder="Enter Amount">
+    <button onclick="makeWithdrawal()">Withdraw</button>
+  </div>
+
+  <!-- History -->
+  <div id="history" class="section">
+    <h3>Transaction History</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody id="history-table">
+        <!-- History goes here -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Settings -->
+  <div id="settings" class="section">
+    <h3>Update Details</h3>
+    <form onsubmit="updateSettings(event)">
+      <input type="text" id="set-name" placeholder="Full Name"><br><br>
+      <input type="email" id="set-email" placeholder="Email"><br><br>
+      <input type="text" id="set-phone" placeholder="Phone"><br><br>
+      <input type="text" id="set-address" placeholder="Address"><br><br>
+      <input type="date" id="set-dob"><br><br>
+      <input type="password" id="set-pin" placeholder="Change PIN"><br><br>
+      <input type="file" id="set-picture"><br><br>
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  let balance = 2500;
+  let pin = "1234"; 
+  let history = [
+    {date: "2025-08-01", type: "Deposit", amount: 500},
+    {date: "2025-08-05", type: "Withdrawal", amount: 200},
+    {date: "2025-08-10", type: "Deposit", amount: 1000}
+  ];
+
+  // Load History
+  function loadHistory() {
+    let table = document.getElementById("history-table");
+    table.innerHTML = "";
+    history.forEach(tx => {
+      let row = `<tr><td>${tx.date}</td><td>${tx.type}</td><td>$${tx.amount}</td></tr>`;
+      table.innerHTML += row;
+    });
+  }
+  loadHistory();
+
+  // Sidebar toggle
+  function toggleMenu() {
+    let sidebar = document.getElementById("sidebar");
+    sidebar.style.display = (sidebar.style.display === "flex") ? "none" : "flex";
+  }
+
+  // Show Section
+  function showSection(id) {
+    document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    document.getElementById("sidebar").style.display = "none";
+  }
+
+  // Deposit
+  function makeDeposit() {
+    let amount = parseFloat(document.getElementById("deposit-amount").value);
+    if (!isNaN(amount) && amount > 0) {
+      balance += amount;
+      document.getElementById("user-balance").textContent = balance.toFixed(2);
+      history.push({date: new Date().toLocaleDateString(), type: "Deposit", amount});
+      loadHistory();
+      alert("Deposit Successful!");
+    }
+  }
+
+  // Withdrawal
+  function makeWithdrawal() {
+    let amount = parseFloat(document.getElementById("withdraw-amount").value);
+    if (!isNaN(amount) && amount > 0 && amount <= balance) {
+      balance -= amount;
+      document.getElementById("user-balance").textContent = balance.toFixed(2);
+      history.push({date: new Date().toLocaleDateString(), type: "Withdrawal", amount});
+      loadHistory();
+      alert("Withdrawal Successful!");
+    } else {
+      alert("Invalid Withdrawal!");
+    }
+  }
+
+  // Settings Update
+  function updateSettings(e) {
+    e.preventDefault();
+    let newName = document.getElementById("set-name").value;
+    let newEmail = document.getElementById("set-email").value;
+    let newPhone = document.getElementById("set-phone").value;
+    let newAddress = document.getElementById("set-address").value;
+    let newDob = document.getElementById("set-dob").value;
+    let newPin = document.getElementById("set-pin").value;
+    let newPic = document.getElementById("set-picture").files[0];
+
+    if (newName) document.getElementById("user-name").textContent = newName;
+    if (newPin) pin = newPin;
+
+    if (newPic) {
+      let reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById("user-picture").src = e.target.result;
+        document.getElementById("pin-picture").src = e.target.result;
+      }
+      reader.readAsDataURL(newPic);
+    }
+    alert("Details Updated!");
+  }
+
+  // PIN Verification
+  function checkPIN() {
+    let entered = document.getElementById("pin-input").value;
+    if (entered === pin) {
+      document.getElementById("pin-screen").style.display = "none";
+    } else {
+      alert("Incorrect PIN!");
+    }
+  }
+</script>
+
 </body>
-</html>
+  </html>

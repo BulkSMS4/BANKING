@@ -7,91 +7,106 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
     }
-    .form-box {
-      background: white;
+    .container {
+      background: #fff;
       padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 320px;
       text-align: center;
     }
-    h2 {
-      margin-bottom: 15px;
-    }
-    img {
-      width: 120px;
-      height: 120px;
+    img.profile-pic {
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       object-fit: cover;
       margin-bottom: 15px;
-      border: 2px solid #002868;
+      border: 2px solid #007bff;
+    }
+    h2 {
+      margin-bottom: 20px;
     }
     input {
-      padding: 12px;
-      width: 100%;
+      width: 90%;
+      padding: 10px;
       margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-    }
-    button {
-      padding: 12px;
-      width: 100%;
-      background: #002868;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+      border: 1px solid #ddd;
+      border-radius: 8px;
       font-size: 16px;
     }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
     button:hover {
-      background: #001f5a;
+      background: #0056b3;
+    }
+    .links {
+      margin-top: 15px;
+    }
+    .links a {
+      display: block;
+      margin: 5px 0;
+      color: #007bff;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .links a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="form-box">
-    <h2>Enter Your 4-Digit PIN</h2>
+  <div class="container">
     <!-- Profile picture -->
-    <img id="profilePhoto" src="" alt="Profile Photo">
+    <img src="profile.jpg" alt="User Picture" class="profile-pic" id="userPic">
+
+    <h2>Enter PIN</h2>
     <form id="pinForm">
-      <input type="password" id="pinInput" placeholder="PIN" required maxlength="4" minlength="4">
-      <button type="submit">Submit</button>
+      <input type="password" id="pin" placeholder="Enter your 4-digit PIN" required maxlength="4">
+      <button type="submit">Unlock</button>
     </form>
+
+    <div class="links">
+      <a href="forgot-pin.html">Forgot PIN?</a>
+      <a href="reset-pin.html">Reset PIN</a>
+    </div>
   </div>
 
   <script>
-    // Load current user
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    const profilePhoto = document.getElementById("profilePhoto");
-
-    if (!currentUser) {
-      alert("❌ No user logged in");
-      window.location.href = "login.html";
-    } else if (currentUser.photo) {
-      profilePhoto.src = currentUser.photo;
-    } else {
-      profilePhoto.src = "https://via.placeholder.com/120?text=No+Photo";
-    }
+    // Example stored PIN for testing
+    const storedPin = localStorage.getItem("userPin") || "1234";
 
     document.getElementById("pinForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const enteredPin = document.getElementById("pinInput").value;
+      const pin = document.getElementById("pin").value;
 
-      if (enteredPin === currentUser.pin) {
-        // PIN correct → go to dashboard
+      if (pin === storedPin) {
         window.location.href = "user-dashboard.html";
       } else {
-        alert("❌ Incorrect PIN. Try again.");
+        alert("Incorrect PIN. Try again.");
       }
     });
+
+    // Load user profile picture from localStorage if available
+    const savedPic = localStorage.getItem("userPic");
+    if (savedPic) {
+      document.getElementById("userPic").src = savedPic;
+    }
   </script>
 </body>
 </html>

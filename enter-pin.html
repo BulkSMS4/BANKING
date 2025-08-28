@@ -5,24 +5,107 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Enter PIN</title>
   <style>
-    body { font-family: Arial, sans-serif; display: flex; height: 100vh; justify-content: center; align-items: center; background: #f4f4f4; }
-    .container { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 300px; text-align: center; }
-    input { padding: 10px; margin: 10px 0; width: 90%; border: 1px solid #ccc; border-radius: 5px; }
-    button { padding: 10px; background: navy; color: white; border: none; border-radius: 5px; width: 100%; cursor: pointer; }
-    .links { margin-top: 10px; }
-    .links a { color: navy; text-decoration: none; margin: 0 5px; font-size: 14px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .pin-container {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 350px;
+      text-align: center;
+    }
+    .pin-container img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
+    h2 {
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .links {
+      margin-top: 15px;
+    }
+    .links a {
+      display: block;
+      margin: 5px 0;
+      color: #007bff;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Enter Your PIN</h2>
-    <input type="password" placeholder="Enter PIN" required>
-    <button>Submit</button>
+  <div class="pin-container">
+    <!-- User picture (will load from localStorage if available) -->
+    <img id="userPicture" src="default-avatar.png" alt="User Picture">
+    <h2>Enter your PIN</h2>
+    <input type="password" id="pinInput" placeholder="Enter PIN" maxlength="6">
+    <button onclick="checkPin()">Login</button>
 
     <div class="links">
-      <a href="forgot-pin.html">Forgot PIN?</a> | 
+      <a href="forgot-pin.html">Forgot PIN?</a>
       <a href="reset-pin.html">Reset PIN</a>
     </div>
   </div>
+
+  <script>
+    // Load user profile picture from localStorage
+    const userPic = localStorage.getItem("profilePicture");
+    if (userPic) {
+      document.getElementById("userPicture").src = userPic;
+    }
+
+    // Check PIN
+    function checkPin() {
+      const enteredPin = document.getElementById("pinInput").value;
+      const savedPin = localStorage.getItem("userPIN");
+
+      if (!savedPin) {
+        alert("No PIN set yet. Please reset your PIN.");
+        return;
+      }
+
+      if (enteredPin === savedPin) {
+        window.location.href = "user-dashboard.html";
+      } else {
+        alert("Incorrect PIN. Try again.");
+      }
+    }
+  </script>
 </body>
 </html>

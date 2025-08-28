@@ -1,0 +1,77 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+}
+
+.hidden {
+  display: none;
+}
+
+.pin-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #002244;
+  color: white;
+}
+
+.pin-box {
+  text-align: center;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  color: black;
+}
+
+.profile-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dashboard {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background: #002244;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.sidebar ul li:hover {
+  background: #0055aa;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+}
+
+.section {
+  display: block;
+}
+
+.section.hidden {
+  display: none;
+}

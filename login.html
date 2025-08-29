@@ -13,6 +13,9 @@
   button { padding:14px; width:100%; background:#002868; color:white; border:none; border-radius:8px; cursor:pointer; font-size:17px; margin-top:10px; }
   button:hover { background:#001f5a; }
   p.error { color:red; font-size:14px; text-align:center; }
+  .forgot { text-align:center; margin-top:15px; }
+  .forgot a { color:#002868; text-decoration:none; font-size:14px; }
+  .forgot a:hover { text-decoration:underline; }
 </style>
 </head>
 <body>
@@ -25,14 +28,16 @@
     <button type="submit">Login</button>
     <p class="error" id="errorMsg"></p>
   </form>
+  <div class="forgot">
+    <a href="#" id="forgotPassword">Forgot Password?</a>
+  </div>
 </div>
 
-<!-- Firebase v9 compat (same as registration page) -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-<script>
   const firebaseConfig = {
     apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
     authDomain: "capital-one-16a95.firebaseapp.com",
@@ -42,12 +47,11 @@
     appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
   };
 
-  // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  // Login handler
+  // ✅ LOGIN
   document.getElementById("loginForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value.trim();
@@ -55,23 +59,39 @@
     const errorMsg = document.getElementById("errorMsg");
 
     try {
-      const cred = await auth.signInWithEmailAndPassword(email, password);
+      const cred = await signInWithEmailAndPassword(auth, email, password);
       const uid = cred.user.uid;
 
-      // Fetch profile
-      const snap = await db.collection("registrations").doc(uid).get();
-      if (!snap.exists) {
-        errorMsg.textContent = "User profile not found.";
+      // Get user profile
+      const snap = await getDoc(doc(db, "registrations", uid));
+      if (!snap.exists()) {
+        errorMsg.textContent = "⚠️ User profile not found.";
         return;
       }
 
-      // Store profile locally (optional)
+      // Cache user (optional)
       localStorage.setItem("currentUser", JSON.stringify({ uid, ...snap.data() }));
 
-      // Redirect to dashboard
+      // Redirect
       window.location.href = "dashboard.html";
     } catch (err) {
-      errorMsg.textContent = "Login failed: " + (err.message || "Unknown error");
+      errorMsg.textContent = "❌ " + (err?.message || "Login failed");
+    }
+  });
+
+  // ✅ FORGOT PASSWORD
+  document.getElementById("forgotPassword").addEventListener("click", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    if (!email) {
+      alert("Enter your email first, then click Forgot Password.");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      alert("📩 Password reset link sent to " + email);
+    } catch (err) {
+      alert("❌ " + (err?.message || "Could not send reset email"));
     }
   });
 </script>

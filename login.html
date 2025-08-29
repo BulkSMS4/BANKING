@@ -5,18 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login - Bank Account</title>
 <style>
-body { font-family: Arial; background:#f2f2f2; display:flex; justify-content:center; align-items:flex-start; padding-top:50px; margin:0; }
-.form-box { background:white; padding:35px 30px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.2); width:420px; max-width:95%; }
-h2 { text-align:center; margin-bottom:10px; font-size:24px; }
-p.description { text-align:center; color:#555; margin-bottom:25px; font-size:15px; }
-input { padding:14px; width:100%; margin:12px 0; border-radius:8px; border:1px solid #ccc; font-size:16px; }
-button { padding:14px; width:100%; background:#002868; color:white; border:none; border-radius:8px; cursor:pointer; font-size:17px; margin-top:10px; }
-button:hover { background:#001f5a; }
-p.error { color:red; font-size:14px; text-align:center; }
+  body { font-family: Arial; background:#f2f2f2; display:flex; justify-content:center; align-items:flex-start; padding-top:50px; margin:0; }
+  .form-box { background:#fff; padding:35px 30px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.2); width:420px; max-width:95%; }
+  h2 { text-align:center; margin-bottom:10px; font-size:24px; }
+  p.description { text-align:center; color:#555; margin-bottom:25px; font-size:15px; }
+  input { padding:14px; width:100%; margin:12px 0; border-radius:8px; border:1px solid #ccc; font-size:16px; }
+  button { padding:14px; width:100%; background:#002868; color:white; border:none; border-radius:8px; cursor:pointer; font-size:17px; margin-top:10px; }
+  button:hover { background:#001f5a; }
+  p.error { color:red; font-size:14px; text-align:center; }
 </style>
 </head>
 <body>
-
 <div class="form-box">
   <h2>Login to Your Account</h2>
   <p class="description">Enter your email and password to access your bank account.</p>
@@ -28,54 +27,51 @@ p.error { color:red; font-size:14px; text-align:center; }
   </form>
 </div>
 
-<!-- Firebase -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCzqzO69UPV23oBHU3JAcvZjwEcsv3TtJY",
-  authDomain: "bank-of-america-92490.firebaseapp.com",
-  projectId: "bank-of-america-92490",
-  storageBucket: "bank-of-america-92490.firebasestorage.app",
-  messagingSenderId: "926628493178",
-  appId: "1:926628493178:web:775a66629b654d80f348c3"
-};
+  // SAME project as registration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
+    authDomain: "capital-one-16a95.firebaseapp.com",
+    projectId: "capital-one-16a95",
+    storageBucket: "capital-one-16a95.appspot.com",
+    messagingSenderId: "1061937867911",
+    appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
+  };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-document.getElementById("loginForm").addEventListener("submit", async function(e){
-  e.preventDefault();
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const errorMsg = document.getElementById("errorMsg");
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const errorMsg = document.getElementById("errorMsg");
 
-  try {
-    // Login with Firebase Auth
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const uid = userCredential.user.uid;
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      const uid = cred.user.uid;
 
-    // Fetch user details from Firestore
-    const userDoc = await getDoc(doc(db, "users", uid));
-    if(!userDoc.exists()){
-      errorMsg.innerText = "User data not found!";
-      return;
+      // Read from the SAME collection used in registration
+      const snap = await getDoc(doc(db, "registrations", uid));
+      if (!snap.exists()) {
+        errorMsg.textContent = "User profile not found.";
+        return;
+      }
+
+      // Store a minimal cache (optional)
+      localStorage.setItem("currentUser", JSON.stringify({ uid, ...snap.data() }));
+
+      // Go to dashboard
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      errorMsg.textContent = "Login failed: " + (err?.message || "Unknown error");
     }
-
-    // Save user locally for PIN page
-    localStorage.setItem("currentUser", JSON.stringify({ uid, ...userDoc.data() }));
-
-    // ✅ Redirect to PIN page instead of dashboard
-    window.location.href = "pin.html";
-
-  } catch(err){
-    errorMsg.innerText = "Login failed: " + err.message;
-  }
-});
+  });
 </script>
-
 </body>
 </html>

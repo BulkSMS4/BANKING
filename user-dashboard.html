@@ -83,57 +83,9 @@
       text-align: left;
       border-bottom: 1px solid #ddd;
     }
-    /* PIN screen */
-    #pin-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      background: #00274d;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      z-index: 1000;
-    }
-    #pin-screen img {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      margin-bottom: 20px;
-      object-fit: cover;
-    }
-    #pin-input {
-      padding: 10px;
-      font-size: 18px;
-      text-align: center;
-      border: none;
-      border-radius: 5px;
-      outline: none;
-    }
-    #pin-btn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      background: #ff9800;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
-
-  <!-- PIN Screen -->
-  <div id="pin-screen">
-    <img id="pin-photo" src="" alt="User Photo">
-    <h3 id="pin-name"></h3>
-    <input type="password" id="pin-input" placeholder="Enter PIN">
-    <button id="pin-btn">Unlock</button>
-  </div>
 
   <!-- Sidebar -->
   <div class="sidebar">
@@ -212,23 +164,11 @@
       name: "User",
       email: "user@email.com",
       photo: "",
-      balance: 5000,
-      pin: "1234"
+      balance: 5000
     };
 
-    // PIN screen setup
-    document.getElementById("pin-photo").src = user.photo || "https://via.placeholder.com/120";
-    document.getElementById("pin-name").innerText = user.name;
-
-    document.getElementById("pin-btn").addEventListener("click", function() {
-      let pinInput = document.getElementById("pin-input").value;
-      if (pinInput === user.pin) {
-        document.getElementById("pin-screen").style.display = "none";
-        loadDashboard();
-      } else {
-        alert("Incorrect PIN!");
-      }
-    });
+    // Load dashboard immediately (no PIN required)
+    loadDashboard();
 
     function loadDashboard() {
       document.getElementById("user-photo").src = user.photo || "https://via.placeholder.com/100";
@@ -289,4 +229,4 @@
     document.getElementById("set-email").value = user.email;
   </script>
 </body>
-</html>
+                          </html>

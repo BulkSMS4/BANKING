@@ -19,61 +19,24 @@
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
   }
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  h3 {
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 5px;
-  }
-  label {
-    display: block;
-    margin-top: 15px;
-    font-weight: bold;
-  }
+  h2 { text-align: center; margin-bottom: 20px; }
+  h3 { border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+  label { display: block; margin-top: 15px; font-weight: bold; }
   input, select, textarea {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
+    width: 100%; padding: 10px; margin-top: 5px;
+    border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box;
   }
-  .small-inputs {
-    display: flex;
-    gap: 10px;
-  }
-  .small-inputs input, .small-inputs select {
-    flex: 1;
-  }
-  .radio-group {
-    display: flex;
-    gap: 15px;
-    margin-top: 5px;
-  }
-  .checkbox-group {
-    margin-top: 10px;
-  }
-  .signature {
-    border: 1px solid #ccc;
-    height: 100px;
-    margin-top: 5px;
-  }
+  .small-inputs { display: flex; gap: 10px; }
+  .small-inputs input, .small-inputs select { flex: 1; }
+  .radio-group { display: flex; gap: 15px; margin-top: 5px; }
+  .checkbox-group { margin-top: 10px; }
+  .signature { border: 1px solid #ccc; height: 100px; margin-top: 5px; width: 100%; }
   button {
-    margin-top: 20px;
-    background: #002868;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    width: 100%;
-    font-size: 16px;
-    cursor: pointer;
+    margin-top: 20px; background: #002868; color: white;
+    padding: 12px; border: none; border-radius: 6px; width: 100%;
+    font-size: 16px; cursor: pointer;
   }
-  button:hover {
-    background: #001f5a;
-  }
+  button:hover { background: #001f5a; }
 </style>
 </head>
 <body>
@@ -108,6 +71,15 @@
 
     <!-- Personal Information -->
     <h3>Personal Information</h3>
+    <label>Email (for login)</label>
+    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+
+    <label>Password (for login)</label>
+    <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+    <label>Choose PIN</label>
+    <input type="number" id="pin" name="pin" placeholder="4-digit PIN" required>
+
     <label>Name</label>
     <div class="small-inputs">
       <input type="text" name="prefix" placeholder="Mr / Mrs" required>
@@ -160,18 +132,6 @@
     <label>Employer Name</label>
     <input type="text" name="employer" placeholder="e.g. Google">
 
-    <label>Do you want to add joint owner?</label>
-    <div class="radio-group">
-      <label><input type="radio" name="jointOwner" value="yes"> Yes</label>
-      <label><input type="radio" name="jointOwner" value="no" checked> No</label>
-    </div>
-
-    <!-- Joint Owner Information -->
-    <h3>Joint Owner Information</h3>
-    <p>Optional if no joint owner.</p>
-    <input type="text" name="jointName" placeholder="Joint Owner Name">
-    <input type="email" name="jointEmail" placeholder="Joint Owner Email">
-
     <!-- Upload Profile Picture -->
     <h3>Profile Picture</h3>
     <input type="file" id="profilePic" name="profilePic" accept="image/*" required>
@@ -193,12 +153,13 @@
 </div>
 
 <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
-<script>
-  // Your Firebase configuration
+  // Your Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
     authDomain: "capital-one-16a95.firebaseapp.com",
@@ -208,10 +169,10 @@
     appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
   };
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const storage = firebase.storage();
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
 
   // Signature capture
   const canvas = document.getElementById("signature");
@@ -237,35 +198,50 @@
   document.getElementById("bankForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    // Capture signature image
-    const signatureData = canvas.toDataURL("image/png");
-
-    // Get form data
-    const formData = new FormData(this);
-    let data = {};
-    formData.forEach((value, key) => { data[key] = value; });
-
-    // Upload profile picture
-    const file = document.getElementById("profilePic").files[0];
-    const storageRef = storage.ref('profilePics/' + file.name);
-    await storageRef.put(file);
-    const photoURL = await storageRef.getDownloadURL();
-
-    // Save to Firestore
-    data.signature = signatureData;
-    data.photoURL = photoURL;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const pin = document.getElementById("pin").value;
 
     try {
-      await db.collection("registrations").add(data);
-      alert("✅ Form submitted successfully!");
-      this.reset();
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    } catch (error) {
-      console.error("Error saving form:", error);
-      alert("❌ Error saving form. See console for details.");
+      // Register user with Firebase Auth
+      const userCred = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = userCred.user.uid;
+
+      // Capture signature
+      const signatureData = canvas.toDataURL("image/png");
+
+      // Collect form data
+      const formData = new FormData(this);
+      let data = {};
+      formData.forEach((value, key) => { data[key] = value; });
+
+      // Upload profile picture
+      const file = document.getElementById("profilePic").files[0];
+      let photoURL = "";
+      if(file){
+        const storageRef = ref(storage, 'profilePics/' + uid + '_' + file.name);
+        await uploadBytes(storageRef, file);
+        photoURL = await getDownloadURL(storageRef);
+      }
+
+      // Save to Firestore
+      await setDoc(doc(db, "registrations", uid), {
+        ...data,
+        pin,
+        photoURL,
+        signature: signatureData,
+        timestamp: new Date()
+      });
+
+      alert("✅ Registration successful! Redirecting to dashboard...");
+      window.location.href = "dashboard.html";
+
+    } catch (err) {
+      console.error("Error:", err);
+      alert("❌ " + err.message);
     }
   });
 </script>
 
 </body>
-</html>
+        </html>

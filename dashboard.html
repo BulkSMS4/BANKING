@@ -5,24 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Dashboard</title>
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; background: #f5f6fa; }
-    header { background: #00274d; color: white; padding: 15px; text-align: center; }
-    .sidebar { position: fixed; top: 0; left: 0; width: 220px; height: 100%; background: #1a1a2e; padding-top: 20px; color: white; }
-    .sidebar h2 { text-align: center; margin-bottom: 30px; }
-    .sidebar a { display: block; padding: 12px; color: white; text-decoration: none; margin: 5px 0; }
-    .sidebar a:hover { background: #16213e; }
-    .content { margin-left: 240px; padding: 20px; }
-    .user-info { text-align: center; margin-bottom: 20px; }
-    .user-info img { width: 100px; height: 100px; border-radius: 50%; margin-bottom: 10px; object-fit: cover; }
-    .balance { background: white; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 20px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
-    .transactions, .settings { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+    body { margin:0; font-family: Arial, sans-serif; background:#f5f6fa; }
+    header { background:#00274d; color:#fff; padding:15px; text-align:center; }
+    .sidebar { position:fixed; top:0; left:0; width:220px; height:100%; background:#1a1a2e; padding-top:20px; color:#fff; }
+    .sidebar h2 { text-align:center; margin-bottom:30px; }
+    .sidebar a { display:block; padding:12px; color:#fff; text-decoration:none; margin:5px 0; }
+    .sidebar a:hover { background:#16213e; }
+    .content { margin-left:240px; padding:20px; }
+    .user-info { text-align:center; margin-bottom:20px; }
+    .user-info img { width:100px; height:100px; border-radius:50%; margin-bottom:10px; object-fit:cover; }
+    .balance { background:#fff; padding:15px; border-radius:10px; text-align:center; margin-bottom:20px; box-shadow:0 0 5px rgba(0,0,0,.1); }
+    .transactions, .settings { background:#fff; padding:15px; border-radius:10px; box-shadow:0 0 5px rgba(0,0,0,.1); margin-bottom:20px; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { padding:10px; text-align:left; border-bottom:1px solid #ddd; }
   </style>
 </head>
 <body>
-
-  <!-- Sidebar -->
   <div class="sidebar">
     <h2>Menu</h2>
     <a href="#" onclick="showSection('dashboard')">Dashboard</a>
@@ -33,7 +31,6 @@
     <a href="#" onclick="logout()">Logout</a>
   </div>
 
-  <!-- Main Content -->
   <div class="content">
     <div class="user-info">
       <img id="user-photo" src="https://via.placeholder.com/100" alt="User Photo">
@@ -52,13 +49,13 @@
     <!-- Deposit -->
     <div id="deposit-section" style="display:none;">
       <h3>Deposit Funds</h3>
-      <p>Deposit form here...</p>
+      <p>Deposit form here…</p>
     </div>
 
     <!-- Withdrawal -->
     <div id="withdrawal-section" style="display:none;">
       <h3>Withdraw Funds</h3>
-      <p>Withdrawal form here...</p>
+      <p>Withdrawal form here…</p>
     </div>
 
     <!-- History -->
@@ -66,9 +63,7 @@
       <div class="transactions">
         <h3>Transaction History</h3>
         <table>
-          <thead>
-            <tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr>
-          </thead>
+          <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
           <tbody id="transaction-history"></tbody>
         </table>
       </div>
@@ -89,7 +84,6 @@
     </div>
   </div>
 
-  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -110,79 +104,78 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    // Check login state
     onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = "login.html";
-        return;
-      }
+      if (!user) { window.location.href = "login.html"; return; }
 
-      // Get user data from Firestore
-      const userDoc = await getDoc(doc(db, "registrations", user.uid));
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        document.getElementById("user-photo").src = data.photoURL || "https://via.placeholder.com/100";
-        document.getElementById("user-name").innerText = data.firstName + " " + data.lastName;
-        document.getElementById("user-email").innerText = data.email;
-        document.getElementById("user-balance").innerText = "$" + (data.balance || 0).toFixed(2);
+      const snap = await getDoc(doc(db, "registrations", user.uid));
+      if (!snap.exists()) { window.location.href = "login.html"; return; }
 
-        // Pre-fill settings
-        document.getElementById("set-name").value = data.firstName + " " + data.lastName;
-        document.getElementById("set-email").value = data.email;
+      const data = snap.data() || {};
+      const fullName = [data.firstName, data.lastName].filter(Boolean).join(" ").trim() || "User";
+      const email = data.email || user.email || "";
+      const balanceNum = Number(data.balance || 0);
 
-        // Fake transactions
-        let transactions = [
-          {date:"2025-08-01", type:"Deposit", amount:1000, status:"Completed"},
-          {date:"2025-08-10", type:"Withdrawal", amount:500, status:"Pending"},
-          {date:"2025-08-15", type:"Deposit", amount:2000, status:"Completed"}
-        ];
-        let historyBody = document.getElementById("transaction-history");
-        historyBody.innerHTML = "";
-        transactions.forEach(tx => {
-          historyBody.innerHTML += `<tr>
-            <td>${tx.date}</td><td>${tx.type}</td><td>$${tx.amount}</td><td>${tx.status}</td>
-          </tr>`;
-        });
-      }
-    });
+      document.getElementById("user-photo").src = data.photoURL || "https://via.placeholder.com/100";
+      document.getElementById("user-name").textContent = fullName;
+      document.getElementById("user-email").textContent = email;
+      document.getElementById("user-balance").textContent = "$" + balanceNum.toFixed(2);
 
-    // Show sections
-    window.showSection = function(section) {
-      document.querySelectorAll(".content > div").forEach(div => div.style.display = "none");
-      document.getElementById(section + "-section").style.display = "block";
-    }
-
-    // Settings update
-    document.getElementById("settings-form").addEventListener("submit", async function(e){
-      e.preventDefault();
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const name = document.getElementById("set-name").value;
-      const email = document.getElementById("set-email").value;
-      const file = document.getElementById("set-photo").files[0];
-      let photoURL = "";
-
-      if (file) {
-        const storageRef = ref(storage, "profilePics/" + user.uid + "_" + file.name);
-        await uploadBytes(storageRef, file);
-        photoURL = await getDownloadURL(storageRef);
-      }
-
-      await updateDoc(doc(db, "registrations", user.uid), {
-        email,
-        photoURL: photoURL || undefined
+      // Dummy transactions (replace with real ones if you later store them)
+      const transactions = [
+        {date:"2025-08-01", type:"Deposit", amount:1000, status:"Completed"},
+        {date:"2025-08-10", type:"Withdrawal", amount:500, status:"Pending"},
+        {date:"2025-08-15", type:"Deposit", amount:2000, status:"Completed"}
+      ];
+      const tbody = document.getElementById("transaction-history");
+      tbody.innerHTML = "";
+      transactions.forEach(t => {
+        tbody.innerHTML += `<tr><td>${t.date}</td><td>${t.type}</td><td>$${t.amount}</td><td>${t.status}</td></tr>`;
       });
 
-      alert("Profile updated successfully!");
-      location.reload();
+      // Settings form
+      document.getElementById("set-name").value = fullName;
+      document.getElementById("set-email").value = email;
+
+      document.getElementById("settings-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("set-name").value.trim();
+        const newEmail = document.getElementById("set-email").value.trim();
+        const file = document.getElementById("set-photo").files[0];
+
+        let photoURL = data.photoURL || "";
+        if (file) {
+          const storageRef = ref(storage, `profilePics/${user.uid}_${file.name}`);
+          await uploadBytes(storageRef, file);
+          photoURL = await getDownloadURL(storageRef);
+        }
+
+        // Split name (best-effort)
+        const [firstName="", ...rest] = name.split(" ");
+        const lastName = rest.join(" ");
+
+        await updateDoc(doc(db, "registrations", user.uid), {
+          email: newEmail || email,
+          photoURL,
+          firstName,
+          lastName
+        });
+
+        alert("Profile updated!");
+        location.reload();
+      });
     });
 
-    // Logout
-    window.logout = async function() {
+    // Simple section router
+    window.showSection = (section) => {
+      ["dashboard","deposit","withdrawal","history","settings"].forEach(id => {
+        document.getElementById(id + "-section").style.display = (id === section) ? "block" : "none";
+      });
+    };
+
+    window.logout = async () => {
       await signOut(auth);
       window.location.href = "login.html";
-    }
+    };
   </script>
 </body>
 </html>

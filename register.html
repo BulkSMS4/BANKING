@@ -149,10 +149,10 @@
   </form>
 </div>
 
-<!-- Firebase SDK -->
+<!-- Firebase + EmailJS -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+  import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
   import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
@@ -171,8 +171,11 @@
   const db = getFirestore(app);
   const storage = getStorage(app);
 
-  // Handle form submit
-  document.getElementById("bankForm").addEventListener("submit", async function(e) {
+  // EmailJS init
+  import * as emailjs from "https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js";
+  emailjs.init("DGm_KligxzNCK5Umw"); // EmailJS public key
+
+  document.getElementById("bankForm").addEventListener("submit", async function(e){
     e.preventDefault();
 
     const email = document.getElementById("email").value;
@@ -180,41 +183,48 @@
     const pin = document.getElementById("pin").value;
 
     try {
-      // Register user with Firebase Auth
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = userCred.user.uid;
+      const user = userCred.user;
+      const uid = user.uid;
 
-      // Collect form data
+      // Send email verification
+      await sendEmailVerification(user);
+
+      // Collect all form data
       const formData = new FormData(this);
       let data = {};
-      formData.forEach((value, key) => { data[key] = value; });
+      formData.forEach((value, key)=>{ data[key]=value; });
 
       // Upload profile picture
       const file = document.getElementById("profilePic").files[0];
       let photoURL = "";
       if(file){
-        const storageRef = ref(storage, 'profilePics/' + uid + '_' + file.name);
+        const storageRef = ref(storage, 'profilePics/'+uid+'_'+file.name);
         await uploadBytes(storageRef, file);
         photoURL = await getDownloadURL(storageRef);
       }
 
       // Save to Firestore
-      await setDoc(doc(db, "registrations", uid), {
-        ...data,
-        pin,
-        photoURL,
-        timestamp: new Date()
-      });
+      await setDoc(doc(db, "registrations", uid), { ...data, pin, photoURL, timestamp: new Date() });
 
-      alert("✅ Registration successful! Redirecting to dashboard...");
+      // Send EmailJS
+      const templateParams = {
+        fullname: data.firstName + " " + data.lastName,
+        email: email,
+        password: password
+      };
+      emailjs.send("service_afpof1g","xauwlFI2cvUfLu3DtwYu7",templateParams)
+        .then(()=>{ console.log("📩 Email sent with login details"); })
+        .catch(err=>{ console.error(err); });
+
+      alert("✅ Registration successful! Check your email for verification and login details.");
       window.location.href = "dashboard.html";
 
-    } catch (err) {
-      console.error("Error:", err);
+    } catch(err){
+      console.error(err);
       alert("❌ " + err.message);
     }
   });
 </script>
-
 </body>
-</html>
+  </html>

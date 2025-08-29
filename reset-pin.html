@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset PIN</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+    input:focus {
+      border-color: #3498db;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #3498db;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    .back {
+      text-align: center;
+      margin-top: 15px;
+    }
+    .back a {
+      color: #3498db;
+      text-decoration: none;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Reset Your PIN</h2>
+    <form id="resetPinForm">
+      <input type="email" id="email" placeholder="Enter your email" required>
+      <input type="password" id="newPin" placeholder="Enter new PIN" required>
+      <input type="password" id="confirmPin" placeholder="Confirm new PIN" required>
+      <button type="submit">Reset PIN</button>
+    </form>
+    <div class="back">
+      <a href="enter-pin.html">Back to Enter PIN</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function() {
+      emailjs.init("xauwlFI2cvUfLu3DtwYu7"); // Your EmailJS public key
+    })();
+
+    document.getElementById("resetPinForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      let email = document.getElementById("email").value;
+      let newPin = document.getElementById("newPin").value;
+      let confirmPin = document.getElementById("confirmPin").value;
+
+      if (newPin !== confirmPin) {
+        alert("PINs do not match!");
+        return;
+      }
+
+      let templateParams = {
+        to_email: email,
+        message: "Your PIN has been successfully reset. Your new PIN is: " + newPin
+      };
+
+      emailjs.send("service_n8mu1n9", "DGm_KligxzNCK5Umw", templateParams)
+        .then(function(response) {
+          alert("PIN reset successful. A confirmation has been sent to your email.");
+          window.location.href = "enter-pin.html";
+        }, function(error) {
+          alert("Failed to send email. Please try again.");
+        });
+    });
+  </script>
+</body>
+</html>

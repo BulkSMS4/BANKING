@@ -127,14 +127,14 @@
   </form>
 </div>
 
-<!-- ✅ Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js"></script>
+<!-- ✅ Firebase v10+ Modular SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-<script>
-  // ✅ Firebase Config (same across all pages)
+  // ✅ Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
     authDomain: "capital-one-16a95.firebaseapp.com",
@@ -144,11 +144,11 @@
     appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
   };
 
-  // ✅ Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  const storage = firebase.storage();
+  // ✅ Initialize
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
 
   // ✅ Handle Registration
   document.getElementById("bankForm").addEventListener("submit", async (e) => {
@@ -158,35 +158,35 @@
     const pin = document.getElementById("pin").value;
 
     try {
-      // Create user in Firebase Auth
-      const cred = await auth.createUserWithEmailAndPassword(email, password);
+      // Create user
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
       const uid = cred.user.uid;
 
       // Send email verification
-      cred.user.sendEmailVerification().catch(()=>{});
+      sendEmailVerification(cred.user).catch(()=>{});
 
       // Collect form data
       const formData = new FormData(e.target);
       const data = {};
       formData.forEach((v, k) => data[k] = v);
 
-      // Upload profile picture
+      // Upload profile pic
       let photoURL = "";
       const file = document.getElementById("profilePic").files[0];
       if (file) {
-        const storageRef = storage.ref(`profilePics/${uid}_${file.name}`);
-        await storageRef.put(file);
-        photoURL = await storageRef.getDownloadURL();
+        const storageRef = ref(storage, `profilePics/${uid}_${file.name}`);
+        await uploadBytes(storageRef, file);
+        photoURL = await getDownloadURL(storageRef);
       }
 
-      // Save in Firestore
-      await db.collection("registrations").doc(uid).set({
+      // Save to Firestore
+      await setDoc(doc(db, "registrations", uid), {
         ...data,
         email,
         pin,
         photoURL,
         balance: 0,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: serverTimestamp()
       });
 
       alert("✅ Registration successful! Redirecting...");
@@ -199,4 +199,4 @@
   });
 </script>
 </body>
-      </html>
+  </html>

